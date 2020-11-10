@@ -1,5 +1,7 @@
 package Account;
 
-public class Admin {
-    
+import Mediator.Mediator;
+
+public class Admin extends Account {
+
 }

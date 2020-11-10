@@ -1,5 +1,6 @@
 package Book;
 
-public class CustomerLibrary {
-    
+public class CustomerLibrary extends BookList {
+    private String ID;
+    // (Book ExpiryDate)
 }

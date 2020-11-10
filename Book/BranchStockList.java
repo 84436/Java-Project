@@ -1,5 +1,6 @@
 package Book;
 
-public class BranchStockList {
-    
+public class BranchStockList extends BookList {
+    private String ID;
+    // (Book, Amount)
 }
