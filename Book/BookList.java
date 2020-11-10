@@ -1,7 +1,5 @@
 package Book;
 
-import Misc.IDGenerator;
-
 public class BookList {
     private String ID;
 
@@ -10,4 +8,8 @@ public class BookList {
     // Methods
         // public abstract void addBook();
         // public abstract void removeBook();
+    
+    public String getID() {
+        return ID;
+    }
 }

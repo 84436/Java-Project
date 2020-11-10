@@ -1,5 +1,5 @@
 package Receipt;
 
-public class BuyReceipt {
+public class BuyReceipt extends Receipt{
     
 }

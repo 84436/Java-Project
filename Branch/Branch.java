@@ -6,6 +6,14 @@ public class Branch {
     private String Address;
     // BookListID
 
+    // Constructors
+    public Branch() {
+        ID = "";
+        Name = "";
+        Address = "";
+        // BookListID
+    }
+
     // getter-setters
     public void setID(String ID) {
         this.ID = ID;

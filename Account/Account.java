@@ -8,7 +8,10 @@ public class Account {
 
     // Constructors
     public Account() {
-
+        ID = "";
+        Name = "";
+        Email = "";
+        Phone = "";
     }
 
     // Getter-setters
