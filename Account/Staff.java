@@ -1,7 +1,11 @@
 package Account;
 
-import Mediator.Mediator;
+import Core.Mediator;
 
 public class Staff extends Account {
-    // private BranchID
+    private String BranchID;
+
+    public Staff(Mediator M) {
+        super(M);
+    }
 }

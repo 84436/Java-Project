@@ -1,6 +1,10 @@
 package Book;
 
+import java.util.HashMap;
+
 public class BranchStockList extends BookList {
-    private String ID;
-    // (Book, Amount)
+    private HashMap<Book, Integer> StockList;
+
+    public void increaseStock() {}
+    public void decreaseStock() {}
 }

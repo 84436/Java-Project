@@ -1,43 +1,15 @@
 package Account;
 
-public class Account {
+import Core.Mediator;
+
+public abstract class Account {
+    protected Mediator M;
     private String ID;
     private String Name;
     private String Email;
     private String Phone;
-
-    // Constructors
-    public Account() {
-        ID = "";
-        Name = "";
-        Email = "";
-        Phone = "";
-    }
-
-    // Getter-setters
-    public void setID(String ID) {
-        this.ID = ID;
-    }
-    public void setName(String Name) {
-        this.Name = Name;
-    }
-    public void setEmail(String Email) {
-        this.Email = Email;
-    }
-    public void setPhone(String Phone) {
-        this.Phone = Phone;
-    }
     
-    public String getID() {
-        return ID;
-    }
-    public String getName() {
-        return Name;
-    }
-    public String getEmail() {
-        return Email;
-    }
-    public String getPhone() {
-        return Phone;
+    public Account(Mediator M) {
+        this.M = M;
     }
 }

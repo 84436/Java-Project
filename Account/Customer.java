@@ -1,11 +1,18 @@
 package Account;
 
-import Mediator.Mediator;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import Core.Mediator;
+import Receipt.Receipt;
 
 public class Customer extends Account {
-    // DoB (new class?)
+    private LocalDate DoB;
     private String Address;
-    // SignUpDate (DOB class?)
-    // BookListID
-    // ReceiptList
+    private LocalDate SignUpDate;
+    private String BookListID;
+    private ArrayList<Receipt> ReceiptList;
+
+    public Customer(Mediator M) {
+        super(M);
+    }
 }

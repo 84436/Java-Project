@@ -1,33 +1,27 @@
 package Receipt;
 
-import Misc.IDGenerator;
+import Core.Provider;
+import Core.IDGenerator;
+import java.util.ArrayList;
 
-public class ReceiptProvider {
-    private Receipt[] ReceiptList;
-    private IDGenerator idGenerator;
+public class ReceiptProvider implements Provider {
+    private ArrayList<Receipt> ReceiptList;
+    private IDGenerator IDGen;
 
-    public ReceiptProvider() {
-        
+    @Override
+    public Object get(Object o) {
+        return null;
     }
 
-    // Methods
-    // public Receipt getReceipt() {
-        
-    // }
-
-    public void addReceipt() {
-
+    @Override
+    public void add(Object o) {
     }
 
-    public void deleteReceipt() {
-
+    @Override
+    public void edit(Object o) {
     }
 
-    public void editReceipt() {
-        
-    }
-    
-    public Receipt[] getAllReceipts() {
-        return ReceiptList;
+    @Override
+    public void remove(Object o) {
     }
 }

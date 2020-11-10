@@ -1,15 +1,8 @@
 package Book;
 
-public class BookList {
+public abstract class BookList {
     private String ID;
 
-    // Constructors
-
-    // Methods
-        // public abstract void addBook();
-        // public abstract void removeBook();
-    
-    public String getID() {
-        return ID;
-    }
+    public void addBook() {}
+    public void removeBook() {}
 }

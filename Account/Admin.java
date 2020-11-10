@@ -1,7 +1,9 @@
 package Account;
 
-import Mediator.Mediator;
+import Core.Mediator;
 
 public class Admin extends Account {
-
+    public Admin(Mediator M) {
+        super(M);
+    }
 }
