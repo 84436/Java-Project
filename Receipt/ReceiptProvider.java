@@ -4,33 +4,9 @@ import Core.Provider;
 import Core.IDGenerator;
 import java.util.ArrayList;
 
-public class ReceiptProvider implements Provider {
+public class ReceiptProvider implements Provider<Receipt> {
     private ArrayList<Receipt> ReceiptList;
     private IDGenerator IDGen;
-
-    /****************************************/
-
-    /**
-     * WARNING: THIS IS A STUB METHOD. DO NOT CALL STUB METHODS.
-     */
-    public Object get(Object o) {return null;}
-    
-    /**
-     * WARNING: THIS IS A STUB METHOD. DO NOT CALL STUB METHODS.
-     */
-    public void add(Object o) {}
-
-    /**
-     * WARNING: THIS IS A STUB METHOD. DO NOT CALL STUB METHODS.
-     */
-    public void edit(Object o) {}
-
-    /**
-     * WARNING: THIS IS A STUB METHOD. DO NOT CALL STUB METHODS.
-     */
-    public void remove(Object o) {}
-
-    /****************************************/
 
     /**
      * Get a receipt with a specific ID from the receipt store.
@@ -66,5 +42,23 @@ public class ReceiptProvider implements Provider {
                 break;
             }
         }
+    }
+
+    @Override
+    public Receipt get(Receipt o) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void edit(Receipt o) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void remove(Receipt o) {
+        // TODO Auto-generated method stub
+
     }
 }

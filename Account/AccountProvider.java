@@ -4,24 +4,24 @@ import Core.Provider;
 import Core.IDGenerator;
 import java.util.ArrayList;
 
-public class AccountProvider implements Provider {
+public class AccountProvider implements Provider<Account> {
     private ArrayList<Account> AccountList;
     private IDGenerator IDGen;
 
     @Override
-    public Object get(Object o) {
+    public Account get(Account o) {
         return null;
     }
 
     @Override
-    public void add(Object o) {
+    public void add(Account o) {
     }
 
     @Override
-    public void edit(Object o) {
+    public void edit(Account o) {
     }
 
     @Override
-    public void remove(Object o) {
+    public void remove(Account o) {
     }
 }

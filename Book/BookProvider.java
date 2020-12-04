@@ -4,24 +4,24 @@ import Core.IDGenerator;
 import Core.Provider;
 import java.util.ArrayList;
 
-public class BookProvider implements Provider {
+public class BookProvider implements Provider<Book>{
     private ArrayList<Book> BookList;
     private IDGenerator IDGen;
 
     @Override
-    public Object get(Object o) {
+    public Book get(Book o) {
         return null;
     }
 
     @Override
-    public void add(Object o) {
+    public void add(Book o) {
     }
 
     @Override
-    public void edit(Object o) {
+    public void edit(Book o) {
     }
 
     @Override
-    public void remove(Object o) {
+    public void remove(Book o) {
     }
 }
