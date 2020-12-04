@@ -13,7 +13,7 @@ import java.util.logging.Level;
  */
 public class Log {
     // Grab the default "root" logger
-    private static final Logger L = Logger.getLogger("");
+    public static final Logger l = Logger.getLogger("");
     private static final Level DEFAULT_LEVEL = Level.INFO;
 
     // Customized datetime format
@@ -28,11 +28,12 @@ public class Log {
                 // 1$   : first argument (index from 1, not 0)
                 //   -  : left-align output
                 //    7 : width = 7
-                "%1$s [%2$7s] %3$s\n",
+                "[%1$14s] [%2$7s] (%3$s:%4$s) %5$s\n",
                 sdf.format(Date.from(r.getInstant())),
                 r.getLevel(),
+                r.getSourceClassName(),
+                r.getSourceMethodName(),
                 r.getMessage()
-                // getSource*() does not work as expected when wrapped in this Log class. Skip that for now.
             );
         }
     }
@@ -41,35 +42,26 @@ public class Log {
      * Initialize the logger (setting up custom log format and level).
      */
     public static void initLogger() {
-        L.getHandlers()[0].setFormatter(new CustomFormatter());
-        L.setLevel(DEFAULT_LEVEL);
+        l.getHandlers()[0].setFormatter(new CustomFormatter());
+        l.setLevel(DEFAULT_LEVEL);
     }
 
     /**
-     * Turns off logging EXCEPT for SEVERE (1000) messages.
+     * Turns off logging everything below SEVERE
      */
-    public static void off() { L.setLevel(Level.SEVERE); }
+    public static void off() { l.setLevel(Level.SEVERE); }
 
     /**
-     * Turns on logging.
+     * Turns on logging everything in range [DEFAULT_LEVEL .. SEVERE]
      */
-    public static void on() { L.setLevel(DEFAULT_LEVEL); }
+    public static void on() { l.setLevel(DEFAULT_LEVEL); }
 
     /**
-     * Log with level = INFO (800).
-     * @param message Message to be logged.
+     * A quick reminder on log levels:
+     * 500  = FINE
+     * 700  = CONFIG
+     * 800  = INFO
+     * 900  = WARNING
+     * 1000 = SEVERE
      */
-    public static void i(String message) { L.info(message); }
-
-    /**
-     * Log with level = WARNING (900).
-     * @param message Message to be logged.
-     */
-    public static void w(String message) { L.warning(message); }
-
-    /**
-     * Log with level = SEVERE (1000, aka. Error).
-     * @param message Message to be logged.
-     */
-    public static void s(String message) { L.severe(message); }
 }

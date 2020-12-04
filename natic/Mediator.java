@@ -77,19 +77,19 @@ public class Mediator {
 
             // Logging
             Log.initLogger();
-            Log.i("Logger configured");
+            Log.l.info("Logger configured");
             if (!enableLogging) {
-                Log.i("Logger is now limited to SEVERE messages only");
+                Log.l.info("Logger is now limited to SEVERE messages only");
                 Log.off();
             }
 
             //#region: Test if database exists; fail immediately if not.
             Class.forName(DB_DRIVER);
             SharedConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-            Log.i("Getting a DB connection");
+            Log.l.info("Getting a DB connection");
 
             if (SharedConnection != null) {
-                Log.i("Houston, we've got a connection.");
+                Log.l.info("Houston, we've got a connection.");
             }
 
             boolean dbExists = false;
@@ -102,7 +102,7 @@ public class Mediator {
             }
 
             if (!dbExists) {
-                Log.s(String.format(
+                Log.l.severe(String.format(
                     "Database not exists. Please manually run %s to create the database first, then try again later.",
                     DB_SCHEMA_FILE
                 ));
@@ -110,13 +110,13 @@ public class Mediator {
             }
             else {
                 SharedConnection.setCatalog(DB_NAME);
-                Log.i("Database exists and selected.");
+                Log.l.info("Database exists and selected.");
             }
             //#endregion
         }
         
         catch (ClassNotFoundException ex) {
-            Log.s("Unable to load driver class");
+            Log.l.severe("Unable to load driver class");
             System.exit(1);
         }
         catch (SQLException se) {

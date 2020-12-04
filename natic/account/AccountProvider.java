@@ -32,7 +32,7 @@ public class AccountProvider implements Provider<Account> {
                 case "Admin"    : oType = AccountType.ADMIN;    break;
                 default         : oType = AccountType.UNKNOWN;  break;
             }
-            Log.i(String.format("New %s", oType.toString()));
+            Log.l.info(String.format("New %s", oType.toString()));
 
             // TODO: Set account ID
 
@@ -46,7 +46,7 @@ public class AccountProvider implements Provider<Account> {
             );
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(query);
-            Log.i(String.format("%s: inserted into ACCOUNTS", o.getID()));
+            Log.l.info(String.format("%s: inserted into ACCOUNTS", o.getID()));
 
             // Who is o? (Customer/Staff/Admin)
             switch (oType) {
@@ -65,7 +65,7 @@ public class AccountProvider implements Provider<Account> {
                         )
                     );
                     stmt.executeUpdate(queryc);
-                    Log.i(String.format("%s: inserted into CUSTOMERS", o.getID()));
+                    Log.l.info(String.format("%s: inserted into CUSTOMERS", o.getID()));
                     break;
                 
                 case STAFF:
@@ -80,15 +80,15 @@ public class AccountProvider implements Provider<Account> {
                         )
                     );
                     stmt.executeUpdate(querys);
-                    Log.i(String.format("%s: inserted into STAFF", o.getID()));
+                    Log.l.info(String.format("%s: inserted into STAFF", o.getID()));
                     break;
                 
                 case ADMIN:
-                    Log.i(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
+                    Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
                     break;
                 
                 default:
-                    Log.w(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
+                    Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
                     break;
             }
         }
@@ -110,9 +110,5 @@ public class AccountProvider implements Provider<Account> {
         catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void hello() {
-        Log.i("AccountProvider says hi.");
     }
 }
