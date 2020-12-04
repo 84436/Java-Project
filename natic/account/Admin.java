@@ -1,6 +1,6 @@
-package Account;
+package natic.account;
 
-import Core.Mediator;
+import natic.Mediator;
 
 public class Admin extends Account {
     public Admin(Mediator M) {

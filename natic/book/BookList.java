@@ -1,4 +1,4 @@
-package Book;
+package natic.book;
 
 public abstract class BookList {
     private String ID;

@@ -1,8 +1,8 @@
-package Book;
+package natic.book;
 
+import natic.IDGenerator;
+import natic.Provider;
 import java.sql.*;
-import Core.IDGenerator;
-import Core.Provider;
 import java.util.ArrayList;
 
 public class BookProvider implements Provider<Book>{

@@ -1,21 +1,20 @@
-package Core;
+package natic;
 
-import Account.AccountProvider;
-import Review.ReviewProvider;
-import Book.BookListProvider;
-import Book.BookProvider;
-import Receipt.ReceiptProvider;
-import Branch.BranchProvider;
-
+import natic.account.AccountProvider;
+import natic.book.BookProvider;
+import natic.book.BookListProvider;
+import natic.branch.BranchProvider;
+import natic.receipt.ReceiptProvider;
+import natic.review.ReviewProvider;
 import java.sql.*;
 
 public class Mediator {
    private AccountProvider ACCOUNT;
-   private ReviewProvider REVIEW;
    private BookProvider BOOK;
    private BookListProvider BOOKLIST;
-   private ReceiptProvider RECEIPT;
    private BranchProvider BRANCH;
+   private ReceiptProvider RECEIPT;
+   private ReviewProvider REVIEW;
 
    private static Connection SharedConnection = null;
 
@@ -25,7 +24,7 @@ public class Mediator {
       * Remember to Start up your Database before running the application
    */
    //#region Initalize DB
-   static final String JDBC_Driver = "com.mysql.jdbc.Driver";
+   static final String JDBC_Driver = "com.mysql.cj.jdbc.Driver";
    static final String DB_URL = "jdbc:mysql://localhost:3300/NATIC";
    static final String USER = "root"; // Update later
    static final String PASS = "Mrsimple2504!"; // Update later

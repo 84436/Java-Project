@@ -1,4 +1,4 @@
-package Core;
+package natic;
 
 public interface Provider<T extends Object> {
     public T get(T o);

@@ -1,5 +1,8 @@
-package Core;
+package natic;
 
+/**
+ * A simple linear ID generator
+ */
 public class IDGenerator {
     private String IDPrefix;
     private int GeneratorState;

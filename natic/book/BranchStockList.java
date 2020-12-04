@@ -1,4 +1,4 @@
-package Book;
+package natic.book;
 
 import java.util.HashMap;
 

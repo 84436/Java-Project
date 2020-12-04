@@ -1,9 +1,9 @@
-package Account;
+package natic.account;
 
+import natic.Mediator;
+import natic.receipt.Receipt;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import Core.Mediator;
-import Receipt.Receipt;
 
 public class Customer extends Account {
     private LocalDate DoB;

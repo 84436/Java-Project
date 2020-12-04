@@ -1,6 +1,6 @@
-package Account;
+package natic.account;
 
-import Core.Mediator;
+import natic.Mediator;
 
 public abstract class Account {
     protected Mediator M;

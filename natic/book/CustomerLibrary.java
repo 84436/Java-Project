@@ -1,4 +1,4 @@
-package Book;
+package natic.book;
 
 import java.time.LocalDate;
 import java.util.HashMap;

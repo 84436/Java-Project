@@ -1,4 +1,4 @@
-package Branch;
+package natic.branch;
 
 public class Branch {
     private String ID;

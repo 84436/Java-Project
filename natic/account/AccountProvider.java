@@ -1,8 +1,8 @@
-package Account;
+package natic.account;
 
+import natic.IDGenerator;
+import natic.Provider;
 import java.sql.*;
-import Core.Provider;
-import Core.IDGenerator;
 import java.util.ArrayList;
 
 public class AccountProvider implements Provider<Account> {

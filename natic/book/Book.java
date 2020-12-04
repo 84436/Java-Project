@@ -1,8 +1,8 @@
-package Book;
+package natic.book;
 
+import natic.book.BookEnums.*;
 import java.time.Year;
 import java.util.Currency;
-import Book.BookEnums.*;
 
 public class Book {
     private String ISBN;

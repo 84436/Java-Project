@@ -1,8 +1,8 @@
-package Review;
+package natic.review;
 
+import natic.IDGenerator;
+import natic.Provider;
 import java.sql.*;
-import Core.Provider;
-import Core.IDGenerator;
 import java.util.ArrayList;
 
 public class ReviewProvider implements Provider<Review> {

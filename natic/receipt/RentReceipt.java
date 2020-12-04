@@ -1,4 +1,4 @@
-package Receipt;
+package natic.receipt;
 
 import java.time.LocalDate;
 

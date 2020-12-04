@@ -1,4 +1,4 @@
-package Review;
+package natic.review;
 
 public class Review {
     private String ID;

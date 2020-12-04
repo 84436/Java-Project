@@ -1,9 +1,9 @@
-package Receipt;
+package natic.receipt;
 
-import Core.Provider;
-import Core.IDGenerator;
-import java.util.ArrayList;
+import natic.IDGenerator;
+import natic.Provider;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ReceiptProvider implements Provider<Receipt> {
     private ArrayList<Receipt> ReceiptList;

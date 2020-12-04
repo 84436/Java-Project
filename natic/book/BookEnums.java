@@ -1,4 +1,4 @@
-package Book;
+package natic.book;
 
 /**
  * Specific constants (and their string representations) for book genre, rating and format.
