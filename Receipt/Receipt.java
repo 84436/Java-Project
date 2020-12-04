@@ -5,7 +5,7 @@ import java.util.Currency;
 
 public abstract class Receipt {
     private String ID;
-    private String BookID;
+    private String ISBN;
     private String StaffID;
     private String BranchID;
     private LocalDate Date;
@@ -15,20 +15,20 @@ public abstract class Receipt {
         return Price;
     }
 
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public void setISBN(String iSBN) {
+        this.ISBN = iSBN;
+    }
+
     public String getID() {
         return ID;
     }
 
     public void setID(String iD) {
         this.ID = iD;
-    }
-
-    public String getBookID() {
-        return BookID;
-    }
-
-    public void setBookID(String bookID) {
-        this.BookID = bookID;
     }
 
     public String getStaffID() {
