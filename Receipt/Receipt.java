@@ -10,4 +10,52 @@ public abstract class Receipt {
     private String BranchID;
     private LocalDate Date;
     private Currency Price;
+
+    public Currency getPrice() {
+        return Price;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String iD) {
+        this.ID = iD;
+    }
+
+    public String getBookID() {
+        return BookID;
+    }
+
+    public void setBookID(String bookID) {
+        this.BookID = bookID;
+    }
+
+    public String getStaffID() {
+        return StaffID;
+    }
+
+    public void setStaffID(String staffID) {
+        this.StaffID = staffID;
+    }
+
+    public String getBranchID() {
+        return BranchID;
+    }
+
+    public void setBranchID(String branchID) {
+        this.BranchID = branchID;
+    }
+
+    public LocalDate getDate() {
+        return Date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.Date = date;
+    }
+
+    public void setPrice(Currency price) {
+        this.Price = price;
+    }
 }

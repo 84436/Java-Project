@@ -8,4 +8,12 @@ public class Staff extends Account {
     public Staff(Mediator M) {
         super(M);
     }
+
+    public String getBranchID() {
+        return BranchID;
+    }
+
+    public void setBranchID(String branchID) {
+        this.BranchID = branchID;
+    }
 }
