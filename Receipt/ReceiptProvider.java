@@ -3,10 +3,12 @@ package Receipt;
 import Core.Provider;
 import Core.IDGenerator;
 import java.util.ArrayList;
+import java.sql.*;
 
 public class ReceiptProvider implements Provider<Receipt> {
     private ArrayList<Receipt> ReceiptList;
     private IDGenerator IDGen;
+    private Connection conn;
 
     /**
      * Get a receipt with a specific ID from the receipt store.

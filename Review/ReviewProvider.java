@@ -1,5 +1,6 @@
 package Review;
 
+import java.sql.*;
 import Core.Provider;
 import Core.IDGenerator;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 public class ReviewProvider implements Provider<Review> {
     private ArrayList<Review> ReviewList;
     private IDGenerator IDGen;
+    private Connection conn;
 
     @Override
     public Review get(Review o) {

@@ -3,10 +3,12 @@ package Branch;
 import Core.Provider;
 import Core.IDGenerator;
 import java.util.ArrayList;
+import java.sql.*;
 
 public class BranchProvider implements Provider<Branch> {
     private ArrayList<Branch> BranchList;
     private IDGenerator IDGen;
+    private Connection conn;
 
     @Override
     public Branch get(Branch o) {

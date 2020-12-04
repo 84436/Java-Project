@@ -1,5 +1,6 @@
 package Book;
 
+import java.sql.*;
 import Core.IDGenerator;
 import Core.Provider;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 public class BookProvider implements Provider<Book>{
     private ArrayList<Book> BookList;
     private IDGenerator IDGen;
+    private Connection conn;
 
     @Override
     public Book get(Book o) {
