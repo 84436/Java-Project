@@ -28,7 +28,7 @@ public class Mediator {
 
     // Database
     private final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private final String DB_NAME = "NATIC";
+    private final String DB_NAME = "natic"; // KEEP THIS LOWERCASE
     private final String DB_SCHEMA_FILE = "NATIC.sql";
     private String DB_URL;
     private String DB_USER;
@@ -95,7 +95,7 @@ public class Mediator {
             boolean dbExists = false;
             ResultSet rsDatabase = SharedConnection.getMetaData().getCatalogs();
             while (rsDatabase.next()) {
-                if (rsDatabase.getString(1) == DB_NAME) {
+                if (rsDatabase.getString(1).equals(DB_NAME)) {
                     dbExists = true;
                     break;
                 }

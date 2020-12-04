@@ -10,20 +10,21 @@ public class BookProvider implements Provider<Book>{
     private IDGenerator IDGen;
     private Connection conn;
 
-    @Override
+    public BookProvider(Connection conn) {
+        this.conn = conn;
+        // TODO: initialize IDGen
+    }
+
     public Book get(Book o) {
         return null;
     }
 
-    @Override
     public void add(Book o) {
     }
 
-    @Override
     public void edit(Book o) {
     }
-
-    @Override
+    
     public void remove(Book o) {
     }
 }

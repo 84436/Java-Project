@@ -10,20 +10,21 @@ public class ReviewProvider implements Provider<Review> {
     private IDGenerator IDGen;
     private Connection conn;
 
-    @Override
+    public ReviewProvider(Connection conn) {
+        this.conn = conn;
+        // TODO: initialize IDGen
+    }
+
     public Review get(Review o) {
         return null;
     }
 
-    @Override
     public void add(Review o) {
     }
 
-    @Override
     public void edit(Review o) {
     }
 
-    @Override
     public void remove(Review o) {
     }
 }

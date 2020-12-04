@@ -10,6 +10,11 @@ public class ReceiptProvider implements Provider<Receipt> {
     private IDGenerator IDGen;
     private Connection conn;
 
+    public ReceiptProvider(Connection conn) {
+        this.conn = conn;
+        // TODO: initialize IDGen
+    }
+
     /**
      * Get a receipt with a specific ID from the receipt store.
      * @param ID ID of receipt to be feteched.
@@ -46,19 +51,16 @@ public class ReceiptProvider implements Provider<Receipt> {
         }
     }
 
-    @Override
     public Receipt get(Receipt o) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public void edit(Receipt o) {
         // TODO Auto-generated method stub
 
     }
-
-    @Override
+    
     public void remove(Receipt o) {
         // TODO Auto-generated method stub
 
