@@ -29,6 +29,7 @@ public class Mediator {
     // Database
     private final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
     private final String DB_NAME = "NATIC";
+    private final String DB_SCHEMA_FILE = "NATIC.sql";
     private String DB_URL;
     private String DB_USER;
     private String DB_PASS;
@@ -75,10 +76,14 @@ public class Mediator {
             if (!readProperties()) { return; }
 
             // Logging
-            if (enableLogging) { Log.initLogger(); }
-            else { Log.off(); }
+            Log.initLogger();
+            Log.i("Logger configured");
+            if (!enableLogging) {
+                Log.i("Logger is now limited to SEVERE messages only");
+                Log.off();
+            }
 
-            // Test if database existed
+            //#region: Test if database exists; fail immediately if not.
             Class.forName(DB_DRIVER);
             SharedConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
             Log.i("Getting a DB connection");
@@ -87,18 +92,40 @@ public class Mediator {
                 Log.i("Houston, we've got a connection.");
             }
 
-            // Database not existed: creating new database
+            boolean dbExists = false;
+            ResultSet rsDatabase = SharedConnection.getMetaData().getCatalogs();
+            while (rsDatabase.next()) {
+                if (rsDatabase.getString(1) == DB_NAME) {
+                    dbExists = true;
+                    break;
+                }
+            }
 
-            // Database existed: reconnect to it instead
-            
-        } catch (ClassNotFoundException ex) {
+            if (!dbExists) {
+                Log.s(String.format(
+                    "Database not exists. Please manually run %s to create the database first, then try again later.",
+                    DB_SCHEMA_FILE
+                ));
+                return;
+            }
+            else {
+                SharedConnection.setCatalog(DB_NAME);
+                Log.i("Database exists and selected.");
+            }
+            //#endregion
+        }
+        
+        catch (ClassNotFoundException ex) {
             Log.s("Unable to load driver class");
             System.exit(1);
-        } catch (SQLException se) {
+        }
+        catch (SQLException se) {
             se.printStackTrace();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
-        } finally {    
+        }
+        finally {    
             try {
                 if (SharedConnection != null) SharedConnection.close();
             } catch (SQLException se3) {

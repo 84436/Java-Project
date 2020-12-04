@@ -18,7 +18,7 @@ public class Log {
 
     // Customized datetime format
     // https://docs.oracle.com/javase/10/docs/api/java/text/SimpleDateFormat.html
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM HH:mm:ss");
 
     // Customized log format
     private static class CustomFormatter extends Formatter {
@@ -43,16 +43,15 @@ public class Log {
     public static void initLogger() {
         L.getHandlers()[0].setFormatter(new CustomFormatter());
         L.setLevel(DEFAULT_LEVEL);
-        L.info("Logger configured");
     }
 
     /**
-     * Turns off logging
+     * Turns off logging EXCEPT for SEVERE (1000) messages.
      */
-    public static void off() { L.setLevel(Level.OFF); }
+    public static void off() { L.setLevel(Level.SEVERE); }
 
     /**
-     * Turns on logging
+     * Turns on logging.
      */
     public static void on() { L.setLevel(DEFAULT_LEVEL); }
 
