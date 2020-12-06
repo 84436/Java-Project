@@ -10,9 +10,9 @@ public class ReceiptProvider implements Provider<Receipt> {
     private IDGenerator IDGen;
     private Connection conn;
 
-    public ReceiptProvider(Connection conn) {
+    public ReceiptProvider(Connection conn, IDGenerator idgen) {
         this.conn = conn;
-        // TODO: initialize IDGen
+        this.IDGen = idgen;
     }
 
     /**

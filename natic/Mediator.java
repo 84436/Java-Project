@@ -21,7 +21,8 @@ public class Mediator {
     // Providers
     private static AccountProvider ACCOUNT;
     private static BookProvider BOOK;
-    private static BookListProvider BOOKLIST;
+    private static BookListProvider LISTBRANCH;
+    private static BookListProvider LISTCUSTOMER;
     private static BranchProvider BRANCH;
     private static ReceiptProvider RECEIPT;
     private static ReviewProvider REVIEW;
@@ -70,6 +71,9 @@ public class Mediator {
         }
     }
 
+    /**
+     * Initialize the server
+     */
     public void init() {
         try {
             // Properties
@@ -112,6 +116,26 @@ public class Mediator {
                 SharedConnection.setCatalog(DB_NAME);
                 Log.l.info("Database exists and selected.");
             }
+            //#endregion
+
+            //#region: Fetch ID generators state and create
+            IDGenerator ACCOUNT_IDGEN = new IDGenerator(SharedConnection, "AC");
+            IDGenerator BRANCH_IDGEN = new IDGenerator(SharedConnection, "BR");
+            IDGenerator BOOK_IDGEN = new IDGenerator(SharedConnection, "BK");
+            IDGenerator LISTBRANCH_IDGEN = new IDGenerator(SharedConnection, "LB");
+            IDGenerator LISTCUSTOMER_IDGEN = new IDGenerator(SharedConnection, "LC");
+            IDGenerator RECEIPT_IDGEN = new IDGenerator(SharedConnection, "RC");
+            IDGenerator REVIEW_IDGEN = new IDGenerator(SharedConnection, "RV");
+            //#endregion
+
+            //#region: Create providers, then init with DB connection and ID generators
+            ACCOUNT = new AccountProvider(SharedConnection, ACCOUNT_IDGEN);
+            BRANCH = new BranchProvider(SharedConnection, BRANCH_IDGEN);
+            BOOK = new BookProvider(SharedConnection, BOOK_IDGEN);
+            LISTBRANCH = new BookListProvider(SharedConnection, LISTBRANCH_IDGEN);
+            LISTCUSTOMER = new BookListProvider(SharedConnection, LISTCUSTOMER_IDGEN);
+            RECEIPT = new ReceiptProvider(SharedConnection, RECEIPT_IDGEN);
+            REVIEW = new ReviewProvider(SharedConnection, REVIEW_IDGEN);
             //#endregion
         }
         

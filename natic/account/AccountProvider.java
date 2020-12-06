@@ -13,9 +13,9 @@ public class AccountProvider implements Provider<Account> {
     private IDGenerator IDGen;
     private Connection conn;
 
-    public AccountProvider(Connection conn) {
+    public AccountProvider(Connection conn, IDGenerator idgen) {
         this.conn = conn;
-        // TODO: initialize IDGen
+        this.IDGen = idgen;
     }
 
     public Account get(Account o) {

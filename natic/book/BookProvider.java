@@ -10,9 +10,9 @@ public class BookProvider implements Provider<Book>{
     private IDGenerator IDGen;
     private Connection conn;
 
-    public BookProvider(Connection conn) {
+    public BookProvider(Connection conn, IDGenerator idgen) {
         this.conn = conn;
-        // TODO: initialize IDGen
+        this.IDGen = idgen;
     }
 
     public Book get(Book o) {

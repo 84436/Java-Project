@@ -10,9 +10,9 @@ public class BranchProvider implements Provider<Branch> {
     private IDGenerator IDGen;
     private Connection conn;
 
-    public BranchProvider(Connection conn) {
+    public BranchProvider(Connection conn, IDGenerator idgen) {
         this.conn = conn;
-        // TODO: initialize IDGen
+        this.IDGen = idgen;
     }
 
     public Branch get(Branch o) {

@@ -1,8 +1,12 @@
 -- WARNING: DESTRUCTIVE ACTION AHEAD
 DROP DATABASE IF EXISTS NATIC;
 
+-- Create database
+
 CREATE DATABASE NATIC;
 USE NATIC;
+
+-- Create tables
 
 CREATE TABLE IDGen_States (
     Prefix  CHAR(2) PRIMARY KEY,
@@ -80,3 +84,16 @@ CREATE TABLE Reviews (
     ReviewScore FLOAT,
     ReviewText  VARCHAR(255)
 );
+
+-- ID generators: create initial states
+
+INSERT INTO IDGen_States (Prefix, State)
+VALUES
+    ("AC", 0), -- Accounts
+    ("BR", 0), -- Branches
+    ("BK", 0), -- Books
+    ("LB", 0), -- List:Branch (BranchStockLists)
+    ("LC", 0), -- List:Customer (CustomerLibraries)
+    ("RC", 0), -- Receipts
+    ("RV", 0)  -- Reviews
+;
