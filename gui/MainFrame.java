@@ -1,18 +1,17 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollBar;
 import javax.swing.JTabbedPane;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
-import java.awt.Font;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+
 import java.awt.Color;
-import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -69,16 +68,29 @@ public class MainFrame extends JFrame {
 		JList BooksList = new JList();
 		Homepage.add(BooksList, "cell 1 0 1 2,grow");
 		
+		JScrollBar ResListScroll = new JScrollBar();
+		Homepage.add(ResListScroll, "cell 0 1,growy");
+		
+		JScrollBar BookListScroll = new JScrollBar();
+		Homepage.add(BookListScroll, "cell 1 0,growy");
+		
 		/**
 		 * Account*/
 		JPanel Account = new JPanel();
 		tabbedPane.addTab("Account", null, Account, null);
-		Account.setLayout(new MigLayout("", "[]", "[]"));
+		Account.setLayout(new MigLayout("", "[125][grow]", "[][grow]"));
+		
+		JTextPane DetailsPane = new JTextPane();
+		Account.add(DetailsPane, "cell 1 0 1 7,grow");
+		
+		JButton btnLogout = new JButton("Log Out");
+		Account.add(btnLogout, "cell 0 6,alignx center");
 		
 		/**
 		 * Library*/
 		JPanel Library = new JPanel();
 		tabbedPane.addTab("Library", null, Library, null);
+		Library.setLayout(new MigLayout("", "[]", "[]"));
 
 		/**
 		 * Orders*/
@@ -104,6 +116,12 @@ public class MainFrame extends JFrame {
 		
 		JButton btnRemoveReceipt = new JButton("Remove Receipt");
 		Orders.add(btnRemoveReceipt, "grow,cell 1 3,alignx center,aligny bottom");
+
+		JScrollBar RecInfoScroll = new JScrollBar();
+		Orders.add(RecInfoScroll, "cell 0 1,growy");
+		
+		JScrollBar RecListScroll = new JScrollBar();
+		Orders.add(RecListScroll, "cell 1 0,growy");
 	}
 
 }
