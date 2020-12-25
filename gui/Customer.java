@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JTabbedPane;
 import net.miginfocom.swing.MigLayout;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
@@ -17,7 +16,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class MainFrame extends JFrame {
+public class Customer extends JFrame {
 	private JTextField SearchField;
 	private JTextField SearchBox;
 	private JTextField SearchReceipts;
@@ -26,23 +25,11 @@ public class MainFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainFrame frame = new MainFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
-	public MainFrame() {
+	public Customer() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new MigLayout("", "[436px]", "[263px]"));

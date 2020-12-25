@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
@@ -15,10 +16,10 @@ public class Login extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField txtUsername;
-	private JTextField txtPassword;
 	private JLabel Label_Cus;
 	private JLabel Label_Q;
 	private JButton btnSignUp;
+	private JPasswordField passwordField;
 
 	/**
 	 * Launch the application.
@@ -57,11 +58,11 @@ public class Login extends JFrame {
 		contentPane.add(txtUsername, "cell 1 1,alignx center");
 		txtUsername.setColumns(15);
 		
-		txtPassword = new JTextField();
-		txtPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		txtPassword.setText("Password");
-		contentPane.add(txtPassword, "cell 1 2,alignx center");
-		txtPassword.setColumns(15);
+		passwordField = new JPasswordField();
+		passwordField.setText("Password");
+		passwordField.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		contentPane.add(passwordField, "cell 1 2,alignx center");
+		passwordField.setColumns(15);
 		
 		JButton btnSignIn = new JButton("Sign In");
 		btnSignIn.setFont(new Font("Tahoma", Font.PLAIN, 15));
