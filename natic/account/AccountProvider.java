@@ -98,14 +98,145 @@ public class AccountProvider implements Provider<Account> {
     }
 
     public void edit(Account o) {
+        try {
+            AccountType oType;
+            switch (o.getClass().getName()) {
+                case "Customer" : oType = AccountType.CUSTOMER; break;
+                case "Staff"    : oType = AccountType.STAFF;    break;
+                case "Admin"    : oType = AccountType.ADMIN;    break;
+                default         : oType = AccountType.UNKNOWN;  break;
+            }
+            Log.l.info(String.format("Update %s", oType.toString()));
+    
+            String query = String.join("\n", 
+                "UPDATE ACCOUNTS", 
+                "SET",
+                String.format(
+                    "NAME = \"%s\", Email = \"%s\", Phone = \"%s\"", 
+                    o.getName(), 
+                    o.getEmail(), 
+                    o.getPhone()
+                ),
+                "WHERE", 
+                String.format(
+                    "ID = \"%s\"", o.getID()
+                )
+            );
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(query);
+            Log.l.info(String.format("%s: update in ACCOUNTS", o.getID()));
+    
+            switch (oType) {
+                case CUSTOMER:
+                    Customer oc = (Customer) o;
+                    String queryc = String.join("\n",
+                        "UPDATE CUSTOMERS",
+                        "SET",
+                        String.format(
+                            "DOB = \"%s-%s-%S\", Address = \"%s\"",
+                            oc.getDoB().getYear(), oc.getDoB().getMonth().getValue(), oc.getDoB().getDayOfMonth(),
+                            oc.getAddress()
+                        ),
+                        "WHERE",
+                        String.format(
+                            "ID = %s", oc.getID()    
+                        )
+                    );
+                    stmt.executeUpdate(queryc);
+                    Log.l.info(String.format("%s: update in CUSTOMER", o.getID()));
+                    break;
+
+                case STAFF:
+                    Staff os = (Staff) o;
+                    String querys = String.join("\n", 
+                        "UPDATE STAFF", 
+                        "SET",
+                        String.format(
+                            "BranchID = %s", 
+                            os.getBranchID()
+                        ),
+                        "WHERE", 
+                        String.format(
+                            "ID = \"%s\"", os.getID()
+                        )
+                    );
+                    stmt.executeUpdate(querys);
+                    Log.l.info(String.format("%s: update in STAFF", o.getID()));
+
+                case ADMIN:
+                    Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
+                    break;
+
+                case UNKNOWN:
+                    Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
+                    break;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     
     public void remove(Account o) {
         try {
+            AccountType oType;
+            switch (o.getClass().getName()) {
+                case "Customer" : oType = AccountType.CUSTOMER; break;
+                case "Staff"    : oType = AccountType.STAFF;    break;
+                case "Admin"    : oType = AccountType.ADMIN;    break;
+                default         : oType = AccountType.UNKNOWN;  break;
+            }
+            Log.l.info(String.format("New %s", oType.toString()));
+
             String query = String.join("\n",
-                ""
+                "DELETE FROM ACCOUNTS", 
+                "WHERE",
+                String.format(
+                    "ID = \"%s\"", 
+                    o.getID()
+                )
             );
             PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate(query);
+            Log.l.info(String.format("%s: deleted from ACCOUNTS", o.getID()));
+
+            switch (oType) {
+                case CUSTOMER:
+                    Customer oc = (Customer) o;
+                    String queryc = String.join("\n",
+                        "DELETE FROM CUSTOMER",
+                        "WHERE",
+                        String.format(
+                            "ID = %s", 
+                            oc.getID()
+                        )
+                    );
+                    stmt.executeUpdate(queryc);
+                    Log.l.info(String.format("%s: delete from CUSTOMER", o.getID()));
+                    break;
+
+                case STAFF:
+                    Staff os = (Staff) o;
+                    String querys = String.join("\n",
+                        "DELETE FROM STAFF",
+                        "WHERE",
+                        String.format(
+                            "ID = \"%s\"",
+                            os.getID()
+                        )
+                    );
+                    stmt.executeUpdate(querys);
+                    Log.l.info(String.format("%s: deleted from STAFF", o.getID()));
+                    break;
+
+                case ADMIN:
+                    Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
+                    break;
+
+                case UNKNOWN:
+                    Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
+                    break;
+            }
         }
         catch (SQLException e) {
             e.printStackTrace();
