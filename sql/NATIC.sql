@@ -41,7 +41,7 @@ CREATE TABLE Staff (
 CREATE TABLE Branches (
     ID          CHAR(10) PRIMARY KEY,
     Name        VARCHAR(255),
-    Address     VARCHAR(255),
+    Address     VARCHAR(255)
 );
 
 CREATE TABLE Books (
@@ -119,19 +119,19 @@ VALUES
 
 INSERT INTO Accounts (ID, Name, Email, Phone, Type)
 VALUES
-    ("AC00000001", "Nguyễn Văn AB", "ab.nguyen@email.com", NULL, 2, NULL),
-    ("AC00000002", "Trần Văn CD", "cd.tran@email.com", "0123456789", 0, NULL),
-    ("AC00000003", "Lê Thị EF", "ef.lethi@email.com", NULL, 1, NULL),
-    ("AC00000004", "Lý Quốc GH", "gh.lyquoc@email.com", "0928471742", 0, NULL),
-    ("AC00000005", "Phạm Lê IJ", "ij.phamle@email.com", "0728471238", 1, NULL),
-    ("AC00000006", "Vũ Thị XY", "xy.vuthi@email.com", "0734591231", 0, NULL),
+    ("AC00000001", "Nguyễn Văn AB", "ab.nguyen@email.com", NULL, 2),
+    ("AC00000002", "Trần Văn CD", "cd.tran@email.com", "0123456789", 0),
+    ("AC00000003", "Lê Thị EF", "ef.lethi@email.com", NULL, 1),
+    ("AC00000004", "Lý Quốc GH", "gh.lyquoc@email.com", "0928471742", 0),
+    ("AC00000005", "Phạm Lê IJ", "ij.phamle@email.com", "0728471238", 1),
+    ("AC00000006", "Vũ Thị XY", "xy.vuthi@email.com", "0734591231", 0)
 ;
 
 INSERT INTO Customers (ID, DoB, Address, SignUpDate, BookListID)
 VALUES
-    ("AC00000002", "1999-01-01", "227 Nguyễn Văn Cừ P4 Q5 TPHCM", "2019-06-21"),
-    ("AC00000004", "2005-12-31", NULL, "2020-02-14"),
-    ("AC00000006", "1975-11-21", "45 Trương Công Định Phường 3 BRVT", "2020-10-31")
+    ("AC00000002", "1999-01-01", "227 Nguyễn Văn Cừ P4 Q5 TPHCM", "2019-06-21", NULL),
+    ("AC00000004", "2005-12-31", NULL, "2020-02-14", NULL),
+    ("AC00000006", "1975-11-21", "45 Trương Công Định Phường 3 BRVT", "2020-10-31", NULL)
 ;
 
 INSERT INTO Staff (ID, BranchID)
@@ -166,11 +166,11 @@ VALUES
 
 INSERT INTO Books (ISBN, BookID, VersionID, Title, Author, BookYear, Publisher, Genre, Rating, BookFormat, Price)
 VALUES
-    ("9781292263427", "BK00000001", 13, "Computer Science: An Overview", "Brookshear & Brylow", "2019", "Pearson", 0, 0.0, 1, 1865.00),
-    ("9781524763169", "BK00000002", 1, "A Promised Land", "Barack Obama", "2020", "Crown", 5, 0.0, 1, 580.00),
-    ("9781506706382", "BK00000003", 1, "The Legend of Zelda Encyclopedia", "Nintendo", "2018", "Dark Horse Books ", 2, 0.0, 1, 580.00),
-    ("9780062457714", "BK00000004", 2, "The Subtle Art of Not Giving a F*ck", "Mark Manson", "2016", "Harper", 4, 0.0, 1, 350.00),
-    ("9780062316103", "BK00000005", 1, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "2015", "Harper Collins", 1, 0.0, 2, 305.00)
+    ("9781292263427", "BK00000001", 13, "Computer Science: An Overview", "Brookshear & Brylow", "2019-01-01", "Pearson", 0, 0.0, 1, 1865.00),
+    ("9781524763169", "BK00000002", 1, "A Promised Land", "Barack Obama", "2020-01-01", "Crown", 5, 0.0, 1, 580.00),
+    ("9781506706382", "BK00000003", 1, "The Legend of Zelda Encyclopedia", "Nintendo", "2018-01-01", "Dark Horse Books ", 2, 0.0, 1, 580.00),
+    ("9780062457714", "BK00000004", 2, "The Subtle Art of Not Giving a F*ck", "Mark Manson", "2016-01-01", "Harper", 4, 0.0, 1, 350.00),
+    ("9780062316103", "BK00000005", 1, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "2015-01-01", "Harper Collins", 1, 0.0, 2, 305.00)
 ;
 
 INSERT INTO Receipts (ID, ISBN, StaffID, BranchID, ReceiptDate, Price, ReturnOn)
