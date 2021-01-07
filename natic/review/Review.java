@@ -1,7 +1,6 @@
 package natic.review;
 
 public class Review {
-    private String ID;
     private String CustomerID;
     private String BookID;
     private Double ReviewScore;
@@ -9,14 +8,6 @@ public class Review {
 
     public String getReviewText() {
         return ReviewText;
-    }
-
-    public String getID() {
-        return ID;
-    }
-
-    public void setID(String iD) {
-        this.ID = iD;
     }
 
     public String getCustomerID() {

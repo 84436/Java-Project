@@ -1,19 +1,13 @@
 package natic.book;
 
 public abstract class BookList {
-    private String ID;
+    private String OwnerID;
 
-    public void addBook() {
+    public String getOwnerID() {
+        return OwnerID;
     }
 
-    public String getID() {
-        return ID;
-    }
-
-    public void setID(String iD) {
-        this.ID = iD;
-    }
-
-    public void removeBook() {
+    public void setOwnerID(String iD) {
+        this.OwnerID = iD;
     }
 }
