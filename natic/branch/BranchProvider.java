@@ -34,6 +34,7 @@ public class BranchProvider implements Provider<Branch> {
             );
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
+            BranchList.add(o);
             Log.l.info(String.format("%s: insert into BRANCHES", o.getID()));
         }
         catch (SQLException e) {
@@ -72,6 +73,7 @@ public class BranchProvider implements Provider<Branch> {
             );
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
+            BranchList.remove(o);
             Log.l.info(String.format("%s: deleted from BRANCHES", o.getID()));
         }
         catch (SQLException e) {
