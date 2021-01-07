@@ -24,9 +24,7 @@ import java.awt.event.ActionEvent;
 
 public class Staff extends JFrame {
 
-	private JTextField SearchField;
 	private JTextField SearchBox;
-	private JPanel contentPane;
 	private JTextField txtEnterIsbn;
 	private JTextField txtEnterEmail;
 
@@ -162,23 +160,5 @@ public class Staff extends JFrame {
 		JLabel TotalCost = new JLabel("Total:");
 		TotalCost.setFont(new Font("Tahoma", Font.BOLD, 15));
 		Orders.add(TotalCost, "cell 3 3");
-	}
-
-	private static void addPopup(Component component, final JPopupMenu popup) {
-		component.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			private void showMenu(MouseEvent e) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-		});
 	}
 }
