@@ -46,6 +46,7 @@ public class AccountProvider implements Provider<Account> {
             );
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(query);
+            AccountList.add(o);
             Log.l.info(String.format("%s: inserted into ACCOUNTS", o.getID()));
 
             // Who is o? (Customer/Staff/Admin)
@@ -198,6 +199,7 @@ public class AccountProvider implements Provider<Account> {
             );
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.executeUpdate(query);
+            AccountList.remove(o);
             Log.l.info(String.format("%s: deleted from ACCOUNTS", o.getID()));
 
             switch (oType) {

@@ -43,6 +43,7 @@ public class BookProvider implements Provider<Book>{
             );
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
+            BookList.add(o);
             Log.l.info(String.format("%s: inserted into BOOKS", o.getBookID()));
         }
         catch (SQLException e) {
@@ -85,10 +86,11 @@ public class BookProvider implements Provider<Book>{
             String query = String.join("\n",
                 "DELETE FROM BOOKS",
                 "WHERE",
-                String.format("ISBN  = %s", o.getISBN())
+                String.format("BookID = %s", o.getBookID())
             );
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
+            BookList.remove(o);
             Log.l.info(String.format("%s: deleted from BOOKS", o.getISBN()));
         }
         catch (SQLException e) {

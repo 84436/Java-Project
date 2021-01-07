@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Login extends JFrame {
 
@@ -77,6 +79,11 @@ public class Login extends JFrame {
 		contentPane.add(Label_Q, "cell 1 5");
 		
 		btnSignUp = new JButton("Sign Up");
+		btnSignUp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		btnSignUp.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		contentPane.add(btnSignUp, "cell 1 6,alignx center");
 	}
