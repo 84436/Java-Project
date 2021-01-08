@@ -2,22 +2,21 @@ package gui;
 
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.border.EmptyBorder;
+import java.awt.EventQueue;
+
+import javax.swing.*;
+import javax.swing.border.*;
+
+import java.awt.*;
 import net.miginfocom.swing.MigLayout;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JButton;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class Login extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField txtUsername;
+	private JTextField txtEmail;
 	private JLabel Label_Cus;
 	private JLabel Label_Q;
 	private JButton btnSignUp;
@@ -54,11 +53,11 @@ public class Login extends JFrame {
 		Label.setFont(new Font("Tahoma", Font.BOLD, 40));
 		contentPane.add(Label, "cell 1 0,alignx center");
 		
-		txtUsername = new JTextField();
-		txtUsername.setText("Username");
-		txtUsername.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		contentPane.add(txtUsername, "cell 1 1,alignx center");
-		txtUsername.setColumns(15);
+		txtEmail = new JTextField();
+		txtEmail.setText("Email");
+		txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		contentPane.add(txtEmail, "cell 1 1,alignx center");
+		txtEmail.setColumns(15);
 		
 		passwordField = new JPasswordField();
 		passwordField.setText("Password");
@@ -67,6 +66,18 @@ public class Login extends JFrame {
 		passwordField.setColumns(15);
 		
 		JButton btnSignIn = new JButton("Sign In");
+		btnSignIn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String email = txtEmail.getText();
+				String password = txtEmail.getText();
+				if (email.equals("") || password.equals("")) {
+					String message = "Missing username/password";
+					JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
+				} else {
+					// TODO: Add something
+				}
+			}
+		});
 		btnSignIn.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		contentPane.add(btnSignIn, "cell 1 3,alignx center");
 		
@@ -81,7 +92,10 @@ public class Login extends JFrame {
 		btnSignUp = new JButton("Sign Up");
 		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+				txtEmail.setText("");
+				passwordField.setText("");
+				Signup signup = new Signup();
+				signup.setVisible(true);
 			}
 		});
 		btnSignUp.setFont(new Font("Tahoma", Font.PLAIN, 15));

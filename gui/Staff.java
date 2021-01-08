@@ -1,24 +1,11 @@
 package gui;
 
-import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Font;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-
+import javax.swing.*;
+import java.awt.*;
 import net.miginfocom.swing.MigLayout;
-import javax.swing.JPopupMenu;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.EventQueue;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
