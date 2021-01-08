@@ -1,4 +1,4 @@
-# Compiled classes
+# Compiled class file
 bin/
 *.class
 
@@ -22,12 +22,10 @@ bin/
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+################################################################################
+
 # test program
 test.java
 
 # IDE-specific stuff
 .idea/
-.vscode/
-
-# gitignore itself
-.gitignore

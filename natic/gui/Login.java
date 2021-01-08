@@ -1,17 +1,10 @@
-package gui;
-
-import java.awt.EventQueue;
-
-import java.awt.EventQueue;
+package natic.gui;
 
 import javax.swing.*;
 import javax.swing.border.*;
-
 import java.awt.*;
+import java.awt.event.*;
 import net.miginfocom.swing.MigLayout;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class Login extends JFrame {
 

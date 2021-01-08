@@ -1,5 +1,5 @@
 import natic.*;
-import gui.*;
+import natic.gui.*;
 
 import java.awt.EventQueue;
 

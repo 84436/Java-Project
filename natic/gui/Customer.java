@@ -1,28 +1,17 @@
-package gui;
-
-import java.awt.EventQueue;
+package natic.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import net.miginfocom.swing.MigLayout;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-public class Staff extends JFrame {
-
+public class Customer extends JFrame {
 	private JTextField SearchBox;
-	private JTextField txtEnterIsbn;
-	private JTextField txtEnterEmail;
-
-	/**
-	 * Launch the application.
-	 */
 
 	/**
 	 * Create the frame.
 	 */
-	public Staff() {
+	public Customer() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new MigLayout("", "[436px]", "[263px]"));
@@ -32,47 +21,45 @@ public class Staff extends JFrame {
 		
 		/**
 		 * Homepage*/
-
+		JPanel Homepage = new JPanel();
+		tabbedPane.addTab("Home", null, Homepage, null);
+		Homepage.setLayout(new MigLayout("", "[][grow]", "[][grow]"));
+		
 		/**
-		 * Counter*/
-		JPanel Counter = new JPanel();
-		tabbedPane.addTab("Counter", null, Counter, null);
-		Counter.setLayout(new MigLayout("", "[225.00,grow][grow]", "[][grow][]"));
+		 * Search*/
+		JPanel Search = new JPanel();
+		tabbedPane.addTab("Search", null, Search, null);
+		Search.setLayout(new MigLayout("", "[100px][75px,grow][50px,grow][225px]", "[][][grow]"));
 		
-		txtEnterIsbn = new JTextField();
-		txtEnterIsbn.setBackground(Color.LIGHT_GRAY);
-		txtEnterIsbn.setForeground(Color.BLACK);
-		txtEnterIsbn.setText("Enter ISBN");
-		txtEnterIsbn.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		Counter.add(txtEnterIsbn, "cell 0 0,growx");
-		txtEnterIsbn.setColumns(10);
+		SearchBox = new JTextField();
+		SearchBox.setBackground(Color.LIGHT_GRAY);
+		SearchBox.setText("Search for books");
+		Search.add(SearchBox, "cell 0 0 3 1,growx,aligny top");
+		SearchBox.setColumns(20);
 		
-		txtEnterEmail = new JTextField();
-		txtEnterEmail.setBackground(Color.LIGHT_GRAY);
-		txtEnterEmail.setText("Enter Email");
-		txtEnterEmail.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		Counter.add(txtEnterEmail, "cell 1 0,growx");
-		txtEnterEmail.setColumns(10);
+		JLabel lblTitleSearch = new JLabel("Title");
+		lblTitleSearch.setFont(new Font("Tahoma", Font.BOLD, 12));
+		Search.add(lblTitleSearch, "cell 0 1");
 		
-		JList BookInCartList = new JList();
-		Counter.add(BookInCartList, "cell 0 1 1 2,grow");
+		JLabel lblAuthorSearch = new JLabel("Author");
+		lblAuthorSearch.setFont(new Font("Tahoma", Font.BOLD, 12));
+		Search.add(lblAuthorSearch, "cell 1 1");
 		
-		JList EmailList = new JList();
-		Counter.add(EmailList, "cell 1 1,grow");
+		JLabel lblYearSearch = new JLabel("Year");
+		lblYearSearch.setFont(new Font("Tahoma", Font.BOLD, 12));
+		Search.add(lblYearSearch, "cell 2 1,alignx center");
 		
-		JButton btnDiscard = new JButton("Discard");
-		btnDiscard.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
-		Counter.add(btnDiscard, "flowx,cell 1 2,growx");
+		JList TitleListSearch = new JList();
+		Search.add(TitleListSearch, "flowx,cell 0 2,grow");
 		
-		JButton btnCreate = new JButton("Create");
-		btnCreate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
-		Counter.add(btnCreate, "cell 1 2,growx");
+		JList BooksListSearch = new JList();
+		Search.add(BooksListSearch, "flowx,cell 3 0 1 3,grow");
+		
+		JList AuthorListSearch = new JList();
+		Search.add(AuthorListSearch, "cell 1 2,grow");
+		
+		JList YearListSearch = new JList();
+		Search.add(YearListSearch, "cell 2 2,grow");
 		
 		/**
 		 * Library*/
@@ -109,7 +96,7 @@ public class Staff extends JFrame {
 		
 		JList YearList = new JList();
 		Library.add(YearList, "cell 2 2,grow");
-
+		
 		/**
 		 * Orders*/
 		JPanel Orders = new JPanel();
@@ -148,4 +135,5 @@ public class Staff extends JFrame {
 		TotalCost.setFont(new Font("Tahoma", Font.BOLD, 15));
 		Orders.add(TotalCost, "cell 3 3");
 	}
+
 }
