@@ -47,7 +47,7 @@ public class Login extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("debug, fillx", "[][grow][]", "[][][][][][grow][]"));
+		contentPane.setLayout(new MigLayout("fillx", "[][grow][]", "[][][][][][grow][]"));
 		
 		JLabel Label = new JLabel("NATiC");
 		Label.setFont(new Font("Tahoma", Font.BOLD, 40));
