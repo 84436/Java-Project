@@ -19,6 +19,12 @@ public class AccountProvider implements Provider<Account> {
     }
 
     public Account get(Account o) {
+        try {
+            String query = "SELECT * from Accounts";
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

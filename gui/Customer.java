@@ -2,17 +2,10 @@ package gui;
 
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
+import java.awt.*;
 import net.miginfocom.swing.MigLayout;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
 
-import java.awt.Color;
-import javax.swing.JList;
-import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
