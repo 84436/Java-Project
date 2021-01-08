@@ -1,6 +1,7 @@
 package natic;
 
 import natic.account.AccountProvider;
+import natic.account.AccountEnums.AccountType;
 import natic.book.BookProvider;
 import natic.book.BookListProvider;
 import natic.branch.BranchProvider;
@@ -150,4 +151,22 @@ public class Mediator {
             }
         }
     }
-}
+
+    public static boolean getEmailLogin(String email) {
+        if (ACCOUNT.getEmailforLogin(email)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean getPasswordLogin(String hash) {
+        if (ACCOUNT.getHashPassword(hash)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static AccountType getType(String email, String password) {
+        return ACCOUNT.getType(email, password);
+    }
+} 

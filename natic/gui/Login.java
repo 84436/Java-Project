@@ -4,7 +4,12 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.security.NoSuchAlgorithmException;
+
 import net.miginfocom.swing.MigLayout;
+import natic.*;
+import natic.account.AccountEnums;
+import natic.account.AccountEnums.AccountType;
 
 public class Login extends JFrame {
 
@@ -14,22 +19,6 @@ public class Login extends JFrame {
 	private JLabel Label_Q;
 	private JButton btnSignUp;
 	private JPasswordField passwordField;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Login frame = new Login();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
@@ -67,7 +56,46 @@ public class Login extends JFrame {
 					String message = "Missing username/password";
 					JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
 				} else {
-					// TODO: Add something
+					if (Mediator.getEmailLogin(email)) {
+						if (Mediator.getPasswordLogin(password)) {
+							AccountType oType = Mediator.getType(email, password);
+							switch (oType.getClass().getName()) {
+								case "Customer":
+									txtEmail.setText("");
+									passwordField.setText("");
+									Customer customer = new Customer();
+									customer.setVisible(true);
+									break;
+									
+								case "Staff":
+									txtEmail.setText("");
+									passwordField.setText("");
+									Staff staff = new Staff();
+									staff.setVisible(true);
+									break;
+
+								case "Admin":
+									txtEmail.setText("");
+									passwordField.setText("");
+									Admin admin = new Admin();
+									admin.setVisible(true);
+									break;
+								
+								case "Unknown":
+									txtEmail.setText("");
+									passwordField.setText("");
+									Log.l.info("GUI for Unknown does not exist!");
+									break;
+							}
+						}
+						else {
+							String message = "Wrong password";
+							JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
+						}
+					} else {
+						String message = "Missing username";
+						JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		});

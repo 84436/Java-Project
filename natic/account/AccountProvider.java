@@ -5,8 +5,10 @@ import natic.IDGenerator;
 import natic.Provider;
 import natic.account.AccountEnums.AccountType;
 
+import java.lang.Thread.State;
 import java.sql.*;
 import java.util.ArrayList;
+import natic.*;
 
 public class AccountProvider implements Provider<Account> {
     private ArrayList<Account> AccountList;
@@ -18,8 +20,91 @@ public class AccountProvider implements Provider<Account> {
         this.IDGen = idgen;
     }
 
+    public boolean getEmailforLogin(String email) {
+        boolean isFound = false;
+        try {
+            String query = String.join("\n", 
+                "SELECT * from ACCOUNTS",
+                "WHERE",
+                String.format("Email = %s", email)
+            );
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            
+            if (rs != null) {
+                isFound = true;
+                Log.l.info(String.format("%s: found!", email));
+                return true;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (!isFound) {
+            Log.l.info(String.format("%s: not found!", email));
+        }
+        return false;
+    }
+
+    public boolean getHashPassword(String password) {
+        String hassPwd = BCrypt.hashpw(password, BCrypt.gensalt(1));
+        boolean isFound = false;
+        try {
+            String query = String.join("\n", 
+                "SELECT * from ACCOUNTS",
+                "WHERE",
+                String.format("Pass = %s", hassPwd)
+            );
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            
+            if (rs != null) {
+                isFound = true;
+                Log.l.info(String.format("%s: found!", hassPwd));
+                return true;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        if (!isFound) {
+            Log.l.info(String.format("%s: not found!", hassPwd));
+        }
+        return false;
+    }
+
+    public AccountType getType(String email, String password) {
+        
+        try {
+            String query = String.join("\n", 
+                "SELECT * from Accounts",
+                "WHERE", 
+                String.format("Email = %s", email),
+                "AND",
+                String.format("Pass = %s", BCrypt.hashpw(password, BCrypt.gensalt(1)))
+            );
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            int result = rs.getInt("Type");
+            switch (result) {
+                case 0 : AccountType ac = AccountType.CUSTOMER; return ac;
+                case 1 : AccountType as = AccountType.STAFF;    return as;
+                case 2 : AccountType ad = AccountType.ADMIN;    return ad;
+                default: AccountType un = AccountType.UNKNOWN;  return un;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
+
     public Account get(Account o) {
-        String query = "SELECT * from Accounts";
         return null;
     }
 
