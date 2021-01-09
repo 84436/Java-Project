@@ -4,14 +4,19 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.security.NoSuchAlgorithmException;
 
 import net.miginfocom.swing.MigLayout;
 import natic.*;
-import natic.account.AccountEnums;
-import natic.account.AccountEnums.AccountType;
+import natic.account.AccountEnums.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Login extends JFrame {
+public class LoginGUI extends JFrame {
+
+	private Mediator mediator = Mediator.getInstance();
+
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+		Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
 
 	private JPanel contentPane;
 	private JTextField txtEmail;
@@ -23,7 +28,7 @@ public class Login extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Login() {
+	public LoginGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -52,48 +57,44 @@ public class Login extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				String email = txtEmail.getText();
 				String password = txtEmail.getText();
+				Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
 				if (email.equals("") || password.equals("")) {
 					String message = "Missing username/password";
 					JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
 				} else {
-					if (Mediator.getEmailLogin(email)) {
-						if (Mediator.getPasswordLogin(password)) {
-							AccountType oType = Mediator.getType(email, password);
-							switch (oType.getClass().getName()) {
-								case "Customer":
-									txtEmail.setText("");
-									passwordField.setText("");
-									Customer customer = new Customer();
-									customer.setVisible(true);
-									break;
-									
-								case "Staff":
-									txtEmail.setText("");
-									passwordField.setText("");
-									Staff staff = new Staff();
-									staff.setVisible(true);
-									break;
-
-								case "Admin":
-									txtEmail.setText("");
-									passwordField.setText("");
-									Admin admin = new Admin();
-									admin.setVisible(true);
-									break;
+					if (mediator.checkLogin(email, password) != null) {
+						AccountType oType = mediator.checkLogin(email, password);
+						switch (oType.getClass().getName()) {
+							case "Customer":
+								txtEmail.setText("");
+								passwordField.setText("");
+								CustomerGUI customer = new CustomerGUI();
+								customer.setVisible(true);
+								break;
 								
-								case "Unknown":
-									txtEmail.setText("");
-									passwordField.setText("");
-									Log.l.info("GUI for Unknown does not exist!");
-									break;
+							case "Staff":
+								txtEmail.setText("");
+								passwordField.setText("");
+								StaffGUI staff = new StaffGUI();
+								staff.setVisible(true);
+								break;
+
+							case "Admin":
+								txtEmail.setText("");
+								passwordField.setText("");
+								AdminGUI admin = new AdminGUI();
+								admin.setVisible(true);
+								break;
+							
+							case "Unknown":
+								txtEmail.setText("");
+								passwordField.setText("");
+								Log.l.info("GUI for Unknown does not exist!");
+								break;
 							}
 						}
-						else {
-							String message = "Wrong password";
-							JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
-						}
-					} else {
-						String message = "Missing username";
+					else {
+						String message = "Wrong username/password";
 						JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -115,8 +116,9 @@ public class Login extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				txtEmail.setText("");
 				passwordField.setText("");
-				Signup signup = new Signup();
+				SignupGUI signup = new SignupGUI();
 				signup.setVisible(true);
+				dispose();
 			}
 		});
 		btnSignUp.setFont(new Font("Tahoma", Font.PLAIN, 15));

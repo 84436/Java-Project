@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import net.miginfocom.swing.MigLayout;
 
-public class Staff extends JFrame {
+public class StaffGUI extends JFrame {
 
 	private JTextField SearchBox;
 	private JTextField txtEnterIsbn;
@@ -18,7 +18,7 @@ public class Staff extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Staff() {
+	public StaffGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new MigLayout("", "[436px]", "[263px]"));

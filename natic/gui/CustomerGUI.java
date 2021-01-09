@@ -5,13 +5,13 @@ import java.awt.*;
 import java.awt.event.*;
 import net.miginfocom.swing.MigLayout;
 
-public class Customer extends JFrame {
+public class CustomerGUI extends JFrame {
 	private JTextField SearchBox;
 
 	/**
 	 * Create the frame.
 	 */
-	public Customer() {
+	public CustomerGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new MigLayout("", "[436px]", "[263px]"));

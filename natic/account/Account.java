@@ -1,6 +1,7 @@
 package natic.account;
 
 import natic.Mediator;
+import natic.account.AccountEnums.*;
 
 public abstract class Account {
     protected Mediator M;
@@ -8,6 +9,33 @@ public abstract class Account {
     private String Name;
     private String Email;
     private String Phone;
+    private AccountType Type;
+    private String Pass;
+
+    public AccountType getType() {
+        return this.Type;
+    }
+
+    public void setType(AccountType Type) {
+        this.Type = Type;
+    }
+
+    public String getPass() {
+        return this.Pass;
+    }
+
+    public void setPass(String Pass) {
+        this.Pass = Pass;
+    }
+
+    public Account() {
+        this.ID = "";
+        this.Name = "";
+        this.Email = "";
+        this.Phone = "";
+        this.Type = AccountType.UNKNOWN;
+        this.Pass = "";
+    }
 
     public Account(Mediator M) {
         this.M = M;

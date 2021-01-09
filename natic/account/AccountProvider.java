@@ -5,7 +5,6 @@ import natic.IDGenerator;
 import natic.Provider;
 import natic.account.AccountEnums.AccountType;
 
-import java.lang.Thread.State;
 import java.sql.*;
 import java.util.ArrayList;
 import natic.*;
@@ -126,8 +125,8 @@ public class AccountProvider implements Provider<Account> {
                 "INSERT INTO ACCOUNTS",
                 "(ID, AccName, Email, Phone, AccType)",
                 String.format(
-                    "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", %s)",
-                    o.getID(), o.getName(), o.getEmail(), o.getPhone(), oType.ordinal()
+                    "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", %s, \"%s\")",
+                    o.getID(), o.getName(), o.getEmail(), o.getPhone(), oType.ordinal(), BCrypt.hashpw(o.getPass(), BCrypt.gensalt(1))
                 )
             );
             Statement stmt = conn.createStatement();
@@ -199,9 +198,8 @@ public class AccountProvider implements Provider<Account> {
                 "UPDATE ACCOUNTS", 
                 "SET",
                 String.format(
-                    "NAME = \"%s\", Email = \"%s\", Phone = \"%s\"", 
+                    "NAME = \"%s\", Phone = \"%s\"", 
                     o.getName(), 
-                    o.getEmail(), 
                     o.getPhone()
                 ),
                 "WHERE", 

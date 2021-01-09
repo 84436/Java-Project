@@ -2,11 +2,26 @@ package natic.gui;
 
 import javax.swing.*;
 import javax.swing.border.*;
+
+import natic.Log;
+import natic.Mediator;
+import natic.account.AccountProvider;
+import natic.account.Customer;
+import natic.account.AccountEnums.AccountType;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.miginfocom.swing.MigLayout;
 
-public class Signup extends JFrame {
+public class SignupGUI extends JFrame {
+
+	private Mediator mediator = Mediator.getInstance();
+
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+		Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
 
 	private JPanel contentPane;
 	private JTextField EmailField;
@@ -20,7 +35,7 @@ public class Signup extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Signup() {
+	public SignupGUI() {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -48,12 +63,12 @@ public class Signup extends JFrame {
 		panel.add(PhoneField, "cell 0 3,alignx center");
 		PhoneField.setColumns(25);
 		
-		pwdField = new JTextField();
+		pwdField = new JPasswordField();
 		pwdField.setText("Password");
 		panel.add(pwdField, "cell 0 4,alignx center");
 		pwdField.setColumns(25);
 		
-		confirmpwdField = new JTextField();
+		confirmpwdField = new JPasswordField();
 		confirmpwdField.setText("Confirm Password");
 		panel.add(confirmpwdField, "cell 0 5,alignx center");
 		confirmpwdField.setColumns(25);
@@ -64,6 +79,45 @@ public class Signup extends JFrame {
 		btnSignUp = new JButton("Sign Up");
 		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				Customer newCustomer = new Customer(mediator);
+				String email = EmailField.getText();
+				String phone = PhoneField.getText();
+				String password = pwdField.getText();
+				String confirmpwd = confirmpwdField.getText();
+				Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+				if (matcher.find()) {
+					newCustomer.setEmail(email);
+					if (phone.length() == 10) {
+						newCustomer.setPhone(phone);
+						if (!password.equals(confirmpwd)) {
+							newCustomer.setPass(password);
+							newCustomer.setType(AccountType.CUSTOMER);
+							newCustomer.setName("");
+							mediator.createAccount(newCustomer);
+						}
+						else {
+							Log.l.info("Password does not match!");
+							setVisible(true);
+							dispose();
+							pwdField.setText("");
+							confirmpwdField.setText("");
+						}
+					}
+					else {
+						Log.l.info("Phone length must be 10!");
+						setVisible(true);
+						dispose();
+						pwdField.setText("");
+						confirmpwdField.setText("");
+					}
+				}
+				else {
+					Log.l.info("Email not valid!");
+					setVisible(true);
+					dispose();
+					pwdField.setText("");
+					confirmpwdField.setText("");
+				}
 			}
 		});
 		panel.add(btnSignUp, "flowx,cell 0 7,alignx center");
@@ -71,6 +125,13 @@ public class Signup extends JFrame {
 		btnBack = new JButton("Back");
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				EmailField.setText("");
+				PhoneField.setText("");
+				pwdField.setText("");
+				confirmpwdField.setText("");
+				dispose();
+				LoginGUI login = new LoginGUI();
+				login.setVisible(true);
 			}
 		});
 		panel.add(btnBack, "cell 0 7,alignx center");

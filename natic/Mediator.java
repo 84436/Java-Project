@@ -152,21 +152,16 @@ public class Mediator {
         }
     }
 
-    public static boolean getEmailLogin(String email) {
+    public AccountType checkLogin(String email, String password) {
         if (ACCOUNT.getEmailforLogin(email)) {
-            return true;
+            if (ACCOUNT.getHashPassword(password)) {
+                return ACCOUNT.getType(email, password);
+            }
         }
-        return false;
+        return null;
     }
-
-    public static boolean getPasswordLogin(String hash) {
-        if (ACCOUNT.getHashPassword(hash)) {
-            return true;
-        }
-        return false;
-    }
-
-    public static AccountType getType(String email, String password) {
-        return ACCOUNT.getType(email, password);
+    
+    public void createAccount(natic.account.Account oAccount) {
+        ACCOUNT.add(oAccount);
     }
 } 
