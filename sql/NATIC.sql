@@ -128,7 +128,7 @@ CREATE TABLE Receipts (
 CREATE TABLE Reviews (
     CustomerID	CHAR(10),
     ISBN        CHAR(13),
-    ReviewScore FLOAT,
+    ReviewScore INT1,
     ReviewText  VARCHAR(255),
     
     PRIMARY KEY (CustomerID, ISBN),

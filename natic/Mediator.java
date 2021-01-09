@@ -11,6 +11,7 @@ import natic.branch.BranchProvider;
 import natic.receipt.BuyReceipt;
 import natic.receipt.ReceiptProvider;
 import natic.receipt.RentReceipt;
+import natic.review.Review;
 import natic.review.ReviewProvider;
 
 import java.io.FileReader;
@@ -236,8 +237,12 @@ public class Mediator {
         RECEIPT.add(receipt);
     }
     
-    public void reviewBook() {
+    public void reviewBook(Review o) {
+        REVIEW.add(o);
 
+        Book b = BOOK.get(o.getISBN());
+        b.setRating(REVIEW.getRating(o.getISBN()));
+        BOOK.edit(b);
     }
 
     public void addBook(Book b) {
