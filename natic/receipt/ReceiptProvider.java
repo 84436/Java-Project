@@ -1,6 +1,7 @@
 package natic.receipt;
 
 import natic.IDGenerator;
+import natic.Log;
 import natic.Provider;
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,54 +16,37 @@ public class ReceiptProvider implements Provider<Receipt> {
         this.IDGen = idgen;
     }
 
-    /**
-     * Get a receipt with a specific ID from the receipt store.
-     * @param ID ID of receipt to be feteched.
-     * @return A copy of the receipt, or null if not found
-     */
-    public Receipt get(String ID) {
-        Receipt r = null;
-        for (var each: this.ReceiptList) {
-            if (each.getID().equals(ID)) {
-                return each;
-            }
-        }
-        return r;
-    }
-
-    /**
-     * Add a new receipt to the receipt store.
-     * @param x Receipt to be added.
-     */
-    public void add(Receipt x) {
-        this.ReceiptList.add(x);
-    }
-
-    /**
-     * Remove a receipt from the receipt store.
-     * @param ID ID of receipt to be removed.
-     */
-    public void remove(String ID) {
-        for (var each: this.ReceiptList) {
-            if (each.getID().equals(ID)) {
-                this.ReceiptList.remove(each);
-                break;
-            }
-        }
-    }
-
     public Receipt get(Receipt o) {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    public void edit(Receipt o) {
-        // TODO Auto-generated method stub
-
+    public void add(Receipt o) {
+        try {
+            String query;
+            if (o.getClass().getName() == "BuyReceipt") {
+                query = String.format(
+                        "INSERT INTO Receipts (ID, ISBN, StaffID, CustomerID, ReceiptDate, Price, ReturnOn) VALUES ('%s', '%s', '%s', '%s', '%d-%d-%d', %2f, '%d-%d-%d')",
+                        o.getID(), o.getISBN(), o.getStaffID(), o.getCustomerID(), o.getDate().getYear(),
+                        o.getDate().getMonth(), o.getDate().getDayOfMonth(), 0000, 01, 01);
+            } else {
+                RentReceipt r = (RentReceipt) o;
+                query = String.format(
+                        "INSERT INTO Receipts (ID, ISBN, StaffID, CustomerID, ReceiptDate, Price, ReturnOn) VALUES ('%s', '%s', '%s', '%s', '%d-%d-%d', %2f, '%d-%d-%d')",
+                        r.getID(), r.getISBN(), r.getStaffID(), r.getCustomerID(), r.getDate().getYear(),
+                        r.getDate().getMonth(), r.getDate().getDayOfMonth(), r.getReturnOn().getYear(),
+                        r.getReturnOn().getMonth(), r.getReturnOn().getDayOfMonth());
+            }
+            Statement stmt = conn.createStatement();
+            stmt.executeQuery(query);
+            Log.l.info(String.format("%s: inserted into RECEIPTS", o.getID()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-    
-    public void remove(Receipt o) {
-        // TODO Auto-generated method stub
 
-    }
+    // DO WE EVEN DO THIS?
+    public void edit(Receipt o) {}
+
+    // ALSO THIS
+    public void remove(Receipt o) {}
 }

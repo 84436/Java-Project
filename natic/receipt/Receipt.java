@@ -7,11 +7,11 @@ public abstract class Receipt {
     private String ID;
     private String ISBN;
     private String StaffID;
-    private String BranchID;
+    private String CustomerID;
     private LocalDate Date;
-    private Currency Price;
+    private float Price;
 
-    public Currency getPrice() {
+    public float getPrice() {
         return Price;
     }
 
@@ -39,12 +39,12 @@ public abstract class Receipt {
         this.StaffID = staffID;
     }
 
-    public String getBranchID() {
-        return BranchID;
+    public String getCustomerID() {
+        return CustomerID;
     }
 
-    public void setBranchID(String branchID) {
-        this.BranchID = branchID;
+    public void setCustomerID(String customerID) {
+        this.CustomerID = customerID;
     }
 
     public LocalDate getDate() {
@@ -55,7 +55,7 @@ public abstract class Receipt {
         this.Date = date;
     }
 
-    public void setPrice(Currency price) {
+    public void setPrice(float price) {
         this.Price = price;
     }
 }

@@ -2,9 +2,10 @@ package natic.review;
 
 public class Review {
     private String CustomerID;
-    private String BookID;
-    private Double ReviewScore;
+    private String ISBN;
+    private int ReviewScore;
     private String ReviewText;
+    private String CustomerName;
 
     public String getReviewText() {
         return ReviewText;
@@ -18,23 +19,31 @@ public class Review {
         this.CustomerID = customerID;
     }
 
-    public String getBookID() {
-        return BookID;
+    public String getISBN() {
+        return ISBN;
     }
 
-    public void setBookID(String bookID) {
-        this.BookID = bookID;
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
     }
 
-    public Double getReviewScore() {
+    public int getReviewScore() {
         return ReviewScore;
     }
 
-    public void setReviewScore(Double reviewScore) {
+    public void setReviewScore(int reviewScore) {
         this.ReviewScore = reviewScore;
     }
 
     public void setReviewText(String reviewText) {
         this.ReviewText = reviewText;
+    }
+
+    public void setCustomerName(String customerName) {
+        CustomerName = customerName;
+    }
+
+    public String getCustomerName() {
+        return CustomerName;
     }
 }
