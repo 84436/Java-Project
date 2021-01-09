@@ -264,4 +264,12 @@ public class Mediator {
             BOOKLIST.edit(b);
         }
     }
+    
+    public void editAccount(natic.account.Account oAccount) {
+        ACCOUNT.edit(oAccount);
+    }
+
+    public void removeStaff(natic.account.Account oAccount) {
+        ACCOUNT.remove(oAccount);
+    }
 } 
