@@ -24,6 +24,34 @@ public class BookProvider implements Provider<Book>{
         return null;
     }
 
+    public ArrayList<Book> getAll() {
+        try {
+            String query = "SELECT * FROM Books";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ArrayList<Book> resList = new ArrayList<>();
+            while (rs.next()) {
+                Book res = new Book();
+                res.setISBN(rs.getString("ISBN"));
+                res.setVersionID(rs.getInt("VersionID"));
+                res.setTitle(rs.getString("Title"));
+                res.setAuthor(rs.getString("Author"));
+                res.setYear(Year.of(rs.getDate("BookYear").getYear() + 1900));
+                res.setPublisher(rs.getString("Publisher"));
+                res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
+                res.setRating(rs.getFloat("Rating"));
+                res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
+                res.setPrice(rs.getFloat("Price"));
+                resList.add(res);
+            }
+            Log.l.info("None: Get all books returned");
+            return resList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public Book get(String ISBN) {
         try {
             String query = String.format("SELECT * FROM Books WHERE ISBN = '%s'", ISBN);
@@ -159,5 +187,4 @@ public class BookProvider implements Provider<Book>{
             e.printStackTrace();
         }
     }
-
 }
