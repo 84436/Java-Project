@@ -3,6 +3,9 @@ package natic;
 import natic.account.AccountProvider;
 import natic.account.AccountEnums.AccountType;
 import natic.book.BookProvider;
+import natic.book.BranchStockList;
+import natic.book.CustomerLibrary;
+import natic.book.Book;
 import natic.book.BookListProvider;
 import natic.branch.BranchProvider;
 import natic.receipt.ReceiptProvider;
@@ -11,6 +14,7 @@ import natic.review.ReviewProvider;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class Mediator {
@@ -143,13 +147,13 @@ public class Mediator {
         catch (Exception e) {
             e.printStackTrace();
         }
-        finally {    
-            try {
-                if (SharedConnection != null) SharedConnection.close();
-            } catch (SQLException se3) {
-                se3.printStackTrace();
-            }
-        }
+        // finally {    
+        //     try {
+        //         if (SharedConnection != null) SharedConnection.close();
+        //     } catch (SQLException se3) {
+        //         se3.printStackTrace();
+        //     }
+        // }
     }
 
     public static boolean getEmailLogin(String email) {
@@ -168,5 +172,47 @@ public class Mediator {
 
     public static AccountType getType(String email, String password) {
         return ACCOUNT.getType(email, password);
+    }
+
+    public ArrayList<Book> searchBook(String query) {
+        return BOOK.searchBook(query);
+    }
+
+    public Book getBook(String ISBN) {
+        return BOOK.get(ISBN);
+    }
+
+    public ArrayList<CustomerLibrary> getLibrary() {
+        return null;
+    }
+
+    public void buyBook() {
+        
+    }
+    
+    public void rentBook() {
+
+    }
+    
+    public void reviewBook() {
+
+    }
+
+    public void addBook(Book b) {
+        BOOK.add(b);
+    }
+
+    public void editBook(Book b) {
+        BOOK.edit(b);
+    }
+
+    public void removeBook(String ISBN) {
+        BOOK.remove(ISBN);
+    }
+
+    public void increaseStock(String BranchID, int amount) {
+    }
+
+    public void decreaseStock(String BranchID, int amount) {
     }
 } 

@@ -33,23 +33,7 @@ public class BookEnums {
         public String toString() { return this.fullname; }
         //#endregion
     }
-    
-    public enum BookRating {
-        //#region: Values
-        EVERYONE("Everyone"),
-        CHILDREN("Children"),
-        PRETEEN("Pre-teen"),
-        R18("18+"),
-        ;
-        //#endregion
 
-        //#region: String enum magic
-        private final String fullname;
-        BookRating(String fullname) { this.fullname = fullname; }
-        public String toString() { return this.fullname; }
-        //#endregion
-    }
-    
     public enum BookFormat {
         //#region: Values
         PAPER("Paperback"),

@@ -3,7 +3,11 @@ package natic.book;
 import natic.Log;
 import natic.IDGenerator;
 import natic.Provider;
+import natic.book.BookEnums.BookFormat;
+import natic.book.BookEnums.BookGenre;
+
 import java.sql.*;
+import java.time.Year;
 import java.util.ArrayList;
 
 public class BookProvider implements Provider<Book>{
@@ -20,6 +24,60 @@ public class BookProvider implements Provider<Book>{
         return null;
     }
 
+    public Book get(String ISBN) {
+        try {
+            String query = String.format("SELECT * FROM Books WHERE ISBN = '%s'", ISBN);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            Book res = new Book();
+            while (rs.next()) {
+                res.setISBN(rs.getString("ISBN"));
+                res.setVersionID(rs.getInt("VersionID"));
+                res.setTitle(rs.getString("Title"));
+                res.setAuthor(rs.getString("Author"));
+                res.setYear(Year.of(rs.getDate("BookYear").getYear() + 1900));
+                res.setPublisher(rs.getString("Publisher"));
+                res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
+                res.setRating(rs.getFloat("Rating"));
+                res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
+                res.setPrice(rs.getFloat("Price"));
+            }
+            Log.l.info(String.format("%s: Get by ISBN returned", ISBN));
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public ArrayList<Book> searchBook(String match) {
+        try {
+            String query = String.format("SELECT * FROM Books WHERE Title LIKE '%%%s%%' OR Author LIKE '%%%s%%'", match, match);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ArrayList<Book> resList = new ArrayList<>();
+            while (rs.next()) {
+                Book res = new Book();
+                res.setISBN(rs.getString("ISBN"));
+                res.setVersionID(rs.getInt("VersionID"));
+                res.setTitle(rs.getString("Title"));
+                res.setAuthor(rs.getString("Author"));
+                res.setYear(Year.of(rs.getDate("BookYear").getYear() + 1900));
+                res.setPublisher(rs.getString("Publisher"));
+                res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
+                res.setRating(rs.getFloat("Rating"));
+                res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
+                res.setPrice(rs.getFloat("Price"));
+                resList.add(res);
+            }
+            Log.l.info(String.format("%s: Searching by query returned", match));
+            return resList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void add(Book o) {
         try {
             String query = String.join("\n",
@@ -29,7 +87,6 @@ public class BookProvider implements Provider<Book>{
                 String.format(
                     "(\"%s\", \"%s\", \"%d\", \"%s\", \"%s\", \"%s\", \"%s\", \"%.2f\", \"%s\", \"%.2f\")",
                     o.getISBN(),
-                    o.getBookID(),
                     o.getVersionID(),
                     o.getTitle(),
                     o.getAuthor(),
@@ -44,7 +101,7 @@ public class BookProvider implements Provider<Book>{
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
             BookList.add(o);
-            Log.l.info(String.format("%s: inserted into BOOKS", o.getBookID()));
+            Log.l.info(String.format("%s: inserted into BOOKS", o.getISBN()));
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -58,7 +115,6 @@ public class BookProvider implements Provider<Book>{
                 "SET",
                 String.format(
                     "(\"%s\", \"%d\", \"%s\", \"%s\", \"%s\", \"%s\", \"%.2f\", \"%s\", \"%.2f\")",
-                    o.getBookID(),
                     o.getVersionID(),
                     o.getTitle(),
                     o.getAuthor(),
@@ -83,18 +139,25 @@ public class BookProvider implements Provider<Book>{
     
     public void remove(Book o) {
         try {
-            String query = String.join("\n",
-                "DELETE FROM BOOKS",
-                "WHERE",
-                String.format("BookID = %s", o.getBookID())
-            );
+            String query = String.join("\n", "DELETE FROM BOOKS", "WHERE", String.format("ISBN = %s", o.getISBN()));
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
             BookList.remove(o);
             Log.l.info(String.format("%s: deleted from BOOKS", o.getISBN()));
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public void remove(String ISBN) {
+        try {
+            String query = String.join("\n", "DELETE FROM BOOKS", "WHERE", String.format("ISBN = %s", ISBN));
+            Statement stmt = conn.createStatement();
+            stmt.executeQuery(query);
+            Log.l.info(String.format("%s: deleted from BOOKS", ISBN));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

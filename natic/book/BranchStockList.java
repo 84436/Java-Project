@@ -1,10 +1,13 @@
 package natic.book;
 
-import java.util.HashMap;
-
 public class BranchStockList extends BookList {
-    private HashMap<Book, Integer> StockList;
+    private int Stock;
 
-    public void increaseStock() {}
-    public void decreaseStock() {}
+    public int getStock() {
+        return Stock;
+    }
+
+    public void setStock(int stock) {
+        Stock = stock;
+    }
 }

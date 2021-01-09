@@ -1,10 +1,15 @@
 package natic.book;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 
 public class CustomerLibrary extends BookList {
-    private HashMap<Book, LocalDate> Library;
+    private LocalDate expireDate;
 
-    public void removeAllExpired() {}
+    public LocalDate getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(LocalDate expireDate) {
+        this.expireDate = expireDate;
+    }
 }

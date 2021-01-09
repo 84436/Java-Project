@@ -6,20 +6,15 @@ import java.util.Currency;
 
 public class Book {
     private String ISBN;
-    private String BookID;
-    private String VersionID;
+    private int VersionID;
     private String Title;
     private String Author;
     private Year Year;
     private String Publisher;
     private BookGenre Genre;
-    private BookRating Rating;
+    private float Rating;
     private BookFormat Format;
-    private Currency Price;
-
-    public Currency getPrice() {
-        return Price;
-    }
+    private float Price;
 
     public String getISBN() {
         return ISBN;
@@ -29,19 +24,11 @@ public class Book {
         this.ISBN = iSBN;
     }
 
-    public String getBookID() {
-        return BookID;
-    }
-
-    public void setBookID(String bookID) {
-        this.BookID = bookID;
-    }
-
-    public String getVersionID() {
+    public int getVersionID() {
         return VersionID;
     }
 
-    public void setVersionID(String versionID) {
+    public void setVersionID(int versionID) {
         this.VersionID = versionID;
     }
 
@@ -85,11 +72,11 @@ public class Book {
         this.Genre = genre;
     }
 
-    public BookRating getRating() {
+    public float getRating() {
         return Rating;
     }
 
-    public void setRating(BookRating rating) {
+    public void setRating(float rating) {
         this.Rating = rating;
     }
 
@@ -101,7 +88,10 @@ public class Book {
         this.Format = format;
     }
 
-    public void setPrice(Currency price) {
+    public float getPrice() {
+        return Price;
+    }
+    public void setPrice(float price) {
         this.Price = price;
     }
 }
