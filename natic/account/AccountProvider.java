@@ -123,7 +123,7 @@ public class AccountProvider implements Provider<Account> {
 
             String query = String.join("\n",
                 "INSERT INTO ACCOUNTS",
-                "(ID, AccName, Email, Phone, AccType)",
+                "(ID, AccName, Email, Phone, AccType, Pass)",
                 String.format(
                     "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", %s, \"%s\")",
                     o.getID(), o.getName(), o.getEmail(), o.getPhone(), oType.ordinal(), BCrypt.hashpw(o.getPass(), BCrypt.gensalt(1))

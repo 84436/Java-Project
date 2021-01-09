@@ -164,4 +164,12 @@ public class Mediator {
     public void createAccount(natic.account.Account oAccount) {
         ACCOUNT.add(oAccount);
     }
+
+    public void editAccount(natic.account.Account oAccount) {
+        ACCOUNT.edit(oAccount);
+    }
+
+    public void removeStaff(natic.account.Account oAccount) {
+        ACCOUNT.remove(oAccount);
+    }
 } 
