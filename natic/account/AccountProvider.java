@@ -131,6 +131,10 @@ public class AccountProvider implements Provider<Account> {
         return null;
     }
 
+    public Staff getStaff(String ID) {
+        return null;
+    }
+
     public void add(Account o) {
         try {
             o.setID(IDGen.next());

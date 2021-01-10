@@ -6,6 +6,7 @@ import natic.account.AccountEnums.AccountType;
 import natic.book.BookProvider;
 import natic.book.BranchStockList;
 import natic.book.CustomerLibrary;
+import natic.book.BookEnums.BookFormat;
 import natic.book.Book;
 import natic.book.BookListProvider;
 import natic.branch.Branch;
@@ -238,13 +239,21 @@ public class Mediator {
     // Buy-Rent function
     public void buyBook(String StaffID, String CustomerID, String ISBN) {
         Book b = BOOK.get(ISBN);
+        CustomerLibrary c = BOOKLIST.getBookInCusLib(CustomerID, ISBN);
 
-        // Add to lib
-        CustomerLibrary c = new CustomerLibrary();
-        c.setOwnerID(CustomerID);
-        c.setBook(b);
-        c.setExpireDate(LocalDate.of(1, 1, 1));
-        BOOKLIST.add(c);
+        // if not exist in lib
+        if (c == null) {
+            CustomerLibrary cAdd = new CustomerLibrary();
+            cAdd.setOwnerID(CustomerID);
+            cAdd.setBook(b);
+            cAdd.setExpireDate(LocalDate.of(1, 1, 1));
+            BOOKLIST.add(cAdd);
+        }
+        // if exist but not permanent
+        else if (!c.getExpireDate().equals(LocalDate.of(1, 1, 1))) {
+            c.setExpireDate(LocalDate.of(1, 1, 1));
+            BOOKLIST.edit(c);
+        }
 
         // Create a receipt
         Receipt receipt = new Receipt();
@@ -255,26 +264,49 @@ public class Mediator {
         receipt.setPrice(b.getPrice());
         receipt.setReturnOn(LocalDate.of(1, 1, 1));
         RECEIPT.add(receipt);
+
+        if (!b.getFormat().equals(BookFormat.EBOOK)) {
+            BranchStockList br = BOOKLIST.getBookInBranLib(ACCOUNT.getStaff(StaffID).getBranchID(), ISBN);
+            br.setStock(br.getStock() - 1);
+            BOOKLIST.edit(br);
+        }
     }
 
     public void rentBook(String StaffID, String CustomerID, String ISBN, int numberOfMonth) {
         Book b = BOOK.get(ISBN);
+        CustomerLibrary c = BOOKLIST.getBookInCusLib(CustomerID, ISBN);
+        Receipt receipt = new Receipt();
 
-        // Add to lib
-        CustomerLibrary c = new CustomerLibrary();
-        c.setOwnerID(CustomerID);
-        c.setBook(b);
-        c.setExpireDate(LocalDate.now().plusMonths(numberOfMonth));
-        BOOKLIST.add(c);
+        // if not exist in lib
+        if (c == null) {
+            CustomerLibrary cAdd = new CustomerLibrary();
+            cAdd.setOwnerID(CustomerID);
+            cAdd.setBook(b);
+            cAdd.setExpireDate(LocalDate.now().plusMonths(numberOfMonth));
+            BOOKLIST.add(cAdd);
+        }
+        else if(c.getExpireDate().equals(LocalDate.of(1, 1, 1))){
+            return;
+        }
+        // if exist but expired
+        else if (c.getExpireDate().compareTo(LocalDate.now()) < 0) {
+            c.setExpireDate(LocalDate.now().plusMonths(numberOfMonth));
+            receipt.setReturnOn(LocalDate.now().plusMonths(numberOfMonth));
+            BOOKLIST.edit(c);
+        }
+        // if exist but not expired
+        else if (c.getExpireDate().compareTo(LocalDate.now()) >= 0) {
+            receipt.setReturnOn(c.getExpireDate().plusMonths(numberOfMonth));
+            c.setExpireDate(c.getExpireDate().plusMonths(numberOfMonth));
+            BOOKLIST.edit(c);
+        }
 
         // Create a receipt
-        Receipt receipt = new Receipt();
         receipt.setISBN(ISBN);
         receipt.setStaffID(StaffID);
         receipt.setCustomerID(CustomerID);
         receipt.setDate(LocalDate.now());
         receipt.setPrice(b.getPrice());
-        receipt.setReturnOn(LocalDate.now().plusMonths(numberOfMonth));
         RECEIPT.add(receipt);
     }
 
