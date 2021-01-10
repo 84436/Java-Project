@@ -12,6 +12,10 @@ public class Customer extends Account {
     private String BookListID;
     private ArrayList<Receipt> ReceiptList;
 
+    public Customer() {
+        
+    }
+
     public Customer(Mediator M) {
         super(M);
     }

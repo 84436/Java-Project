@@ -164,8 +164,8 @@ public class Mediator {
 
     public AccountType checkLogin(String email, String password) {
         if (ACCOUNT.getEmailforLogin(email)) {
-            if (ACCOUNT.getHashPassword(password)) {
-                return ACCOUNT.getType(email, password);
+            if (ACCOUNT.getHashPassword(email, password)) {
+                return ACCOUNT.getType(email);
             }
         }
         return null;
@@ -309,11 +309,12 @@ public class Mediator {
     }
 
     // GetBranch()
+    public ArrayList<Branch> getAllBranch() {
+        return BRANCH.getAll();
+    }
 
     public void addBranch(String BranchID, String name, String address) {
-        if (BRANCH.checkExistBranch(BranchID)){
-            
-        } else {
+        if (!BRANCH.checkExistBranch(BranchID)){
             Branch newBranch = new Branch();
             newBranch.setID(BranchID);
             newBranch.setName(name);
@@ -342,9 +343,9 @@ public class Mediator {
         }
     }
 
-    public void changePassword(String oldPassword, String newPassword) {
-        if (ACCOUNT.getHashPassword(oldPassword)) {
-            ACCOUNT.changePasswordinDB(oldPassword, newPassword);
+    public void changePassword(String email, String oldPassword, String newPassword) {
+        if (ACCOUNT.getHashPassword(email, oldPassword)) {
+            ACCOUNT.changePasswordinDB(email, oldPassword, newPassword);
         }
     }
 } 

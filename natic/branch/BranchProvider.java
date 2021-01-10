@@ -117,4 +117,29 @@ public class BranchProvider implements Provider<Branch> {
         }
         return false;
     }
+    
+    public ArrayList<Branch> getAll() {
+        
+        try {
+            String query = "SELECT * FROM BRANCHES";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            ArrayList<Branch> branchList = new ArrayList<>();
+
+            while (rs.next()) {
+                Branch branch = new Branch();
+                branch.setID(rs.getString("ID"));
+                branch.setName(rs.getString("Name"));
+                branch.setAddress(rs.getString("Address"));
+                branchList.add(branch);
+            }
+            Log.l.info("All branch get");
+            return branchList;
+        }
+        catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+
+        return null;
+    }
 }

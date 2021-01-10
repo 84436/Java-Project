@@ -147,7 +147,7 @@ VALUES
 
 INSERT INTO Accounts (ID, Name, Email, Phone, Type, Pass)
 VALUES
-    ("AC00000000", NULL, NULL, NULL, 1, NULL)
+    ("AC00000000", NULL, NULL, NULL, 1, NULL),
     ("AC00000001", "Nguyễn Văn AB", "ab.nguyen@email.com", NULL, 2, NULL),
     ("AC00000002", "Trần Văn CD", "cd.tran@email.com", "0123456789", 0, NULL),
     ("AC00000003", "Lê Thị EF", "ef.lethi@email.com", NULL, 1, NULL),

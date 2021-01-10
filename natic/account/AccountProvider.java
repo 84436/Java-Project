@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import natic.*;
 
 public class AccountProvider implements Provider<Account> {
-    private ArrayList<Account> AccountList;
     private IDGenerator IDGen;
     private Connection conn;
 
@@ -46,22 +45,25 @@ public class AccountProvider implements Provider<Account> {
         return false;
     }
 
-    public boolean getHashPassword(String password) {
-        String hassPwd = BCrypt.hashpw(password, BCrypt.gensalt(1));
+    public boolean getHashPassword(String email, String password) {
+        String hassPwd = BCrypt.hashpw(password, BCrypt.gensalt());
         boolean isFound = false;
         try {
             String query = String.join("\n", 
-                "SELECT * from ACCOUNTS",
+                "SELECT ac.Email, ac.Pass from ACCOUNTS as ac",
                 "WHERE",
-                String.format("Pass = %s", hassPwd)
+                String.format("Email = %s", email)
             );
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             
             if (rs != null) {
-                isFound = true;
-                Log.l.info(String.format("%s: found!", hassPwd));
-                return true;
+                while (rs.next()) {
+                    if (BCrypt.checkpw(password, rs.getString("Pass"))) {
+                        isFound = true;
+                        return true;
+                    }
+                }
             }
         }
         catch (SQLException e) {
@@ -74,34 +76,34 @@ public class AccountProvider implements Provider<Account> {
         return false;
     }
 
-    public AccountType getType(String email, String password) {
+    // public AccountType getType(String email, String password) {
         
-        try {
-            String query = String.join("\n", 
-                "SELECT * from Accounts",
-                "WHERE", 
-                String.format("Email = %s", email),
-                "AND",
-                String.format("Pass = %s", BCrypt.hashpw(password, BCrypt.gensalt(1)))
-            );
+    //     try {
+    //         String query = String.join("\n", 
+    //             "SELECT * from Accounts",
+    //             "WHERE", 
+    //             String.format("Email = %s", email),
+    //             "AND",
+    //             String.format("Pass = %s", BCrypt.hashpw(password, BCrypt.gensalt()))
+    //         );
 
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+    //         Statement stmt = conn.createStatement();
+    //         ResultSet rs = stmt.executeQuery(query);
 
-            int result = rs.getInt("Type");
-            switch (result) {
-                case 0 : AccountType ac = AccountType.CUSTOMER; return ac;
-                case 1 : AccountType as = AccountType.STAFF;    return as;
-                case 2 : AccountType ad = AccountType.ADMIN;    return ad;
-                default: AccountType un = AccountType.UNKNOWN;  return un;
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
+    //         int result = rs.getInt("Type");
+    //         switch (result) {
+    //             case 0 : AccountType ac = AccountType.CUSTOMER; return ac;
+    //             case 1 : AccountType as = AccountType.STAFF;    return as;
+    //             case 2 : AccountType ad = AccountType.ADMIN;    return ad;
+    //             default: AccountType un = AccountType.UNKNOWN;  return un;
+    //         }
+    //     }
+    //     catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
         
-        return null;
-    }
+    //     return null;
+    // }
 
     public AccountType getType(String email) {
         
@@ -150,15 +152,14 @@ public class AccountProvider implements Provider<Account> {
 
             String query = String.join("\n",
                 "INSERT INTO ACCOUNTS",
-                "(ID, AccName, Email, Phone, AccType, Pass)",
+                "(ID, Name, Email, Phone, Type, Pass)",
                 String.format(
                     "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", %s, \"%s\")",
-                    o.getID(), o.getName(), o.getEmail(), o.getPhone(), oType.ordinal(), BCrypt.hashpw(o.getPass(), BCrypt.gensalt(1))
+                    o.getID(), o.getName(), o.getEmail(), o.getPhone(), oType.ordinal(), BCrypt.hashpw(o.getPass(), BCrypt.gensalt())
                 )
             );
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(query);
-            AccountList.add(o);
             Log.l.info(String.format("%s: inserted into ACCOUNTS", o.getID()));
 
             // Who is o? (Customer/Staff/Admin)
@@ -310,7 +311,6 @@ public class AccountProvider implements Provider<Account> {
             );
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.executeUpdate(query);
-            AccountList.remove(o);
             Log.l.info(String.format("%s: deleted from ACCOUNTS", o.getID()));
 
             switch (oType) {
@@ -439,14 +439,14 @@ public class AccountProvider implements Provider<Account> {
         return true;
     }
 
-    public void changePasswordinDB(String oldPassword, String newPassword) {
+    public void changePasswordinDB(String email, String oldPassword, String newPassword) {
         try {
             String query = String.join("\n",
                 "UPDATE ACCOUNTS",
                 "SET",
-                String.format("Pass = %s", BCrypt.hashpw(newPassword, BCrypt.gensalt(1))),
+                String.format("Pass = %s", BCrypt.hashpw(newPassword, BCrypt.gensalt())),
                 "WHERE",
-                String.format("Pass = %s", BCrypt.hashpw(oldPassword, BCrypt.gensalt(1)))
+                String.format("Email = %s", email)
             );
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.executeQuery();
@@ -454,5 +454,34 @@ public class AccountProvider implements Provider<Account> {
         catch (SQLException exec) {
             exec.printStackTrace();
         }
+    }
+
+    public ArrayList<Account> searchCustomer(String match) {
+        try {
+            String query = String.join("\n",
+                "SELECT *",
+                "FROM ACCOUNTS as ac JOIN CUSTOMERS as cus on ac.ID = cus.ID",
+                "WHERE",
+                String.format("Name LIKE '%%%s%%' OR Email LIKE '%%%s%%'", match, match)
+            );
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            ArrayList<Account> accountList = new ArrayList<>();
+            while (rs.next()) {
+                Customer customer = new Customer();
+                customer.setEmail(rs.getString("Email"));
+                customer.setName(rs.getString("Name"));
+                customer.setPhone(rs.getString("Phone"));
+                customer.setAddress(rs.getString("Address"));
+                accountList.add(customer);
+            }
+            Log.l.info("All Customer found!");
+            return accountList;
+
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+
+        return null;
     }
 }

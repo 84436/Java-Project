@@ -8,10 +8,10 @@ package natic.account;
 public class AccountEnums {
     public enum AccountType {
         //#region: Values
-        UNKNOWN("unknown"),
         CUSTOMER("Customer"),
         STAFF("Staff"),
         ADMIN("Administrator"),
+        UNKNOWN("unknown")
         ;
         //#endregion
 
