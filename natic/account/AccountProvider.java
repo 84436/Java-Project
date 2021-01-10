@@ -19,55 +19,47 @@ public class AccountProvider implements Provider<Account> {
         this.IDGen = idgen;
     }
 
-    public boolean getEmailforLogin(String email) {
-        try {
-            String query = String.join("\n", 
-                "SELECT * from ACCOUNTS",
-                "WHERE",
-                String.format("Email = \"%s\"", email)
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs != null) {
-                Log.l.info(String.format("%s: found!", email));
-                return true;
-            }
+    public boolean getEmailforLogin(String email) throws SQLException {
+        String query = String.join("\n", 
+            "SELECT * from ACCOUNTS",
+            "WHERE",
+            String.format("Email = \"%s\"", email)
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        
+        if (rs != null) {
+            Log.l.info(String.format("%s: found!", email));
+            return true;
         }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
+
         return false;
     }
 
-    public boolean checkPassword(String email, String password) {
-        try {
-            String query = String.join("\n", 
-                "SELECT ac.Email, ac.Pass",
-                "FROM ACCOUNTS as ac",
-                "WHERE Email = ?"  
-            );
-            
-            PreparedStatement stmt = conn.prepareStatement(query);
-            if (email != null) {
-                stmt.setString(1, email);
-            } else {
-                stmt.setNull(1, java.sql.Types.NULL);
-            }
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs != null) {
-                while (rs.next()) {
-                    if (BCrypt.checkpw(password, rs.getString("Pass"))) {
-                        Log.l.info("ACCOUNT: Found!");
-                        return true;
-                    }
+    public boolean checkPassword(String email, String password) throws SQLException {
+        String query = String.join("\n", 
+            "SELECT ac.Email, ac.Pass",
+            "FROM ACCOUNTS as ac",
+            "WHERE Email = ?"  
+        );
+        
+        PreparedStatement stmt = conn.prepareStatement(query);
+        if (email != null) {
+            stmt.setString(1, email);
+        } else {
+            stmt.setNull(1, java.sql.Types.NULL);
+        }
+        ResultSet rs = stmt.executeQuery();
+        
+        if (rs != null) {
+            while (rs.next()) {
+                if (BCrypt.checkpw(password, rs.getString("Pass"))) {
+                    Log.l.info("ACCOUNT: Found!");
+                    return true;
                 }
             }
         }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
+
         return false;
     }
 
@@ -100,464 +92,437 @@ public class AccountProvider implements Provider<Account> {
     //     return null;
     // }
 
-    public AccountType getType(String email) {
+    public AccountType getType(String email) throws SQLException {
         
-        try {
-            String query = String.join("\n", 
-                "SELECT * from Accounts",
-                "WHERE", 
-                String.format("Email = %s", email)
-            );
+        String query = String.join("\n", 
+            "SELECT * from Accounts",
+            "WHERE", 
+            String.format("Email = %s", email)
+        );
 
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
 
-            int result = rs.getInt("Type");
-            switch (result) {
-                case 0 : AccountType ac = AccountType.CUSTOMER; return ac;
-                case 1 : AccountType as = AccountType.STAFF;    return as;
-                case 2 : AccountType ad = AccountType.ADMIN;    return ad;
-                default: AccountType un = AccountType.UNKNOWN;  return un;
-            }
+        int result = rs.getInt("Type");
+        switch (result) {
+            case 0 : AccountType ac = AccountType.CUSTOMER; return ac;
+            case 1 : AccountType as = AccountType.STAFF;    return as;
+            case 2 : AccountType ad = AccountType.ADMIN;    return ad;
+            default: AccountType un = AccountType.UNKNOWN;  return un;
         }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        return null;
     }
 
     public Account get(Account o) {
         return null;
     }
 
-    public void add(Account o) {
-        try {
-            o.setID(IDGen.next());
-            // Who is o?
-            AccountType oType;
-            switch (o.getType().toString()) {
-                case "Customer" : oType = AccountType.CUSTOMER; break;
-                case "Staff"    : oType = AccountType.STAFF;    break;
-                case "Admin"    : oType = AccountType.ADMIN;    break;
-                default         : oType = AccountType.UNKNOWN;  break;
-            }
-            Log.l.info(String.format("New %s", oType.toString()));
+    public void add(Account o) throws SQLException{
+        o.setID(IDGen.next());
+        // Who is o?
+        AccountType oType;
+        switch (o.getType().toString()) {
+            case "Customer" : oType = AccountType.CUSTOMER; break;
+            case "Staff"    : oType = AccountType.STAFF;    break;
+            case "Admin"    : oType = AccountType.ADMIN;    break;
+            default         : oType = AccountType.UNKNOWN;  break;
+        }
+        Log.l.info(String.format("New %s", oType.toString()));
 
-            // TODO: Set account ID
+        // TODO: Set account ID
 
-            String query = String.join("\n",
-                "INSERT INTO ACCOUNTS",
-                "(ID, Name, Email, Phone, Type, Pass)",
-                "VALUES (?, ?, ?, ?, ?, ?)"
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
+        String query = String.join("\n",
+            "INSERT INTO ACCOUNTS",
+            "(ID, Name, Email, Phone, Type, Pass)",
+            "VALUES (?, ?, ?, ?, ?, ?)"
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        
+        stmt.setString(1, o.getID());
+
+        if (o.getName() != null) {
+            stmt.setString(2, o.getName());
+        } else {
+            stmt.setNull(2, java.sql.Types.NULL);
+        }
+
+        if (o.getEmail() != null) {
+            stmt.setString(3, o.getEmail());
+        } else {
+            stmt.setNull(3, java.sql.Types.NULL);
+        }
+
+        if (o.getPhone() != null) {
+            stmt.setString(4, o.getPhone());
+        } else {
+            stmt.setNull(4, java.sql.Types.NULL);
+        }
+
+        if (o.getType() != null) {
+            stmt.setInt(5, o.getType().ordinal());
+        } else {
+            stmt.setNull(5, java.sql.Types.NULL);
+        }
+
+        if (o.getPass() != null) {
+            stmt.setString(6, BCrypt.hashpw(o.getPass(), BCrypt.gensalt()));
+        } else {
+            stmt.setNull(6, java.sql.Types.NULL);
+        }
+
+        stmt.executeUpdate();
+        Log.l.info(String.format("%s: inserted into ACCOUNTS", o.getID()));
+
+        // Who is o? (Customer/Staff/Admin)
+        switch (oType) {
+            case CUSTOMER:
+                Customer oc = (Customer) o;
+                String queryc = String.join("\n",
+                    "INSERT INTO CUSTOMERS",
+                    "(ID, DoB, Address, SignUpDate, BookListID)",
+                    "VALUES (?, ?, ?, ?, ?)"
+                );
+
+                PreparedStatement stmtc = conn.prepareStatement(queryc);
+
+                stmtc.setString(1, oc.getID());
+
+                if (oc.getDoB() != null) {
+                    stmtc.setDate(2, Date.valueOf(LocalDate.of(oc.getDoB().getYear(), oc.getDoB().getMonth().getValue(), oc.getDoB().getDayOfMonth())));
+                } else {
+                    stmtc.setNull(2, java.sql.Types.NULL);
+                }
+
+                if (oc.getAddress() != null) {
+                    stmtc.setString(3, oc.getAddress());
+                } else {
+                    stmtc.setNull(3, java.sql.Types.NULL);
+                }
+
+                if (oc.getSignUpDate() != null) {
+                    stmtc.setDate(4, Date.valueOf(LocalDate.of(oc.getSignUpDate().getYear(), oc.getSignUpDate().getMonth().getValue(), oc.getSignUpDate().getDayOfMonth())));
+                } else {
+                    stmtc.setNull(4, java.sql.Types.NULL);
+                }
+
+                if (oc.getBookListID() != null) {
+                    stmtc.setString(5, oc.getBookListID());
+                } else {
+                    stmtc.setNull(5, java.sql.Types.NULL);
+                }
+                
+                stmtc.executeUpdate();
+                Log.l.info(String.format("%s: inserted into CUSTOMERS", o.getID()));
+                break;
             
-            stmt.setString(1, o.getID());
+            case STAFF:
+                Staff os = (Staff) o;
+                String querys = String.join("\n",
+                    "INSERT INTO STAFF",
+                    "(ID, BranchID)",
+                    "VALUES (?, ?)"
+                );
 
-            if (o.getName() != null) {
-                stmt.setString(2, o.getName());
-            } else {
-                stmt.setNull(2, java.sql.Types.NULL);
-            }
+                PreparedStatement stmts = conn.prepareStatement(querys);
 
-            if (o.getEmail() != null) {
-                stmt.setString(3, o.getEmail());
-            } else {
-                stmt.setNull(3, java.sql.Types.NULL);
-            }
+                stmts.setString(1, os.getID());
 
-            if (o.getPhone() != null) {
-                stmt.setString(4, o.getPhone());
-            } else {
-                stmt.setNull(4, java.sql.Types.NULL);
-            }
+                if (os.getBranchID() != null) {
+                    stmts.setString(2, os.getBranchID());
+                } else {
+                    stmts.setNull(2, java.sql.Types.NULL);
+                }
 
-            if (o.getType() != null) {
-                stmt.setInt(5, o.getType().ordinal());
-            } else {
-                stmt.setNull(5, java.sql.Types.NULL);
-            }
-
-            if (o.getPass() != null) {
-                stmt.setString(6, BCrypt.hashpw(o.getPass(), BCrypt.gensalt()));
-            } else {
-                stmt.setNull(6, java.sql.Types.NULL);
-            }
-
-            stmt.executeUpdate();
-            Log.l.info(String.format("%s: inserted into ACCOUNTS", o.getID()));
-
-            // Who is o? (Customer/Staff/Admin)
-            switch (oType) {
-                case CUSTOMER:
-                    Customer oc = (Customer) o;
-                    String queryc = String.join("\n",
-                        "INSERT INTO CUSTOMERS",
-                        "(ID, DoB, Address, SignUpDate, BookListID)",
-                        "VALUES (?, ?, ?, ?, ?)"
-                    );
-
-                    PreparedStatement stmtc = conn.prepareStatement(queryc);
-
-                    stmtc.setString(1, oc.getID());
-
-                    if (oc.getDoB() != null) {
-                        stmtc.setDate(2, Date.valueOf(LocalDate.of(oc.getDoB().getYear(), oc.getDoB().getMonth().getValue(), oc.getDoB().getDayOfMonth())));
-                    } else {
-                        stmtc.setNull(2, java.sql.Types.NULL);
-                    }
-
-                    if (oc.getAddress() != null) {
-                        stmtc.setString(3, oc.getAddress());
-                    } else {
-                        stmtc.setNull(3, java.sql.Types.NULL);
-                    }
-
-                    if (oc.getSignUpDate() != null) {
-                        stmtc.setDate(4, Date.valueOf(LocalDate.of(oc.getSignUpDate().getYear(), oc.getSignUpDate().getMonth().getValue(), oc.getSignUpDate().getDayOfMonth())));
-                    } else {
-                        stmtc.setNull(4, java.sql.Types.NULL);
-                    }
-
-                    if (oc.getBookListID() != null) {
-                        stmtc.setString(5, oc.getBookListID());
-                    } else {
-                        stmtc.setNull(5, java.sql.Types.NULL);
-                    }
-                    
-                    stmtc.executeUpdate();
-                    Log.l.info(String.format("%s: inserted into CUSTOMERS", o.getID()));
-                    break;
-                
-                case STAFF:
-                    Staff os = (Staff) o;
-                    String querys = String.join("\n",
-                        "INSERT INTO STAFF",
-                        "(ID, BranchID)",
-                        "VALUES (?, ?)"
-                    );
-
-                    PreparedStatement stmts = conn.prepareStatement(querys);
-
-                    stmts.setString(1, os.getID());
-
-                    if (os.getBranchID() != null) {
-                        stmts.setString(2, os.getBranchID());
-                    } else {
-                        stmts.setNull(2, java.sql.Types.NULL);
-                    }
-
-                    stmts.executeUpdate();
-                    Log.l.info(String.format("%s: inserted into STAFF", o.getID()));
-                    break;
-                
-                case ADMIN:
-                    Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
-                    break;
-                
-                default:
-                    Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
-                    break;
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
+                stmts.executeUpdate();
+                Log.l.info(String.format("%s: inserted into STAFF", o.getID()));
+                break;
+            
+            case ADMIN:
+                Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
+                break;
+            
+            default:
+                Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
+                break;
         }
     }
 
-    public void edit(Account o) {
-        try {
-            AccountType oType = o.getType();
-            // switch (o.getClass().getName()) {
-            //     case "Customer" : oType = AccountType.CUSTOMER; break;
-            //     case "Staff"    : oType = AccountType.STAFF;    break;
-            //     case "Admin"    : oType = AccountType.ADMIN;    break;
-            //     default         : oType = AccountType.UNKNOWN;  break;
-            // }
-            Log.l.info(String.format("Update %s", oType.toString()));
+    public void edit(Account o) throws SQLException {
+        AccountType oType = o.getType();
+        // switch (o.getClass().getName()) {
+        //     case "Customer" : oType = AccountType.CUSTOMER; break;
+        //     case "Staff"    : oType = AccountType.STAFF;    break;
+        //     case "Admin"    : oType = AccountType.ADMIN;    break;
+        //     default         : oType = AccountType.UNKNOWN;  break;
+        // }
+        Log.l.info(String.format("Update %s", oType.toString()));
+
+        String query = String.join("\n", 
+            "UPDATE ACCOUNTS", 
+            "SET Name = ?, Phone = ?",
+            "WHERE ID = ?"
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+
+        if (o.getName() != null) {
+            stmt.setString(1, o.getName());
+        } else {
+            stmt.setNull(1, java.sql.Types.NULL);
+        }
+
+        if (o.getPhone() != null) {
+            stmt.setString(2, o.getPhone());
+        } else {
+            stmt.setNull(2, java.sql.Types.NULL);
+        }
+
+        // WHERE statement
+        stmt.setString(3, o.getID());
+
+        stmt.executeUpdate();
+        Log.l.info(String.format("%s: update in ACCOUNTS", o.getID()));
+        stmt.close();
+
+        switch (oType) {
+            case CUSTOMER:
+                Customer oc = (Customer) o;
+                String queryc = String.join("\n",
+                    "UPDATE CUSTOMERS",
+                    "SET",
+                    "DOB = ?, Address = ?",
+                    "WHERE",
+                    "ID = ?"   
+                );
+
+                PreparedStatement stmtc = conn.prepareStatement(queryc);
+
+                if (oc.getDoB() != null) {
+                    stmtc.setDate(1, Date.valueOf(LocalDate.of(oc.getDoB().getYear(), oc.getDoB().getMonth().getValue(), oc.getDoB().getDayOfMonth())));
+                } else {
+                    stmtc.setNull(1, java.sql.Types.NULL);
+                }
     
-            String query = String.join("\n", 
-                "UPDATE ACCOUNTS", 
-                "SET Name = ?, Phone = ?",
-                "WHERE ID = ?"
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
+                if (oc.getAddress() != null) {
+                    stmtc.setString(2, oc.getAddress());
+                } else {
+                    stmtc.setNull(2, java.sql.Types.NULL);
+                }
+    
+                // WHERE statement
+                stmtc.setString(3, oc.getID());
 
-            if (o.getName() != null) {
-                stmt.setString(1, o.getName());
-            } else {
-                stmt.setNull(1, java.sql.Types.NULL);
-            }
+                stmtc.executeUpdate();
+                Log.l.info(String.format("%s: update in CUSTOMER", o.getID()));
+                break;
 
-            if (o.getPhone() != null) {
-                stmt.setString(2, o.getPhone());
-            } else {
-                stmt.setNull(2, java.sql.Types.NULL);
-            }
+            case STAFF:
+                Staff os = (Staff) o;
+                String querys = String.join("\n", 
+                    "UPDATE STAFF", 
+                    "SET",
+                    "BranchID = ?", 
+                    "WHERE", 
+                    "ID = ?"
+                );
 
-            // WHERE statement
-            stmt.setString(3, o.getID());
+                PreparedStatement stmts = conn.prepareStatement(querys);                    
 
-            stmt.executeUpdate();
-            Log.l.info(String.format("%s: update in ACCOUNTS", o.getID()));
-            stmt.close();
+                if (os.getBranchID() != null) {
+                    stmts.setString(1, os.getBranchID());
+                } else {
+                    stmts.setNull(1, java.sql.Types.NULL);
+                }
 
-            switch (oType) {
-                case CUSTOMER:
-                    Customer oc = (Customer) o;
-                    String queryc = String.join("\n",
-                        "UPDATE CUSTOMERS",
-                        "SET",
-                        "DOB = ?, Address = ?",
-                        "WHERE",
-                        "ID = ?"   
-                    );
+                // WHERE statement
+                stmts.setString(3, os.getID());
 
-                    PreparedStatement stmtc = conn.prepareStatement(queryc);
+                stmts.executeUpdate();
+                Log.l.info(String.format("%s: update in STAFF", o.getID()));
+                break;
 
-                    if (oc.getDoB() != null) {
-                        stmtc.setDate(1, Date.valueOf(LocalDate.of(oc.getDoB().getYear(), oc.getDoB().getMonth().getValue(), oc.getDoB().getDayOfMonth())));
-                    } else {
-                        stmtc.setNull(1, java.sql.Types.NULL);
-                    }
-        
-                    if (oc.getAddress() != null) {
-                        stmtc.setString(2, oc.getAddress());
-                    } else {
-                        stmtc.setNull(2, java.sql.Types.NULL);
-                    }
-        
-                    // WHERE statement
-                    stmtc.setString(3, oc.getID());
+            case ADMIN:
+                Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
+                break;
 
-                    stmtc.executeUpdate();
-                    Log.l.info(String.format("%s: update in CUSTOMER", o.getID()));
-                    break;
-
-                case STAFF:
-                    Staff os = (Staff) o;
-                    String querys = String.join("\n", 
-                        "UPDATE STAFF", 
-                        "SET",
-                        "BranchID = ?", 
-                        "WHERE", 
-                        "ID = ?"
-                    );
-
-                    PreparedStatement stmts = conn.prepareStatement(querys);                    
-
-                    if (os.getBranchID() != null) {
-                        stmts.setString(1, os.getBranchID());
-                    } else {
-                        stmts.setNull(1, java.sql.Types.NULL);
-                    }
-
-                    // WHERE statement
-                    stmts.setString(3, os.getID());
-
-                    stmts.executeUpdate();
-                    Log.l.info(String.format("%s: update in STAFF", o.getID()));
-                    break;
-
-                case ADMIN:
-                    Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
-                    break;
-
-                case UNKNOWN:
-                    Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
-                    break;
-            }
-            stmt.close();
+            case UNKNOWN:
+                Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
+                break;
         }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
+        stmt.close();
     }
     
-    public void remove(Account o) {
-        try {
-            AccountType oType;
-            switch (o.getClass().getName()) {
-                case "Customer" : oType = AccountType.CUSTOMER; break;
-                case "Staff"    : oType = AccountType.STAFF;    break;
-                case "Admin"    : oType = AccountType.ADMIN;    break;
-                default         : oType = AccountType.UNKNOWN;  break;
-            }
-            Log.l.info(String.format("New %s", oType.toString()));
-
-            String query = String.join("\n",
-                "DELETE FROM ACCOUNTS", 
-                "WHERE",
-                String.format(
-                    "ID = \"%s\"", 
-                    o.getID()
-                )
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.executeUpdate(query);
-            Log.l.info(String.format("%s: deleted from ACCOUNTS", o.getID()));
-
-            switch (oType) {
-                case CUSTOMER:
-                    Customer oc = (Customer) o;
-                    String queryc = String.join("\n",
-                        "DELETE FROM CUSTOMER",
-                        "WHERE",
-                        String.format(
-                            "ID = %s", 
-                            oc.getID()
-                        )
-                    );
-                    PreparedStatement stmtc = conn.prepareStatement(query);
-                    stmtc.executeUpdate();
-                    Log.l.info(String.format("%s: delete from CUSTOMER", o.getID()));
-                    break;
-
-                case STAFF:
-                    Staff os = (Staff) o;
-                    String querys = String.join("\n",
-                        "DELETE FROM STAFF",
-                        "WHERE",
-                        String.format(
-                            "ID = \"%s\"",
-                            os.getID()
-                        )
-                    );
-                    PreparedStatement stmts = conn.prepareStatement(querys);
-                    stmts.executeUpdate();
-                    Log.l.info(String.format("%s: deleted from STAFF", o.getID()));
-                    break;
-
-                case ADMIN:
-                    Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
-                    break;
-
-                case UNKNOWN:
-                    Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
-                    break;
-            }
+    public void remove(Account o) throws SQLException {
+        AccountType oType;
+        switch (o.getClass().getName()) {
+            case "Customer" : oType = AccountType.CUSTOMER; break;
+            case "Staff"    : oType = AccountType.STAFF;    break;
+            case "Admin"    : oType = AccountType.ADMIN;    break;
+            default         : oType = AccountType.UNKNOWN;  break;
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+        Log.l.info(String.format("New %s", oType.toString()));
+
+        String query = String.join("\n",
+            "DELETE FROM ACCOUNTS", 
+            "WHERE",
+            String.format(
+                "ID = \"%s\"", 
+                o.getID()
+            )
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.executeUpdate(query);
+        Log.l.info(String.format("%s: deleted from ACCOUNTS", o.getID()));
+
+        switch (oType) {
+            case CUSTOMER:
+                Customer oc = (Customer) o;
+                String queryc = String.join("\n",
+                    "DELETE FROM CUSTOMER",
+                    "WHERE",
+                    String.format(
+                        "ID = %s", 
+                        oc.getID()
+                    )
+                );
+                PreparedStatement stmtc = conn.prepareStatement(query);
+                stmtc.executeUpdate();
+                Log.l.info(String.format("%s: delete from CUSTOMER", o.getID()));
+                break;
+
+            case STAFF:
+                Staff os = (Staff) o;
+                String querys = String.join("\n",
+                    "DELETE FROM STAFF",
+                    "WHERE",
+                    String.format(
+                        "ID = \"%s\"",
+                        os.getID()
+                    )
+                );
+                PreparedStatement stmts = conn.prepareStatement(querys);
+                stmts.executeUpdate();
+                Log.l.info(String.format("%s: deleted from STAFF", o.getID()));
+                break;
+
+            case ADMIN:
+                Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
+                break;
+
+            case UNKNOWN:
+                Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
+                break;
         }
     }
 
-    public ArrayList<Account> getAllStaffAtBranch(String BranchID) {
+    public ArrayList<Account> getAllStaffAtBranch(String BranchID) throws SQLException {
         ArrayList<Account> staffInBranch = new ArrayList<>();
 
-        try {
-            String query = String.join("\n",
-                "SELECT * FROM STAFF",
-                "WHERE",
-                String.format("BranchID = \"%s\"", BranchID)
-            );
+        String query = String.join("\n",
+            "SELECT * FROM STAFF",
+            "WHERE",
+            String.format("BranchID = \"%s\"", BranchID)
+        );
 
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                Staff staff = new Staff();
-                staff.setID(rs.getString("ID"));
-                staff.setBranchID(rs.getString("BranchID"));
-                staffInBranch.add(staff);
-            }
-            Log.l.info("Get all staff in branch");
-            return staffInBranch;
+        while (rs.next()) {
+            Staff staff = new Staff();
+            staff.setID(rs.getString("ID"));
+            staff.setBranchID(rs.getString("BranchID"));
+            staffInBranch.add(staff);
         }
-        catch (SQLException exec) {
-            exec.printStackTrace();
-        }
-
-        return null;
+        Log.l.info("Get all staff in branch");
+        return staffInBranch;
     }
 
-    public void setBranchForStaff(String oldBranchID, String BranchID) {
-        try {
-            String query = String.join("\n",
-                "UPDATE STAFF",
-                "SET",
-                String.format("BranchID = \"%s\"", BranchID),
-                "WHERE",
-                String.format("BranchID = \"%s\"", oldBranchID)
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.executeQuery();
-        }
-        catch (SQLException exec) {
-            exec.printStackTrace();
-        }
+    public void setBranchForStaff(String oldBranchID, String BranchID) throws SQLException {
+        String query = String.join("\n",
+            "UPDATE STAFF",
+            "SET",
+            String.format("BranchID = \"%s\"", BranchID),
+            "WHERE",
+            String.format("BranchID = \"%s\"", oldBranchID)
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.executeQuery();
     }
 
-    public void removeStaffFromBranch(String ID) {
-        try {
-            String query = String.join("\n",
-                "DELETE FROM STAFF",
-                "WHERE",
-                String.format("ID = \"%s\"", ID)
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.executeUpdate();
-            Log.l.info(String.format("%s: REMOVE from BRANCHES", ID));
-        }
-        catch (SQLException exec) {
-            exec.printStackTrace();
-        }
+    public void removeStaffFromBranch(String ID) throws SQLException {
+        String query = String.join("\n",
+            "DELETE FROM STAFF",
+            "WHERE",
+            String.format("ID = \"%s\"", ID)
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.executeUpdate();
+        Log.l.info(String.format("%s: REMOVE from BRANCHES", ID));
     }
 
-    public boolean checkStaffInBranch(String StaffID, String BranchID) {
-        try {
-            String query = String.join("\n",
-                "SELECT * FROM STAFF",
-                "WHERE",
-                String.format("ID = \"%s\"", StaffID),
-                "AND",
-                String.format("BranchID = \"%s\"", BranchID)
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
+    public boolean checkStaffInBranch(String StaffID, String BranchID) throws SQLException {
+        String query = String.join("\n",
+            "SELECT * FROM STAFF",
+            "WHERE",
+            String.format("ID = \"%s\"", StaffID),
+            "AND",
+            String.format("BranchID = \"%s\"", BranchID)
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
 
-            if (rs != null) {
-                Log.l.info(String.format("%s: STAFF in %s", StaffID, BranchID));
-                return true;
-            }
-        } catch (SQLException exec) {
-            exec.printStackTrace();
+        if (rs != null) {
+            Log.l.info(String.format("%s: STAFF in %s", StaffID, BranchID));
+            return true;
         }
+
         return false;
     }
 
-    public void changePasswordinDB(String email, String newPassword) {
-        try {
-            String query = String.join("\n",
-                "UPDATE ACCOUNTS",
-                "SET",
-                "Pass = ?",
-                "WHERE Email = ?"
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
-            stmt.setString(2, email);
+    public void changePasswordinDB(String email, String newPassword) throws SQLException {
+        String query = String.join("\n",
+            "UPDATE ACCOUNTS",
+            "SET",
+            "Pass = ?",
+            "WHERE Email = ?"
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+        stmt.setString(2, email);
 
-            stmt.executeUpdate();
-        }
-        catch (SQLException exec) {
-            exec.printStackTrace();
-        }
+        stmt.executeUpdate();
     }
 
-    public ArrayList<Account> searchCustomer(String match) {
-        try {
-            String query = String.join("\n",
-                "SELECT *",
-                "FROM ACCOUNTS as ac JOIN CUSTOMERS as cus on ac.ID = cus.ID",
-                "WHERE",
-                String.format("Name LIKE '%%%s%%' OR Email LIKE '%%%s%%'", match, match)
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-            ArrayList<Account> accountList = new ArrayList<>();
-            while (rs.next()) {
+    public ArrayList<Account> searchCustomer(String match) throws SQLException {
+        String query = String.join("\n",
+            "SELECT *",
+            "FROM ACCOUNTS as ac JOIN CUSTOMERS as cus on ac.ID = cus.ID",
+            "WHERE",
+            String.format("Name LIKE '%%%s%%' OR Email LIKE '%%%s%%'", match, match)
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        ArrayList<Account> accountList = new ArrayList<>();
+        while (rs.next()) {
+            Customer customer = new Customer();
+            customer.setEmail(rs.getString("Email"));
+            customer.setName(rs.getString("Name"));
+            customer.setPhone(rs.getString("Phone"));
+            customer.setAddress(rs.getString("Address"));
+            accountList.add(customer);
+        }
+        Log.l.info("All Customer found!");
+        return accountList;
+    }
+
+    public ArrayList<Account> getAllCustomer() throws SQLException {
+        String query = String.join("\n",
+            "SELECT *",
+            "FROM ACCOUNTS as ac JOIN CUSTOMERS as cus on ac.ID = cus.ID"
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        ArrayList<Account> accountList = new ArrayList<>();
+        while (rs.next()) {
+            if (rs.getInt("Type") == 0) {
                 Customer customer = new Customer();
                 customer.setEmail(rs.getString("Email"));
                 customer.setName(rs.getString("Name"));
@@ -565,67 +530,26 @@ public class AccountProvider implements Provider<Account> {
                 customer.setAddress(rs.getString("Address"));
                 accountList.add(customer);
             }
-            Log.l.info("All Customer found!");
-            return accountList;
-
-        } catch (SQLException exec) {
-            exec.printStackTrace();
         }
-
-        return null;
+        Log.l.info("All Customer found!");
+        return accountList;
     }
 
-    public ArrayList<Account> getAllCustomer() {
-        try {
-            String query = String.join("\n",
-                "SELECT *",
-                "FROM ACCOUNTS as ac JOIN CUSTOMERS as cus on ac.ID = cus.ID"
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-            ArrayList<Account> accountList = new ArrayList<>();
-            while (rs.next()) {
-                if (rs.getInt("Type") == 0) {
-                    Customer customer = new Customer();
-                    customer.setEmail(rs.getString("Email"));
-                    customer.setName(rs.getString("Name"));
-                    customer.setPhone(rs.getString("Phone"));
-                    customer.setAddress(rs.getString("Address"));
-                    accountList.add(customer);
-                }
+    public ArrayList<Account> getALlStaff() throws SQLException {
+        String query = "SELECT * FROM ACCOUNTS";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        ArrayList<Account> accountList = new ArrayList<>();
+        while (rs.next()) {
+            if (rs.getInt("Type") == 1) {
+                Staff staff = new Staff();
+                staff.setEmail(rs.getString("Email"));
+                staff.setName(rs.getString("Name"));
+                staff.setPhone(rs.getString("Phone"));
+                accountList.add(staff);
             }
-            Log.l.info("All Customer found!");
-            return accountList;
-
-        } catch (SQLException exec) {
-            exec.printStackTrace();
         }
-
-        return null;
-    }
-
-    public ArrayList<Account> getALlStaff() {
-        try {
-            String query = "SELECT * FROM ACCOUNTS";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-            ArrayList<Account> accountList = new ArrayList<>();
-            while (rs.next()) {
-                if (rs.getInt("Type") == 1) {
-                    Staff staff = new Staff();
-                    staff.setEmail(rs.getString("Email"));
-                    staff.setName(rs.getString("Name"));
-                    staff.setPhone(rs.getString("Phone"));
-                    accountList.add(staff);
-                }
-            }
-            Log.l.info("All Staff found!");
-            return accountList;
-
-        } catch (SQLException exec) {
-            exec.printStackTrace();
-        }
-
-        return null;
+        Log.l.info("All Staff found!");
+        return accountList;
     }
 }

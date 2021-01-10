@@ -162,7 +162,7 @@ public class Mediator {
         // }
     }
 
-    public AccountType checkLogin(String email, String password) {
+    public AccountType checkLogin(String email, String password) throws SQLException {
         if ((email != null && password != null)) {
             if (ACCOUNT.getEmailforLogin(email)) {
                 if (ACCOUNT.checkPassword(email, password)) {
@@ -177,19 +177,19 @@ public class Mediator {
         return null;
     }
     
-    public void createAccount(Account oAccount) {
+    public void createAccount(Account oAccount) throws SQLException {
         ACCOUNT.add(oAccount);
     }
 
-    public void editAccount(Account oAccount) {
+    public void editAccount(Account oAccount) throws SQLException {
         ACCOUNT.edit(oAccount);
     }
 
-    public void removeStaff(Account oAccount) {
+    public void removeStaff(Account oAccount) throws SQLException {
         ACCOUNT.remove(oAccount);
     }
 
-    public void addStaff(Account oAccount) {
+    public void addStaff(Account oAccount) throws SQLException {
         Staff add = new Staff();
         add.setEmail(oAccount.getEmail());
         add.setName(oAccount.getName());
@@ -314,7 +314,7 @@ public class Mediator {
         return BOOKLIST.getCustomerLibrary(CustomerID);
     }
     
-    public void editAccount(String email, String name, String phone, LocalDate dob, String CusAddress, String branchID) {
+    public void editAccount(String email, String name, String phone, LocalDate dob, String CusAddress, String branchID) throws SQLException {
         if (ACCOUNT.getEmailforLogin(email)) {
             AccountType oType = ACCOUNT.getType(email);
             switch (oType.getClass().getName()) {
@@ -348,7 +348,7 @@ public class Mediator {
         }
     }
 
-    public void removeStaff(String ID, String BranchID) {
+    public void removeStaff(String ID, String BranchID) throws SQLException {
         if (BranchID != null && ID != null) {
             RECEIPT.bypassReceiptForVirtualAcc("AC00000000", ID);
             ACCOUNT.removeStaffFromBranch(ID);
@@ -359,25 +359,25 @@ public class Mediator {
         }
     }
 
-    public ArrayList<Account> getAllStaff() {
+    public ArrayList<Account> getAllStaff() throws SQLException {
         return ACCOUNT.getALlStaff();
     }
 
     // GetBranch()
-    public ArrayList<Branch> getAllBranch() {
+    public ArrayList<Branch> getAllBranch() throws SQLException {
         return BRANCH.getAll();
     }
 
-    public void addBranch(Branch branch) {
+    public void addBranch(Branch branch) throws SQLException {
         BRANCH.add(branch);
     }
 
-    public void removeBranch(String ID) {
+    public void removeBranch(String ID) throws SQLException {
         BOOKLIST.removeAll(ID, false);
         BRANCH.remove(ID);
     }
 
-    public void addBranch(String BranchID, String name, String address) {
+    public void addBranch(String BranchID, String name, String address) throws SQLException {
         if (!BRANCH.checkExistBranch(BranchID)){
             Branch newBranch = new Branch();
             newBranch.setID(BranchID);
@@ -387,7 +387,7 @@ public class Mediator {
         }
     }
     
-    public void editBranch(String BranchID, String name, String address) {
+    public void editBranch(String BranchID, String name, String address) throws SQLException {
         if (BRANCH.checkExistBranch(BranchID)) {
             Branch updateBranch = new Branch();
             updateBranch.setName(name);
@@ -396,7 +396,7 @@ public class Mediator {
         } 
     }
 
-    public void deleteBranch(String ID) {
+    public void deleteBranch(String ID) throws SQLException {
         ArrayList<Account> staffList = ACCOUNT.getAllStaffAtBranch(ID);
         if (staffList == null) {
             BRANCH.remove(ID);
@@ -407,7 +407,7 @@ public class Mediator {
         }
     }
 
-    public void changePassword(String email, String oldPassword, String newPassword) {
+    public void changePassword(String email, String oldPassword, String newPassword) throws SQLException {
         if (ACCOUNT.checkPassword(email, oldPassword)) {
             ACCOUNT.changePasswordinDB(email, newPassword);
         }

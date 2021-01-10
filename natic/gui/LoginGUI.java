@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 
 import net.miginfocom.swing.MigLayout;
 import natic.*;
@@ -28,7 +29,7 @@ public class LoginGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public LoginGUI() {
+	public LoginGUI() throws SQLException {
         // Native LAF
 	    try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -59,56 +60,56 @@ public class LoginGUI extends JFrame {
 		contentPane.add(passwordField, "cell 1 2,alignx center");
 		passwordField.setColumns(15);
 		
-		JButton btnSignIn = new JButton("Sign In");
-		btnSignIn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				String email = txtEmail.getText();
-				String password = txtEmail.getText();
-				Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
-				if (email.equals("") || password.equals("")) {
-					String message = "Missing username/password";
-					JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
-				} else {
-					if (mediator.checkLogin(email, password) != null) {
-						AccountType oType = mediator.checkLogin(email, password);
-						switch (oType.getClass().getName()) {
-							case "Customer":
-								txtEmail.setText("");
-								passwordField.setText("");
-								CustomerGUI customer = new CustomerGUI();
-								customer.setVisible(true);
-								break;
+		// JButton btnSignIn = new JButton("Sign In");
+		// btnSignIn.addActionListener(new ActionListener() {
+		// 	public void actionPerformed(ActionEvent arg0)  {
+		// 		String email = txtEmail.getText();
+		// 		String password = txtEmail.getText();
+		// 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+		// 		if (email.equals("") || password.equals("")) {
+		// 			String message = "Missing username/password";
+		// 			JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
+		// 		} else {
+		// 			if (mediator.checkLogin(email, password) != null) {
+		// 				AccountType oType = mediator.checkLogin(email, password);
+		// 				switch (oType.getClass().getName()) {
+		// 					case "Customer":
+		// 						txtEmail.setText("");
+		// 						passwordField.setText("");
+		// 						CustomerGUI customer = new CustomerGUI();
+		// 						customer.setVisible(true);
+		// 						break;
 								
-							case "Staff":
-								txtEmail.setText("");
-								passwordField.setText("");
-								StaffGUI staff = new StaffGUI();
-								staff.setVisible(true);
-								break;
+		// 					case "Staff":
+		// 						txtEmail.setText("");
+		// 						passwordField.setText("");
+		// 						StaffGUI staff = new StaffGUI();
+		// 						staff.setVisible(true);
+		// 						break;
 
-							case "Admin":
-								txtEmail.setText("");
-								passwordField.setText("");
-								AdminGUI admin = new AdminGUI();
-								admin.setVisible(true);
-								break;
+		// 					case "Admin":
+		// 						txtEmail.setText("");
+		// 						passwordField.setText("");
+		// 						AdminGUI admin = new AdminGUI();
+		// 						admin.setVisible(true);
+		// 						break;
 							
-							case "Unknown":
-								txtEmail.setText("");
-								passwordField.setText("");
-								Log.l.info("GUI for Unknown does not exist!");
-								break;
-							}
-						}
-					else {
-						String message = "Wrong username/password";
-						JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		});
-		btnSignIn.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		contentPane.add(btnSignIn, "cell 1 3,alignx center");
+		// 					case "Unknown":
+		// 						txtEmail.setText("");
+		// 						passwordField.setText("");
+		// 						Log.l.info("GUI for Unknown does not exist!");
+		// 						break;
+		// 					}
+		// 				}
+		// 			else {
+		// 				String message = "Wrong username/password";
+		// 				JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
+		// 			}
+		// 		}
+		// 	}
+		// });
+		// btnSignIn.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		// contentPane.add(btnSignIn, "cell 1 3,alignx center");
 		
 		Label_Cus = new JLabel("Customer only:");
 		Label_Cus.setFont(new Font("Tahoma", Font.BOLD, 15));

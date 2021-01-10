@@ -100,7 +100,7 @@ public class SignupGUI extends JFrame {
 							newCustomer.setPass(password);
 							newCustomer.setType(AccountType.CUSTOMER);
 							newCustomer.setName("");
-							mediator.createAccount(newCustomer);
+							// mediator.createAccount(newCustomer);
 						}
 						else {
 							Log.l.info("Password does not match!");
@@ -129,19 +129,19 @@ public class SignupGUI extends JFrame {
 		});
 		panel.add(btnSignUp, "flowx,cell 0 7,alignx center");
 		
-		btnBack = new JButton("Back");
-		btnBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				EmailField.setText("");
-				PhoneField.setText("");
-				pwdField.setText("");
-				confirmpwdField.setText("");
-				dispose();
-				LoginGUI login = new LoginGUI();
-				login.setVisible(true);
-			}
-		});
-		panel.add(btnBack, "cell 0 7,alignx center");
+		// btnBack = new JButton("Back");
+		// btnBack.addActionListener(new ActionListener() {
+		// 	public void actionPerformed(ActionEvent arg0) {
+		// 		EmailField.setText("");
+		// 		PhoneField.setText("");
+		// 		pwdField.setText("");
+		// 		confirmpwdField.setText("");
+		// 		dispose();
+		// 		LoginGUI login = new LoginGUI();
+		// 		login.setVisible(true);
+		// 	}
+		// });
+		// panel.add(btnBack, "cell 0 7,alignx center");
 	}
 
 }
