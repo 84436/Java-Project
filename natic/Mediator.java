@@ -191,6 +191,10 @@ public class Mediator {
     public void editBook(Book b) {
         BOOK.edit(b);
     }
+
+    public Book getByISBN(String match) {
+        return BOOK.get(match);
+    }
     
     public ArrayList<Book> getAllBooks() {
         return BOOK.getAll();
@@ -258,6 +262,12 @@ public class Mediator {
         RECEIPT.add(receipt);
     }
 
+    public void buyAtCounter(String StaffID, String CustomerID, ArrayList<String> ISBNs) {
+        for (int i = 0; i < ISBNs.size(); i++) {
+            buyBook(StaffID, CustomerID, ISBNs.get(i));
+        }
+    }
+
     // BOOKLISTS function
     public void addBookToBranch(String ISBN, String BranchID) {
         BranchStockList b = new BranchStockList();
@@ -278,6 +288,10 @@ public class Mediator {
             b.setStock(amount);
             BOOKLIST.edit(b);
         }
+    }
+
+    public void removeBookFromBranch(String ISBN, String BranchID) {
+        BOOKLIST.removeOne(BranchID, ISBN);
     }
 
     public ArrayList<CustomerLibrary> getCustomerLibrary(String CustomerID) {
@@ -382,4 +396,4 @@ public class Mediator {
     public ArrayList<Receipt> getAllReceipts(String CustomerID) {
         return RECEIPT.get(CustomerID);
     }
-} 
+}
