@@ -80,4 +80,41 @@ public class BranchProvider implements Provider<Branch> {
             e.printStackTrace();
         }
     }
+
+    public void remove(String ID) {
+        try {
+            String query = String.join("\n",
+                "DELETE FROM BRANCHES",
+                "WHERE",
+                String.format("ID = %s", ID)
+            );
+            Statement stmt = conn.createStatement();
+            stmt.executeQuery(query);
+            Log.l.info(String.format("%s: deleted from BRANCHES", ID));
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public boolean checkExistBranch(String ID) {
+        try {
+            String query = String.join("\n",
+                "SELECT * FROM BRANCH",
+                "WHERE",
+                String.format("ID = %s", ID)
+            );
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            if (!rs.next()) {
+                Log.l.info(String.format("%s: exist", ID));
+                return true;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

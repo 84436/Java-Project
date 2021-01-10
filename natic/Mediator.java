@@ -1,5 +1,6 @@
 package natic;
 
+import natic.account.*;
 import natic.account.AccountProvider;
 import natic.account.AccountEnums.AccountType;
 import natic.book.BookProvider;
@@ -7,6 +8,7 @@ import natic.book.BranchStockList;
 import natic.book.CustomerLibrary;
 import natic.book.Book;
 import natic.book.BookListProvider;
+import natic.branch.Branch;
 import natic.branch.BranchProvider;
 import natic.receipt.BuyReceipt;
 import natic.receipt.ReceiptProvider;
@@ -265,11 +267,84 @@ public class Mediator {
         }
     }
     
-    public void editAccount(natic.account.Account oAccount) {
-        ACCOUNT.edit(oAccount);
+    public void editAccount(String email, String name, String phone, LocalDate dob, String CusAddress, String branchID) {
+        if (ACCOUNT.getEmailforLogin(email)) {
+            AccountType oType = ACCOUNT.getType(email);
+            switch (oType.getClass().getName()) {
+                case "Customer":
+                    Customer updateCus = new Customer(this);
+                    updateCus.setName(name);
+                    updateCus.setPhone(phone);
+                    updateCus.setAddress(CusAddress);
+                    updateCus.setDoB(dob);
+                    ACCOUNT.edit(updateCus);
+                    break;
+
+                case "Staff":
+                    Staff updateStaff = new Staff(this);
+                    updateStaff.setName(name);
+                    updateStaff.setPhone(phone);
+                    updateStaff.setBranchID(branchID);
+                    ACCOUNT.edit(updateStaff);
+                    break;
+
+                case "Admin":
+                    Admin updateAdmin = new Admin(this);
+                    updateAdmin.setName(name);
+                    updateAdmin.setPhone(phone);
+                    ACCOUNT.edit(updateAdmin);
+                    break;
+                
+                case "Unknown":
+                    break;
+            }
+        }
     }
 
-    public void removeStaff(natic.account.Account oAccount) {
-        ACCOUNT.remove(oAccount);
+    public void removeStaff(String ID, String BranchID) {
+        if (ACCOUNT.checkStaffInBranch(ID, BranchID)) {
+            Log.l.info(String.format("%s: STAFF in %s", ID, BranchID));
+            ACCOUNT.removeStaffFromBranch(ID);
+        }
+    }
+
+    // GetBranch()
+
+    public void addBranch(String BranchID, String name, String address) {
+        if (BRANCH.checkExistBranch(BranchID)){
+            
+        } else {
+            Branch newBranch = new Branch();
+            newBranch.setID(BranchID);
+            newBranch.setName(name);
+            newBranch.setAddress(address);
+            BRANCH.add(newBranch);
+        }
+    }
+    
+    public void editBranch(String BranchID, String name, String address) {
+        if (BRANCH.checkExistBranch(BranchID)) {
+            Branch updateBranch = new Branch();
+            updateBranch.setName(name);
+            updateBranch.setAddress(address);
+            BRANCH.edit(updateBranch);
+        } 
+    }
+
+    public void deleteBranch(String ID) {
+        ArrayList<Account> staffList = ACCOUNT.getAllStaffAtBranch(ID);
+        if (staffList == null) {
+            BRANCH.remove(ID);
+        } else {
+            String newBranchID = "BR00000000";
+            ACCOUNT.setBranchForStaff(ID, newBranchID);
+            BRANCH.remove(ID);
+        }
+    }
+
+    public void changePassword(String oldPassword, String newPassword) {
+        if (ACCOUNT.getHashPassword(oldPassword)) {
+            ACCOUNT.changePasswordinDB(oldPassword, newPassword);
+        }
     }
 } 

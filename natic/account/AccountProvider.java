@@ -103,6 +103,33 @@ public class AccountProvider implements Provider<Account> {
         return null;
     }
 
+    public AccountType getType(String email) {
+        
+        try {
+            String query = String.join("\n", 
+                "SELECT * from Accounts",
+                "WHERE", 
+                String.format("Email = %s", email)
+            );
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            int result = rs.getInt("Type");
+            switch (result) {
+                case 0 : AccountType ac = AccountType.CUSTOMER; return ac;
+                case 1 : AccountType as = AccountType.STAFF;    return as;
+                case 2 : AccountType ad = AccountType.ADMIN;    return ad;
+                default: AccountType un = AccountType.UNKNOWN;  return un;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
+
     public Account get(Account o) {
         return null;
     }
@@ -326,6 +353,106 @@ public class AccountProvider implements Provider<Account> {
         }
         catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public ArrayList<Account> getAllStaffAtBranch(String BranchID) {
+        ArrayList<Account> staffInBranch = new ArrayList<>();
+
+        try {
+            String query = String.join("\n",
+                "SELECT * FROM STAFF",
+                "WHERE",
+                String.format("BranchID = %s", BranchID)
+            );
+
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Staff staff = new Staff();
+                staff.setID(rs.getString("ID"));
+                staff.setBranchID(rs.getString("BranchID"));
+                staffInBranch.add(staff);
+            }
+            Log.l.info("Get all staff in branch");
+            return staffInBranch;
+        }
+        catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public void setBranchForStaff(String oldBranchID, String BranchID) {
+        try {
+            String query = String.join("\n",
+                "UPDATE STAFF",
+                "SET",
+                String.format("BranchID = %s", BranchID),
+                "WHERE",
+                String.format("BranchID = %s", oldBranchID)
+            );
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeQuery();
+        }
+        catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+    }
+
+    public void removeStaffFromBranch(String ID) {
+        try {
+            String query = String.join("\n",
+                "DELETE FROM STAFF",
+                "WHERE",
+                String.format("ID = %s", ID)
+            );
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeQuery();
+        }
+        catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+    }
+
+    public boolean checkStaffInBranch(String StaffID, String BranchID) {
+        try {
+            String query = String.join("\n",
+                "SELECT * FROM STAFF",
+                "WHERE",
+                String.format("ID = %s", StaffID),
+                "AND",
+                String.format("BranchID = %s", BranchID)
+            );
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            if (!rs.next()) {
+                Log.l.info(String.format("%s: STAFF not in %s", StaffID, BranchID));
+                return false;
+            }
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+        return true;
+    }
+
+    public void changePasswordinDB(String oldPassword, String newPassword) {
+        try {
+            String query = String.join("\n",
+                "UPDATE ACCOUNTS",
+                "SET",
+                String.format("Pass = %s", BCrypt.hashpw(newPassword, BCrypt.gensalt(1))),
+                "WHERE",
+                String.format("Pass = %s", BCrypt.hashpw(oldPassword, BCrypt.gensalt(1)))
+            );
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeQuery();
+        }
+        catch (SQLException exec) {
+            exec.printStackTrace();
         }
     }
 }
