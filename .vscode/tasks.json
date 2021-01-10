@@ -16,6 +16,8 @@
             "args": [
                 // compile to
                 "-d", "${workspaceFolder}\\bin",
+                // utf-8
+                "-encoding", "utf-8",
                 // include everything
                 "-cp", "${workspaceFolder}\\lib\\*",
                 "${workspaceFolder}\\natic\\*.java",
