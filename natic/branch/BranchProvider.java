@@ -7,7 +7,6 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class BranchProvider implements Provider<Branch> {
-    private ArrayList<Branch> BranchList;
     private IDGenerator IDGen;
     private Connection conn;
 
@@ -22,19 +21,30 @@ public class BranchProvider implements Provider<Branch> {
 
     public void add(Branch o) {
         try {
+            o.setID(IDGen.next());
             String query = String.join("\n",
-                "INSERTS INTO BRANCHES",
+                "INSERT INTO BRANCHES",
                 "(ID, Name, Address)",
-                String.format(
-                    "VALUES (\"%s\", \"%s\", \"%s\")",
-                    o.getID(), 
-                    o.getName(), 
-                    o.getAddress()
-                )
+                "VALUES (?, ?, ?)"
             );
-            Statement stmt = conn.createStatement();
-            stmt.executeQuery(query);
-            BranchList.add(o);
+
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            stmt.setString(1, o.getID());
+
+            if (o.getName() != null) {
+                stmt.setString(2, o.getName());
+            } else {
+                stmt.setNull(2, java.sql.Types.NULL);
+            }
+
+            if (o.getAddress() != null) {
+                stmt.setString(3, o.getAddress());
+            } else {
+                stmt.setNull(3, java.sql.Types.NULL);
+            }
+
+            stmt.executeUpdate();
             Log.l.info(String.format("%s: insert into BRANCHES", o.getID()));
         }
         catch (SQLException e) {
@@ -53,7 +63,7 @@ public class BranchProvider implements Provider<Branch> {
                     o.getAddress()
                 ),
                 "WHERE",
-                String.format("ID = %s", o.getID())
+                String.format("ID = \"%s\"", o.getID())
             );
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
@@ -69,11 +79,10 @@ public class BranchProvider implements Provider<Branch> {
             String query = String.join("\n",
                 "DELETE FROM BRANCHES",
                 "WHERE",
-                String.format("ID = %s", o.getID())
+                String.format("ID = \"%s\"", o.getID())
             );
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
-            BranchList.remove(o);
             Log.l.info(String.format("%s: deleted from BRANCHES", o.getID()));
         }
         catch (SQLException e) {
@@ -86,10 +95,13 @@ public class BranchProvider implements Provider<Branch> {
             String query = String.join("\n",
                 "DELETE FROM BRANCHES",
                 "WHERE",
-                String.format("ID = %s", ID)
+                "ID = ?"
             );
-            Statement stmt = conn.createStatement();
-            stmt.executeQuery(query);
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            stmt.setString(1, ID);
+
+            stmt.executeUpdate();
             Log.l.info(String.format("%s: deleted from BRANCHES", ID));
         }
         catch (SQLException e) {
@@ -100,14 +112,14 @@ public class BranchProvider implements Provider<Branch> {
     public boolean checkExistBranch(String ID) {
         try {
             String query = String.join("\n",
-                "SELECT * FROM BRANCH",
+                "SELECT * FROM BRANCHES",
                 "WHERE",
-                String.format("ID = %s", ID)
+                String.format("ID = \"%s\"", ID)
             );
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 
-            if (!rs.next()) {
+            if (rs != null) {
                 Log.l.info(String.format("%s: exist", ID));
                 return true;
             }

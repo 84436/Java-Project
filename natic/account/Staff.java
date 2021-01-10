@@ -6,6 +6,7 @@ public class Staff extends Account {
     private String BranchID;
 
     public Staff() {
+        super();
         BranchID = "BR00000000";
     }
 
