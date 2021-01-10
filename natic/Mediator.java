@@ -341,4 +341,10 @@ public class Mediator {
             BRANCH.remove(ID);
         }
     }
+
+    public void changePassword(String oldPassword, String newPassword) {
+        if (ACCOUNT.getHashPassword(oldPassword)) {
+            ACCOUNT.changePasswordinDB(oldPassword, newPassword);
+        }
+    }
 } 

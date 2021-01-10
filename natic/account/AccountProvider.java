@@ -438,4 +438,21 @@ public class AccountProvider implements Provider<Account> {
         }
         return true;
     }
+
+    public void changePasswordinDB(String oldPassword, String newPassword) {
+        try {
+            String query = String.join("\n",
+                "UPDATE ACCOUNTS",
+                "SET",
+                String.format("Pass = %s", BCrypt.hashpw(newPassword, BCrypt.gensalt(1))),
+                "WHERE",
+                String.format("Pass = %s", BCrypt.hashpw(oldPassword, BCrypt.gensalt(1)))
+            );
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeQuery();
+        }
+        catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+    }
 }
