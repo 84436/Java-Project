@@ -26,11 +26,32 @@ public class StaffGUI extends JFrame {
     private JTextField txtCounterEmail;
     private JTable tblCounterBookList;
     private JTable tblCounterCustomerList;
-	
-	private JTextField txtLibrarySearch;
+    
     private JTable tblLibrary;
+    private JTextField txtLibrarySearch;
+    private JTextField txtLibraryISBN;
+    private JTextField txtLibraryTitle;
+    private JTextField txtLibraryAuthor;
+    private JTextField txtLibraryVersionID;
+    private JTextField txtLibraryYear;
+    private JTextField txtLibraryPublisher;
+    private JTextField txtLibraryGenre;
+    private JTextField txtLibraryFormat;
+    private JTextField txtLibraryPrice;
     
     private JTable tblOrders;
+    private JTextField txtOrderISBN;
+    private JTextField txtOrderTitle;
+    private JTextField txtOrderAuthor;
+    private JTextField txtOrderVersionID;
+    private JTextField txtOrderYear;
+    private JTextField txtOrderPublisher;
+    private JTextField txtOrderGenre;
+    private JTextField txtOrderFormat;
+    private JTextField txtOrderPrice;
+    private JTextField txtOrderID;
+    private JTextField txtOrderDate;
+    private JTextField txtOrderStaffID;
     
 	// https://stackoverflow.com/a/27873384
 	// It's hard to believe Java Swing can understand HTML4 for basic formatting, but it _does_
@@ -46,6 +67,12 @@ public class StaffGUI extends JFrame {
 	    String style = "font-weight: bold; font-size: 24pt";
 	    return String.format(template, style, text);
 	}
+	
+	private static String styledHeaderSmallLabel(String text) {
+        String template = "<html><body style=\"%s\">%s</body></html>";
+        String style = "font-weight: bold; font-size: 18pt";
+        return String.format(template, style, text);
+    }
 	
 	// adapted from https://stackoverflow.com/a/7434935
 	private static void setGlobalFont(String family, int style, int size) {
@@ -303,6 +330,95 @@ public class StaffGUI extends JFrame {
         Library.add(scrollBookDetails, "cell 1 1,grow");
         
         
+        /**
+         * Library -> Book Details
+         */
+        
+        JPanel BookDetails = new JPanel();
+        scrollBookDetails.setViewportView(BookDetails);
+        BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][]"));
+        
+        JLabel lblBookCover = new JLabel("");
+        JLabel lblHeaderLibraryCommonFields = new JLabel(styledHeaderSmallLabel("Overview"));
+        JLabel lblLibraryISBN = new JLabel("ISBN");
+        JLabel lblLibraryTitle = new JLabel("Title");
+        JLabel lblLibraryAuthor = new JLabel("Author");
+        JLabel lblHeaderLibraryDetails = new JLabel(styledHeaderSmallLabel("Details"));
+        JLabel lblLibraryVersionID = new JLabel("Version ID");
+        JLabel lblLibraryYear = new JLabel("Year");
+        JLabel lblLibraryPublisher = new JLabel("Publisher");
+        JLabel lblLibraryGenre = new JLabel("Genre");
+        JLabel lblLibraryFormat = new JLabel("Format");
+        JLabel lblLibraryPrice = new JLabel("Price");
+        
+        txtLibraryISBN = new JTextField();
+        txtLibraryTitle = new JTextField();
+        txtLibraryAuthor = new JTextField();
+        JSeparator sepBookDetails = new JSeparator();
+        txtLibraryVersionID = new JTextField();
+        txtLibraryYear = new JTextField();
+        txtLibraryPublisher = new JTextField();
+        txtLibraryGenre = new JTextField();
+        txtLibraryFormat = new JTextField();
+        txtLibraryPrice = new JTextField();
+        
+        txtLibraryISBN.setEditable(false);
+        txtLibraryTitle.setEditable(false);
+        txtLibraryAuthor.setEditable(false);
+        txtLibraryVersionID.setEditable(false);
+        txtLibraryYear.setEditable(false);
+        txtLibraryPublisher.setEditable(false);
+        txtLibraryGenre.setEditable(false);
+        txtLibraryFormat.setEditable(false);
+        txtLibraryPrice.setEditable(false);
+        
+        txtLibraryISBN.setEnabled(false);
+        txtLibraryTitle.setEnabled(false);
+        txtLibraryAuthor.setEnabled(false);
+        txtLibraryVersionID.setEnabled(false);
+        txtLibraryYear.setEnabled(false);
+        txtLibraryPublisher.setEnabled(false);
+        txtLibraryGenre.setEnabled(false);
+        txtLibraryFormat.setEnabled(false);
+        txtLibraryPrice.setEnabled(false);
+        
+        txtLibraryISBN.setColumns(10);
+        txtLibraryTitle.setColumns(10);
+        txtLibraryAuthor.setColumns(10);
+        txtLibraryVersionID.setColumns(10);
+        txtLibraryYear.setColumns(10);
+        txtLibraryPublisher.setColumns(10);
+        txtLibraryGenre.setColumns(10);
+        txtLibraryFormat.setColumns(10);
+        txtLibraryPrice.setColumns(10);
+        
+        sepBookDetails.setForeground(new Color(192, 192, 192));
+        
+        BookDetails.add(lblBookCover, "cell 0 0 2 1");
+        BookDetails.add(lblHeaderLibraryCommonFields, "cell 0 1 2 1");
+        BookDetails.add(lblLibraryISBN, "cell 0 2");
+        BookDetails.add(lblLibraryTitle, "cell 0 3");
+        BookDetails.add(lblLibraryAuthor, "cell 0 4");
+        BookDetails.add(lblHeaderLibraryDetails, "cell 0 6 2 1");
+        BookDetails.add(lblLibraryVersionID, "cell 0 7");
+        BookDetails.add(lblLibraryYear, "cell 0 8");
+        BookDetails.add(lblLibraryPublisher, "cell 0 9");
+        BookDetails.add(lblLibraryGenre, "cell 0 10");
+        BookDetails.add(lblLibraryFormat, "cell 0 11");
+        BookDetails.add(lblLibraryPrice, "cell 0 12");
+        
+        BookDetails.add(txtLibraryISBN, "cell 1 2,growx");
+        BookDetails.add(txtLibraryTitle, "cell 1 3,growx");
+        BookDetails.add(txtLibraryAuthor, "cell 1 4,growx");
+        BookDetails.add(sepBookDetails, "cell 0 5 2 1");
+        BookDetails.add(txtLibraryVersionID, "cell 1 7");
+        BookDetails.add(txtLibraryYear, "cell 1 8");
+        BookDetails.add(txtLibraryPublisher, "cell 1 9,growx");
+        BookDetails.add(txtLibraryGenre, "cell 1 10,growx");
+        BookDetails.add(txtLibraryFormat, "cell 1 11,growx");
+        BookDetails.add(txtLibraryPrice, "cell 1 12");
+        
+        
         
 		/**
 		 * Orders
@@ -325,6 +441,115 @@ public class StaffGUI extends JFrame {
 		
 		Orders.add(scrollOrders, "cell 0 0,grow");
 		Orders.add(scrollOrderDetails, "cell 1 0,grow");
+		
+		
+		
+		/**
+		 * Orders -> Order Detail
+		 */
+		
+		JPanel OrderDetails = new JPanel();
+        scrollOrderDetails.setViewportView(OrderDetails);
+        OrderDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][40px,center][][][][][][][][][][]"));
+        
+        JLabel lblHeaderOrderOverview = new JLabel(styledHeaderSmallLabel("Order info"));
+        JLabel lblOrderID = new JLabel("Order ID");
+        JLabel lblOrderDate = new JLabel("Date");
+        JLabel lblOrderStaffID = new JLabel("Staff ID");
+        JLabel lblHeaderOrderBookDetails = new JLabel(styledHeaderSmallLabel("Book details"));
+        JLabel lblOrderISBN = new JLabel("ISBN");
+        JLabel lblOrderTitle = new JLabel("Title");
+        JLabel lblOrderAuthor = new JLabel("Author");
+        JLabel lblOrderVersionID = new JLabel("Version ID");
+        JLabel lblOrderYear = new JLabel("Year");
+        JLabel lblOrderPublisher = new JLabel("Publisher");
+        JLabel lblOrderGenre = new JLabel("Genre");
+        JLabel lblOrderFormat = new JLabel("Format");
+        JLabel lblOrderPrice = new JLabel("Price");
+        
+        txtOrderID = new JTextField();
+        txtOrderDate = new JTextField();
+        txtOrderStaffID = new JTextField();
+        txtOrderISBN = new JTextField();
+        txtOrderTitle = new JTextField();
+        txtOrderAuthor = new JTextField();
+        txtOrderVersionID = new JTextField();
+        txtOrderYear = new JTextField();
+        txtOrderPublisher = new JTextField();
+        txtOrderGenre = new JTextField();
+        txtOrderFormat = new JTextField();
+        txtOrderPrice = new JTextField();
+        
+        txtOrderID.setEditable(false);
+        txtOrderDate.setEditable(false);
+        txtOrderStaffID.setEditable(false);
+        txtOrderISBN.setEditable(false);
+        txtOrderTitle.setEditable(false);
+        txtOrderAuthor.setEditable(false);
+        txtOrderVersionID.setEditable(false);
+        txtOrderYear.setEditable(false);
+        txtOrderPublisher.setEditable(false);
+        txtOrderGenre.setEditable(false);
+        txtOrderFormat.setEditable(false);
+        txtOrderPrice.setEditable(false);
+        
+        txtOrderID.setEnabled(false);
+        txtOrderDate.setEnabled(false);
+        txtOrderStaffID.setEnabled(false);
+        txtOrderISBN.setEnabled(false);
+        txtOrderTitle.setEnabled(false);
+        txtOrderAuthor.setEnabled(false);
+        txtOrderVersionID.setEnabled(false);
+        txtOrderYear.setEnabled(false);
+        txtOrderPublisher.setEnabled(false);
+        txtOrderGenre.setEnabled(false);
+        txtOrderFormat.setEnabled(false);
+        txtOrderPrice.setEnabled(false);
+        
+        txtOrderID.setColumns(10);
+        txtOrderDate.setColumns(10);
+        txtOrderStaffID.setColumns(10);
+        txtOrderISBN.setColumns(10);
+        txtOrderTitle.setColumns(10);
+        txtOrderAuthor.setColumns(10);
+        txtOrderVersionID.setColumns(10);
+        txtOrderYear.setColumns(10);
+        txtOrderPublisher.setColumns(10);
+        txtOrderGenre.setColumns(10);
+        txtOrderFormat.setColumns(10);
+        txtOrderPrice.setColumns(10);
+        
+        JSeparator sepOrderDetails = new JSeparator();
+        sepOrderDetails.setForeground(Color.LIGHT_GRAY);
+        
+        OrderDetails.add(lblHeaderOrderOverview, "cell 0 0 2 1");
+        OrderDetails.add(lblOrderID, "cell 0 1,alignx trailing");
+        OrderDetails.add(lblOrderDate, "cell 0 2,alignx trailing");
+        OrderDetails.add(lblOrderStaffID, "cell 0 3,alignx trailing");
+        OrderDetails.add(sepOrderDetails, "cell 0 4 2 1");
+        OrderDetails.add(lblHeaderOrderBookDetails, "cell 0 5 2 1");
+        OrderDetails.add(lblOrderISBN, "cell 0 6");
+        OrderDetails.add(lblOrderTitle, "cell 0 7");
+        OrderDetails.add(lblOrderAuthor, "cell 0 8");
+        OrderDetails.add(lblOrderVersionID, "cell 0 9");
+        OrderDetails.add(lblOrderYear, "cell 0 10");
+        OrderDetails.add(lblOrderPublisher, "cell 0 11");
+        OrderDetails.add(lblOrderGenre, "cell 0 12");
+        OrderDetails.add(lblOrderFormat, "cell 0 13");
+        OrderDetails.add(lblOrderPrice, "cell 0 14");
+        
+        OrderDetails.add(txtOrderID, "cell 1 1,growx");
+        OrderDetails.add(txtOrderDate, "cell 1 2,growx");
+        OrderDetails.add(txtOrderStaffID, "cell 1 3,growx");
+        OrderDetails.add(txtOrderISBN, "cell 1 6,growx");
+        OrderDetails.add(txtOrderTitle, "cell 1 7,growx");
+        OrderDetails.add(txtOrderAuthor, "cell 1 8,growx");
+        OrderDetails.add(txtOrderVersionID, "cell 1 9");
+        OrderDetails.add(txtOrderYear, "cell 1 10");
+        OrderDetails.add(txtOrderPublisher, "cell 1 11,growx");
+        OrderDetails.add(txtOrderGenre, "cell 1 12,growx");
+        OrderDetails.add(txtOrderFormat, "cell 1 13,growx");
+        OrderDetails.add(txtOrderPrice, "cell 1 14");
 		
 		
 		
@@ -375,5 +600,57 @@ public class StaffGUI extends JFrame {
 		
 		// Always select 2nd tab on startup
         tabbedPane.setSelectedIndex(1);
+        
+        /**
+         * Events -> Account
+         */
+        
+        btnAccountAboutSave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("btn: AccountAboutSave");
+            }
+        });
+        
+        btnPasswordSave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("btn: PasswordSave");
+            }
+        });
+        
+        btnLogOut.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("btn: LogOut");
+            }
+        });
+        
+        /**
+         * Events -> Counter
+         */
+        
+        btnCounterCreate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("btn: CounterCreate");
+            }
+        });
+        
+        btnCounterDiscard.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("btn: CounterDiscard");
+            }
+        });
+        
+        /**
+         * Events -> Library
+         */
+        
+        btnSetStock.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("btn: SetStock");
+            }
+        });
+        
+        /**
+         * Events -> Orders
+         */
 	}
 }
