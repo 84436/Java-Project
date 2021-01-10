@@ -177,16 +177,26 @@ public class Mediator {
         return null;
     }
     
-    public void createAccount(natic.account.Account oAccount) {
+    public void createAccount(Account oAccount) {
         ACCOUNT.add(oAccount);
     }
 
-    public void editAccount(natic.account.Account oAccount) {
+    public void editAccount(Account oAccount) {
         ACCOUNT.edit(oAccount);
     }
 
-    public void removeStaff(natic.account.Account oAccount) {
+    public void removeStaff(Account oAccount) {
         ACCOUNT.remove(oAccount);
+    }
+
+    public void addStaff(Account oAccount) {
+        Staff add = new Staff();
+        add.setEmail(oAccount.getEmail());
+        add.setName(oAccount.getName());
+        add.setPhone(oAccount.getPhone());
+        add.setBranchID("BR00000000");
+        add.setType(AccountType.STAFF);
+        ACCOUNT.add(add);
     }
     
     // BOOKS functions
@@ -295,7 +305,7 @@ public class Mediator {
             AccountType oType = ACCOUNT.getType(email);
             switch (oType.getClass().getName()) {
                 case "Customer":
-                    Customer updateCus = new Customer(this);
+                    Customer updateCus = new Customer();
                     updateCus.setName(name);
                     updateCus.setPhone(phone);
                     updateCus.setAddress(CusAddress);
@@ -304,7 +314,7 @@ public class Mediator {
                     break;
 
                 case "Staff":
-                    Staff updateStaff = new Staff(this);
+                    Staff updateStaff = new Staff();
                     updateStaff.setName(name);
                     updateStaff.setPhone(phone);
                     updateStaff.setBranchID(branchID);
@@ -312,7 +322,7 @@ public class Mediator {
                     break;
 
                 case "Admin":
-                    Admin updateAdmin = new Admin(this);
+                    Admin updateAdmin = new Admin();
                     updateAdmin.setName(name);
                     updateAdmin.setPhone(phone);
                     ACCOUNT.edit(updateAdmin);
@@ -335,16 +345,22 @@ public class Mediator {
         }
     }
 
+    public ArrayList<Account> getAllStaff() {
+        return ACCOUNT.getALlStaff();
+    }
+
     // GetBranch()
     public ArrayList<Branch> getAllBranch() {
         return BRANCH.getAll();
     }
 
     public void addBranch(Branch branch) {
-        if (!BRANCH.checkExistBranch(branch.getID())) {
-            Log.l.info(String.format("BRANCH %s: ADDED", branch.getID()));
-            BRANCH.add(branch);
-        }
+        BRANCH.add(branch);
+    }
+
+    public void removeBranch(String ID) {
+        BOOKLIST.removeAll(ID, false);
+        BRANCH.remove(ID);
     }
 
     public void addBranch(String BranchID, String name, String address) {
