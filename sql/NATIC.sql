@@ -139,11 +139,13 @@ CREATE TABLE Reviews (
 
 INSERT INTO IDGen_States (Prefix, State)
 VALUES
-    ("AC", 0), -- Accounts
-    ("BR", 0), -- Branches
-    ("BK", 0), -- Books
-    ("RC", 0)  -- Receipts
+    ("AC", 1), -- Accounts
+    ("BR", 1), -- Branches
+    ("BK", 1), -- Books
+    ("RC", 1)  -- Receipts
 ;
+
+-- TODO: add *00000000 entities (deleted account, virtual branch, etc.)
 
 INSERT INTO Accounts (ID, Name, Email, Phone, Type)
 VALUES
