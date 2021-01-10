@@ -36,7 +36,14 @@ public class SignupGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public SignupGUI() {
-		setBounds(100, 100, 450, 300);
+        // Native LAF
+	    try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();;
+        }
+
+		setBounds(100, 100, 500, 400);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
