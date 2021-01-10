@@ -362,10 +362,10 @@ public class AdminGUI extends JFrame {
         
         txtStaffID.setEditable(false);
         txtStaffID.setEnabled(false);
-        txtStaffEmail.setEditable(false);
-        txtStaffEmail.setEnabled(false);
-        txtStaffPhone.setEditable(false);
-        txtStaffPhone.setEnabled(false);
+        // txtStaffEmail.setEditable(false);
+        // txtStaffEmail.setEnabled(false);
+        // txtStaffPhone.setEditable(false);
+        // txtStaffPhone.setEnabled(false);
         
         txtStaffID.setColumns(10);
         txtStaffName.setColumns(10);
