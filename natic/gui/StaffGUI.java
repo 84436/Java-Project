@@ -39,6 +39,11 @@ public class StaffGUI extends JFrame {
     private JTextField txtLibraryFormat;
     private JTextField txtLibraryPrice;
     
+    private JSpinner spinnerSetStock;
+    private JButton btnSetStock;
+    private JButton btnAddBook;
+    private JButton btnRemoveBook;
+    
     private JTable tblOrders;
     private JTextField txtOrderISBN;
     private JTextField txtOrderTitle;
@@ -295,7 +300,7 @@ public class StaffGUI extends JFrame {
 		
 		JPanel Library = new JPanel();
 		tabbedPane.addTab(styledTabName("Library"), null, Library, null);
-		Library.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow]"));
+		Library.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][][grow]"));
 		
 		txtLibrarySearch = new JTextField();
 		txtLibrarySearch.setColumns(20);
@@ -304,10 +309,11 @@ public class StaffGUI extends JFrame {
 		
 		JPanel BookActions = new JPanel();
 		
-		JSpinner spinnerSetStock = new JSpinner();
+        spinnerSetStock = new JSpinner();
+        spinnerSetStock.setModel(new SpinnerNumberModel(0, 0, null, 1));
 		spinnerSetStock.setPreferredSize(new Dimension(100, 25));
 		
-		JButton btnSetStock = new JButton("Set stock");
+		btnSetStock = new JButton("Set stock");
 		btnSetStock.setPreferredSize(new Dimension(100, 25));
 		
 		tblLibrary = new JTable();
@@ -324,10 +330,24 @@ public class StaffGUI extends JFrame {
         
         Library.add(txtLibrarySearch, "cell 0 0,growx,aligny top");
         Library.add(BookActions, "cell 1 0,grow");
+        
+        btnAddBook = new JButton("Add");
+        btnAddBook.setPreferredSize(new Dimension(100, 25));
+        
+        btnRemoveBook = new JButton("Remove");
+        btnRemoveBook.setPreferredSize(new Dimension(100, 25));
+        
+        BookActions.add(btnAddBook);
+        BookActions.add(btnRemoveBook);
         BookActions.add(spinnerSetStock);
         BookActions.add(btnSetStock);
-        Library.add(scrollLibrary, "cell 0 1,grow");
-        Library.add(scrollBookDetails, "cell 1 1,grow");
+        
+        JCheckBox checkBranchOnly = new JCheckBox("Show only books in current branch");
+        checkBranchOnly.setSelected(true);
+        Library.add(checkBranchOnly, "cell 0 1");
+        
+        Library.add(scrollLibrary, "cell 0 2,grow");
+        Library.add(scrollBookDetails, "cell 1 1 1 2,grow");
         
         
         /**
@@ -572,6 +592,7 @@ public class StaffGUI extends JFrame {
         Orders                      .setBackground(Color.WHITE);
         scrollOrders                .setBackground(Color.WHITE);
         scrollOrderDetails          .setBackground(Color.WHITE);
+        checkBranchOnly             .setBackground(Color.WHITE);
         
         // Uniform border: 1px #c0c0c0 + variable padding
         CompoundBorder CBorder0 = new CompoundBorder(new LineBorder(new Color(192, 192, 192)), new EmptyBorder(0, 0, 0, 0));
@@ -600,6 +621,9 @@ public class StaffGUI extends JFrame {
 		
 		// Always select 2nd tab on startup
         tabbedPane.setSelectedIndex(1);
+        
+        // Library -> that checkbox: fire default state
+        toggleLibraryView(checkBranchOnly.isSelected());
         
         /**
          * Events -> Account
@@ -649,8 +673,42 @@ public class StaffGUI extends JFrame {
             }
         });
         
+        checkBranchOnly.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("check: BranchOnly: " + checkBranchOnly.isSelected());
+                toggleLibraryView(checkBranchOnly.isSelected());
+            }
+        });
+        
+        btnAddBook.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("btn: AddBook");
+            }
+        });
+        
+        btnRemoveBook.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("btn: RemoveBook");
+            }
+        });
+        
         /**
          * Events -> Orders
          */
+	}
+	
+	private void toggleLibraryView(boolean branchOnly) {
+	    if (branchOnly) {
+	        spinnerSetStock    .setVisible(true);
+	        btnSetStock        .setVisible(true);
+	        btnAddBook         .setVisible(false);
+	        btnRemoveBook      .setVisible(false);
+	    }
+	    else {
+	        spinnerSetStock    .setVisible(false);
+            btnSetStock        .setVisible(false);
+            btnAddBook         .setVisible(true);
+            btnRemoveBook      .setVisible(true);
+	    }
 	}
 }
