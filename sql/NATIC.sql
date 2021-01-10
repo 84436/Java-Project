@@ -139,10 +139,9 @@ CREATE TABLE Reviews (
 
 INSERT INTO IDGen_States (Prefix, State)
 VALUES
-    ("AC", 0), -- Accounts
-    ("BR", 0), -- Branches
-    ("BK", 0), -- Books
-    ("RC", 0)  -- Receipts
+    ("AC", 6), -- Accounts
+    ("BR", 4), -- Branches
+    ("RC", 3)  -- Receipts
 ;
 
 INSERT INTO Accounts (ID, Name, Email, Phone, Type, Pass)

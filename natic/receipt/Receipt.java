@@ -2,13 +2,14 @@ package natic.receipt;
 
 import java.time.LocalDate;
 
-public abstract class Receipt {
+public class Receipt {
     private String ID;
     private String ISBN;
     private String StaffID;
     private String CustomerID;
     private LocalDate Date;
     private float Price;
+    private LocalDate ReturnOn;
 
     public float getPrice() {
         return Price;
@@ -56,5 +57,13 @@ public abstract class Receipt {
 
     public void setPrice(float price) {
         this.Price = price;
+    }
+
+    public LocalDate getReturnOn() {
+        return ReturnOn;
+    }
+
+    public void setReturnOn(LocalDate returnOn) {
+        this.ReturnOn = returnOn;
     }
 }

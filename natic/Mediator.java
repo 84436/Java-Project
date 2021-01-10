@@ -6,12 +6,10 @@ import natic.book.BookProvider;
 import natic.book.BranchStockList;
 import natic.book.CustomerLibrary;
 import natic.book.Book;
-import natic.book.BookList;
 import natic.book.BookListProvider;
 import natic.branch.BranchProvider;
-import natic.receipt.BuyReceipt;
+import natic.receipt.Receipt;
 import natic.receipt.ReceiptProvider;
-import natic.receipt.RentReceipt;
 import natic.review.Review;
 import natic.review.ReviewProvider;
 
@@ -182,48 +180,6 @@ public class Mediator {
     public void removeStaff(natic.account.Account oAccount) {
         ACCOUNT.remove(oAccount);
     }
-
-
-    public void buyBook(String StaffID, String CustomerID, String ISBN) {
-        Book b = BOOK.get(ISBN);
-
-        // Add to lib
-        CustomerLibrary c = new CustomerLibrary();
-        c.setOwnerID(CustomerID);
-        // c.setISBN(ISBN);
-        c.setExpireDate(LocalDate.of(0, 1, 1));
-        BOOKLIST.add(c);
-
-        // Create a receipt
-        BuyReceipt receipt = new BuyReceipt();
-        receipt.setISBN(ISBN);
-        receipt.setStaffID(StaffID);
-        receipt.setCustomerID(CustomerID);
-        receipt.setDate(LocalDate.now());
-        receipt.setPrice(b.getPrice());
-        RECEIPT.add(receipt);
-    }
-    
-    public void rentBook(String StaffID, String CustomerID, String ISBN, int numberOfMonth) {
-        Book b = BOOK.get(ISBN);
-
-        // Add to lib
-        CustomerLibrary c = new CustomerLibrary();
-        c.setOwnerID(CustomerID);
-        // c.setISBN(ISBN);
-        c.setExpireDate(LocalDate.now().plusMonths(numberOfMonth));
-        BOOKLIST.add(c);
-
-        // Create a receipt
-        RentReceipt receipt = new RentReceipt();
-        receipt.setISBN(ISBN);
-        receipt.setStaffID(StaffID);
-        receipt.setCustomerID(CustomerID);
-        receipt.setDate(LocalDate.now());
-        receipt.setPrice(b.getPrice());
-        receipt.setReturnOn(LocalDate.now().plusMonths(numberOfMonth));
-        RECEIPT.add(receipt);
-    }
     
     // BOOKS functions
     public void addBook(Book b) {
@@ -257,9 +213,48 @@ public class Mediator {
         return REVIEW.get(ISBN);
     }
 
-    // RECEIPTS function
-    
+    // Buy-Rent function
+    public void buyBook(String StaffID, String CustomerID, String ISBN) {
+        Book b = BOOK.get(ISBN);
 
+        // Add to lib
+        CustomerLibrary c = new CustomerLibrary();
+        c.setOwnerID(CustomerID);
+        c.setBook(b);
+        c.setExpireDate(LocalDate.of(1, 1, 1));
+        BOOKLIST.add(c);
+
+        // Create a receipt
+        Receipt receipt = new Receipt();
+        receipt.setISBN(ISBN);
+        receipt.setStaffID(StaffID);
+        receipt.setCustomerID(CustomerID);
+        receipt.setDate(LocalDate.now());
+        receipt.setPrice(b.getPrice());
+        receipt.setReturnOn(LocalDate.of(1, 1, 1));
+        RECEIPT.add(receipt);
+    }
+
+    public void rentBook(String StaffID, String CustomerID, String ISBN, int numberOfMonth) {
+        Book b = BOOK.get(ISBN);
+
+        // Add to lib
+        CustomerLibrary c = new CustomerLibrary();
+        c.setOwnerID(CustomerID);
+        c.setBook(b);
+        c.setExpireDate(LocalDate.now().plusMonths(numberOfMonth));
+        BOOKLIST.add(c);
+
+        // Create a receipt
+        Receipt receipt = new Receipt();
+        receipt.setISBN(ISBN);
+        receipt.setStaffID(StaffID);
+        receipt.setCustomerID(CustomerID);
+        receipt.setDate(LocalDate.now());
+        receipt.setPrice(b.getPrice());
+        receipt.setReturnOn(LocalDate.now().plusMonths(numberOfMonth));
+        RECEIPT.add(receipt);
+    }
 
     // BOOKLISTS function
     public void addBookToBranch(String ISBN, String BranchID) {
@@ -297,5 +292,10 @@ public class Mediator {
 
     public ArrayList<BranchStockList> searchInBranLib(String BranchID, String match) {
         return BOOKLIST.searchInBranLib(BranchID, match);
+    }
+
+    // RECEIPTS function
+    public ArrayList<Receipt> getAllReceipts(String CustomerID) {
+        return RECEIPT.get(CustomerID);
     }
 } 

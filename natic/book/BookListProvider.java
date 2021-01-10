@@ -243,7 +243,7 @@ public class BookListProvider implements Provider<BookList> {
             stmt.setString(2, ISBN);
 
             stmt.executeUpdate();
-            Log.l.info(String.format("%s: Delted from BRANCHSTOCKLISTS %s", ISBN, BranchID));
+            Log.l.info(String.format("%s: Deleted from BRANCHSTOCKLISTS %s", ISBN, BranchID));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -266,7 +266,7 @@ public class BookListProvider implements Provider<BookList> {
                 stmt.setString(1, OwnerID);
 
                 stmt.executeUpdate();
-                Log.l.info(String.format("%s: Delted from BRANCHSTOCKLISTS", OwnerID));
+                Log.l.info(String.format("%s: Deleted from BRANCHSTOCKLISTS", OwnerID));
             }
         } catch (SQLException e) {
             e.printStackTrace();
