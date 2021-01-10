@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 import net.miginfocom.swing.MigLayout;
+import java.util.*;
+import java.text.*;
 
 public class CustomerGUI extends JFrame {
     
@@ -165,12 +167,12 @@ public class CustomerGUI extends JFrame {
         
         JPanel AccountInfoEdit = new JPanel();
         Account.add(AccountInfoEdit, "cell 0 0,grow");
-        AccountInfoEdit.setLayout(new MigLayout("", "[grow,fill][grow,fill][fill]", "[][][][][][40px,center][][][][][]"));
+        AccountInfoEdit.setLayout(new MigLayout("", "[grow,fill][grow,fill][fill]", "[][][][][][][40px,center][][][][][]"));
         
         // Separator between About and Password section
         JSeparator sepAccount = new JSeparator();
         sepAccount.setForeground(new Color(192, 192, 192));
-        AccountInfoEdit.add(sepAccount, "cell 0 5 3 1");
+        AccountInfoEdit.add(sepAccount, "cell 0 6 3 1");
         
         JButton btnLogOut = new JButton("Log out");
         Account.add(btnLogOut, "cell 0 1");
@@ -202,7 +204,14 @@ public class CustomerGUI extends JFrame {
         AccountInfoEdit.add(txtAccountName, "cell 1 1 2 1,growx");
         AccountInfoEdit.add(txtAccountEmail, "cell 1 2 2 1,growx");
         AccountInfoEdit.add(txtAccountPhone, "cell 1 3 2 1,growx");
-        AccountInfoEdit.add(btnAccountAboutSave, "cell 1 4 2 1");
+        AccountInfoEdit.add(btnAccountAboutSave, "cell 1 5 2 1");
+        
+        JLabel lblAccountDoB = new JLabel("Date of Birth");
+        AccountInfoEdit.add(lblAccountDoB, "cell 0 4,alignx trailing");
+        
+        JFormattedTextField ftxtAccountDoB = new JFormattedTextField(new SimpleDateFormat("yyyy-MM-dd"));
+        ftxtAccountDoB.setValue(new Date());
+        AccountInfoEdit.add(ftxtAccountDoB, "cell 1 4 2 1,growx");
         
         
         
@@ -227,17 +236,17 @@ public class CustomerGUI extends JFrame {
         addPasswordRevealToggleEvent(btnPasswordNewReveal, pwtxtNew);
         addPasswordRevealToggleEvent(btnPasswordConfirmReveal, pwtxtConfirm);
         
-        AccountInfoEdit.add(lblHeaderPassword, "cell 0 6 3 1");
-        AccountInfoEdit.add(lblPasswordOld, "cell 0 7,alignx trailing");
-        AccountInfoEdit.add(lblPasswordNew, "cell 0 8,alignx trailing");
-        AccountInfoEdit.add(lblPasswordConfirm, "cell 0 9,alignx trailing");
-        AccountInfoEdit.add(pwtxtOld, "cell 1 7,growx");
-        AccountInfoEdit.add(pwtxtNew, "cell 1 8,growx");
-        AccountInfoEdit.add(pwtxtConfirm, "cell 1 9,growx");
-        AccountInfoEdit.add(btnPasswordOldReveal, "cell 2 7");
-        AccountInfoEdit.add(btnPasswordNewReveal, "cell 2 8");
-        AccountInfoEdit.add(btnPasswordConfirmReveal, "cell 2 9");
-        AccountInfoEdit.add(btnPasswordSave, "cell 1 10 2 1");
+        AccountInfoEdit.add(lblHeaderPassword, "cell 0 7 3 1");
+        AccountInfoEdit.add(lblPasswordOld, "cell 0 8,alignx trailing");
+        AccountInfoEdit.add(lblPasswordNew, "cell 0 9,alignx trailing");
+        AccountInfoEdit.add(lblPasswordConfirm, "cell 0 10,alignx trailing");
+        AccountInfoEdit.add(pwtxtOld, "cell 1 8,growx");
+        AccountInfoEdit.add(pwtxtNew, "cell 1 9,growx");
+        AccountInfoEdit.add(pwtxtConfirm, "cell 1 10,growx");
+        AccountInfoEdit.add(btnPasswordOldReveal, "cell 2 8");
+        AccountInfoEdit.add(btnPasswordNewReveal, "cell 2 9");
+        AccountInfoEdit.add(btnPasswordConfirmReveal, "cell 2 10");
+        AccountInfoEdit.add(btnPasswordSave, "cell 1 11 2 1");
         
         
         
