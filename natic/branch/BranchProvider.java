@@ -53,7 +53,7 @@ public class BranchProvider implements Provider<Branch> {
                     o.getAddress()
                 ),
                 "WHERE",
-                String.format("ID = %s", o.getID())
+                String.format("ID = \"%s\"", o.getID())
             );
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
@@ -69,7 +69,7 @@ public class BranchProvider implements Provider<Branch> {
             String query = String.join("\n",
                 "DELETE FROM BRANCHES",
                 "WHERE",
-                String.format("ID = %s", o.getID())
+                String.format("ID = \"%s\"", o.getID())
             );
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
@@ -86,7 +86,7 @@ public class BranchProvider implements Provider<Branch> {
             String query = String.join("\n",
                 "DELETE FROM BRANCHES",
                 "WHERE",
-                String.format("ID = %s", ID)
+                String.format("ID = \"%s\"", ID)
             );
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
@@ -100,14 +100,14 @@ public class BranchProvider implements Provider<Branch> {
     public boolean checkExistBranch(String ID) {
         try {
             String query = String.join("\n",
-                "SELECT * FROM BRANCH",
+                "SELECT * FROM BRANCHES",
                 "WHERE",
-                String.format("ID = %s", ID)
+                String.format("ID = \"%s\"", ID)
             );
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 
-            if (!rs.next()) {
+            if (rs != null) {
                 Log.l.info(String.format("%s: exist", ID));
                 return true;
             }

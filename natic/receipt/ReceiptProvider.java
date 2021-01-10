@@ -44,6 +44,24 @@ public class ReceiptProvider implements Provider<Receipt> {
         }
     }
 
+    public void bypassReceiptForVirtualAcc(String VirtualID, String currentStaff) {
+        try {
+            String query = String.join("\n",
+                "UPDATE RECEIPTS",
+                "SET",
+                String.format("StaffID = \"%s\"", VirtualID),
+                "WHERE",
+                String.format("StaffID = \"%s\"", currentStaff)
+            );
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+            Log.l.info(String.format("Bypass RECEIPTS from \"%s\" to \"%s\"", currentStaff, VirtualID));
+
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+    }
+
     // DO WE EVEN DO THIS?
     public void edit(Receipt o) {}
 

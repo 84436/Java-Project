@@ -163,10 +163,16 @@ public class Mediator {
     }
 
     public AccountType checkLogin(String email, String password) {
-        if (ACCOUNT.getEmailforLogin(email)) {
-            if (ACCOUNT.getHashPassword(email, password)) {
-                return ACCOUNT.getType(email);
-            }
+        if ((email != null && password != null)) {
+            if (ACCOUNT.getEmailforLogin(email)) {
+                if (ACCOUNT.checkPassword(email, password)) {
+                    return ACCOUNT.getType(email);
+                }
+            } 
+        }
+        else {
+            Log.l.info(String.format("%s: NOT FOUND", email));
+            return AccountType.UNKNOWN;
         }
         return null;
     }
@@ -302,9 +308,15 @@ public class Mediator {
     }
 
     public void removeStaff(String ID, String BranchID) {
-        if (ACCOUNT.checkStaffInBranch(ID, BranchID)) {
-            Log.l.info(String.format("%s: STAFF in %s", ID, BranchID));
-            ACCOUNT.removeStaffFromBranch(ID);
+        if ((BranchID != null && ID != null) || (!BranchID.equals("") || !ID.equals(""))) {
+            if (BRANCH.checkExistBranch(BranchID) && ACCOUNT.checkStaffInBranch(ID, BranchID)) {
+                RECEIPT.bypassReceiptForVirtualAcc("AC00000000", ID);
+                ACCOUNT.removeStaffFromBranch(ID);
+                Log.l.info(String.format("%s: STAFF in %s", ID, BranchID));
+            }
+        } else {
+            Log.l.info("These fields must have value");
+            return;
         }
     }
 
@@ -344,8 +356,8 @@ public class Mediator {
     }
 
     public void changePassword(String email, String oldPassword, String newPassword) {
-        if (ACCOUNT.getHashPassword(email, oldPassword)) {
-            ACCOUNT.changePasswordinDB(email, oldPassword, newPassword);
+        if (ACCOUNT.checkPassword(email, oldPassword)) {
+            ACCOUNT.changePasswordinDB(email, newPassword);
         }
     }
 } 
