@@ -4,6 +4,7 @@ import natic.Log;
 import natic.Provider;
 import natic.book.BookEnums.BookFormat;
 import natic.book.BookEnums.BookGenre;
+import natic.branch.Branch;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -115,12 +116,12 @@ public class BookListProvider implements Provider<BookList> {
                 res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
                 res.setPrice(rs.getFloat("Price"));
 
-                BranchStockList cres = new BranchStockList();
-                cres.setOwnerID(rs.getString("BranchID"));
-                cres.setBook(res);
-                cres.setStock(rs.getInt("Stock"));
+                BranchStockList bres = new BranchStockList();
+                bres.setOwnerID(rs.getString("BranchID"));
+                bres.setBook(res);
+                bres.setStock(rs.getInt("Stock"));
 
-                resList.add(cres);
+                resList.add(bres);
             }
             Log.l.info(String.format("%s: Search in BRANCHSTOCKLISTS", BranchID));
             return resList;
@@ -161,6 +162,75 @@ public class BookListProvider implements Provider<BookList> {
             }
             Log.l.info(String.format("%s: Search in CUSTOMERLIBRARIES", CustomerID));
             return resList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public CustomerLibrary getBookInCusLib(String CustomerID, String ISBN) {
+        try {
+            String query = String.format(
+                    "SELECT Books.*, ExpiryDate, CustomerID FROM Books, CustomerLibraries WHERE (CustomerID = '%s' AND Books.ISBN = CustomerLibraries.ISBN AND Books.ISBN = '%s')",
+                    CustomerID, ISBN);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            CustomerLibrary cres = null;
+            while (rs.next()) {
+                Book res = new Book();
+                res.setISBN(rs.getString("ISBN"));
+                res.setVersionID(rs.getInt("VersionID"));
+                res.setTitle(rs.getString("Title"));
+                res.setAuthor(rs.getString("Author"));
+                res.setYear(Year.of(rs.getDate("BookYear").getYear() + 1900));
+                res.setPublisher(rs.getString("Publisher"));
+                res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
+                res.setRating(rs.getFloat("Rating"));
+                res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
+                res.setPrice(rs.getFloat("Price"));
+
+                cres = new CustomerLibrary();
+                cres.setOwnerID(rs.getString("CustomerID"));
+                cres.setBook(res);
+                Date exDate = rs.getDate("ExpiryDate");
+                cres.setExpireDate(LocalDate.of(exDate.getYear() + 1900, exDate.getMonth() + 1, exDate.getDate()));
+            }
+            Log.l.info(String.format("%s: Get by ID CUSTOMERLIBRARIES", CustomerID));
+            return cres;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public BranchStockList getBookInBranLib(String BranchID, String ISBN) {
+        try {
+            String query = String.format(
+                    "SELECT Books.*, Stock, BranchID FROM Books, BranchStockLists WHERE (BranchID = '%s' AND Books.ISBN = BranchStockLists.ISBN AND Books.ISBN = '%s')",
+                    BranchID, ISBN);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            BranchStockList bres = null;
+            while (rs.next()) {
+                Book res = new Book();
+                res.setISBN(rs.getString("ISBN"));
+                res.setVersionID(rs.getInt("VersionID"));
+                res.setTitle(rs.getString("Title"));
+                res.setAuthor(rs.getString("Author"));
+                res.setYear(Year.of(rs.getDate("BookYear").getYear() + 1900));
+                res.setPublisher(rs.getString("Publisher"));
+                res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
+                res.setRating(rs.getFloat("Rating"));
+                res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
+                res.setPrice(rs.getFloat("Price"));
+
+                bres = new BranchStockList();
+                bres.setOwnerID(rs.getString("BranchID"));
+                bres.setBook(res);
+                bres.setStock(rs.getInt("Stock"));
+            }
+            Log.l.info(String.format("%s: Get by ID BRANCHSTOCKLISTS", BranchID));
+            return bres;
         } catch (SQLException e) {
             e.printStackTrace();
         }

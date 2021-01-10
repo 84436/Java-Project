@@ -116,17 +116,22 @@ public class AccountProvider implements Provider<Account> {
         return null;
     }
 
-    public void add(Account o) throws SQLException{
-        o.setID(IDGen.next());
-        // Who is o?
-        AccountType oType;
-        switch (o.getType().toString()) {
-            case "Customer" : oType = AccountType.CUSTOMER; break;
-            case "Staff"    : oType = AccountType.STAFF;    break;
-            case "Admin"    : oType = AccountType.ADMIN;    break;
-            default         : oType = AccountType.UNKNOWN;  break;
-        }
-        Log.l.info(String.format("New %s", oType.toString()));
+    public Staff getStaff(String ID) {
+        return null;
+    }
+
+    public void add(Account o) {
+        try {
+            o.setID(IDGen.next());
+            // Who is o?
+            AccountType oType;
+            switch (o.getType().toString()) {
+                case "Customer" : oType = AccountType.CUSTOMER; break;
+                case "Staff"    : oType = AccountType.STAFF;    break;
+                case "Admin"    : oType = AccountType.ADMIN;    break;
+                default         : oType = AccountType.UNKNOWN;  break;
+            }
+            Log.l.info(String.format("New %s", oType.toString()));
 
         // TODO: Set account ID
 
