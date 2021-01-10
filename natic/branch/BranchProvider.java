@@ -22,6 +22,7 @@ public class BranchProvider implements Provider<Branch> {
 
     public void add(Branch o) {
         try {
+            o.setID(IDGen.next());
             String query = String.join("\n",
                 "INSERTS INTO BRANCHES",
                 "(ID, Name, Address)",
