@@ -63,9 +63,15 @@ public class ReviewProvider implements Provider<Review> {
 
     public void add(Review o) {
         try {
-            String query = String.format("INSERT INTO REVIEWS (CustomerID, ISBN, ReviewScore, ReviewText) VALUES (%s, %s, %d, %s)", o.getCustomerID(), o.getISBN(), o.getReviewScore(), o.getReviewText());
-            Statement stmt = conn.createStatement();
-            stmt.executeQuery(query);
+            String query = "INSERT INTO REVIEWS (CustomerID, ISBN, ReviewScore, ReviewText) VALUES (?, ?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            stmt.setString(1, o.getCustomerID());
+            stmt.setString(2, o.getISBN());
+            stmt.setInt(3, o.getReviewScore());
+            stmt.setString(4, o.getReviewText());
+
+            stmt.executeUpdate();
             Log.l.info(String.format("%s to %s: inserted into REVIEW", o.getCustomerID(), o.getISBN()));
         }
         catch (SQLException e) {

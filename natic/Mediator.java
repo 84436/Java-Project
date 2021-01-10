@@ -6,6 +6,7 @@ import natic.book.BookProvider;
 import natic.book.BranchStockList;
 import natic.book.CustomerLibrary;
 import natic.book.Book;
+import natic.book.BookList;
 import natic.book.BookListProvider;
 import natic.branch.BranchProvider;
 import natic.receipt.BuyReceipt;
@@ -174,21 +175,14 @@ public class Mediator {
         ACCOUNT.add(oAccount);
     }
 
-    public ArrayList<Book> searchBook(String query) {
-        return BOOK.searchBook(query);
+    public void editAccount(natic.account.Account oAccount) {
+        ACCOUNT.edit(oAccount);
     }
 
-    public Book getBook(String ISBN) {
-        return BOOK.get(ISBN);
+    public void removeStaff(natic.account.Account oAccount) {
+        ACCOUNT.remove(oAccount);
     }
 
-    public ArrayList<Book> getAllBooks() {
-        return BOOK.getAll();
-    }
-
-    public ArrayList<Book> getCustomerLibrary(String CustomerID) {
-        return null;
-    }
 
     public void buyBook(String StaffID, String CustomerID, String ISBN) {
         Book b = BOOK.get(ISBN);
@@ -196,7 +190,7 @@ public class Mediator {
         // Add to lib
         CustomerLibrary c = new CustomerLibrary();
         c.setOwnerID(CustomerID);
-        c.setISBN(ISBN);
+        // c.setISBN(ISBN);
         c.setExpireDate(LocalDate.of(0, 1, 1));
         BOOKLIST.add(c);
 
@@ -216,7 +210,7 @@ public class Mediator {
         // Add to lib
         CustomerLibrary c = new CustomerLibrary();
         c.setOwnerID(CustomerID);
-        c.setISBN(ISBN);
+        // c.setISBN(ISBN);
         c.setExpireDate(LocalDate.now().plusMonths(numberOfMonth));
         BOOKLIST.add(c);
 
@@ -231,14 +225,7 @@ public class Mediator {
         RECEIPT.add(receipt);
     }
     
-    public void reviewBook(Review o) {
-        REVIEW.add(o);
-
-        Book b = BOOK.get(o.getISBN());
-        b.setRating(REVIEW.getRating(o.getISBN()));
-        BOOK.edit(b);
-    }
-
+    // BOOKS functions
     public void addBook(Book b) {
         BOOK.add(b);
     }
@@ -246,29 +233,69 @@ public class Mediator {
     public void editBook(Book b) {
         BOOK.edit(b);
     }
+    
+    public ArrayList<Book> getAllBooks() {
+        return BOOK.getAll();
+    }
 
-    public void removeBook(String ISBN) {
-        BOOK.remove(ISBN);
+    public ArrayList<Book> searchBook(String query) {
+        return BOOK.searchBook(query);
+    }
+
+    // REVIEWS function
+    public void reviewBook(Review o) {
+        // Add a review
+        REVIEW.add(o);
+
+        // Calculate rating
+        Book b = BOOK.get(o.getISBN());
+        b.setRating(REVIEW.getRating(o.getISBN()));
+        BOOK.edit(b);
+    }
+
+    public ArrayList<Review> getReview(String ISBN) {
+        return REVIEW.get(ISBN);
+    }
+
+    // RECEIPTS function
+    
+
+
+    // BOOKLISTS function
+    public void addBookToBranch(String ISBN, String BranchID) {
+        BranchStockList b = new BranchStockList();
+        b.setOwnerID(BranchID);
+        b.setStock(1);
+        b.setBook(BOOK.get(ISBN));
+
+        BOOKLIST.add(b);
     }
 
     public void updateStock(String BranchID, String ISBN, int amount) {
         if (amount == 0) {
             BOOKLIST.removeOne(BranchID, ISBN);
-        }
-        else {
+        } else {
             BranchStockList b = new BranchStockList();
             b.setOwnerID(BranchID);
-            b.setISBN(ISBN);
+            b.setBook(BOOK.get(ISBN));
             b.setStock(amount);
             BOOKLIST.edit(b);
         }
     }
+
+    public ArrayList<CustomerLibrary> getCustomerLibrary(String CustomerID) {
+        return BOOKLIST.getCustomerLibrary(CustomerID);
+    }
     
-    public void editAccount(natic.account.Account oAccount) {
-        ACCOUNT.edit(oAccount);
+    public ArrayList<BranchStockList> getBranchStockList(String BranchID) {
+        return BOOKLIST.getBranchLibrary(BranchID);
     }
 
-    public void removeStaff(natic.account.Account oAccount) {
-        ACCOUNT.remove(oAccount);
+    public ArrayList<CustomerLibrary> searchInCusLib(String CustomerID, String match) {
+        return BOOKLIST.searchInCusLib(CustomerID, match);
+    }
+
+    public ArrayList<BranchStockList> searchInBranLib(String BranchID, String match) {
+        return BOOKLIST.searchInBranLib(BranchID, match);
     }
 } 

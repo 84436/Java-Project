@@ -77,8 +77,8 @@ public class BookProvider implements Provider<Book> {
 
     public ArrayList<Book> searchBook(String match) {
         try {
-            String query = String.format("SELECT * FROM Books WHERE Title LIKE '%%%s%%' OR Author LIKE '%%%s%%'", match,
-                    match);
+            String query = String.format("SELECT * FROM Books WHERE Title LIKE '%%%s%%' OR Author LIKE '%%%s%%' OR ISBN = '%s'", match,
+                    match, match);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             ArrayList<Book> resList = new ArrayList<>();
@@ -172,7 +172,7 @@ public class BookProvider implements Provider<Book> {
 
     public void edit(Book o) {
         try {
-            String query = "UPDATE BOOKS SET VersionID = ?, Title = ?, Author = ?, BookYear = ?, Publisher = ?, Genre = ?, BookFormat = ?, Price = ? WHERE ISBN = ?";
+            String query = "UPDATE BOOKS SET VersionID = ?, Title = ?, Author = ?, BookYear = ?, Publisher = ?, Genre = ?, Rating = ?, BookFormat = ?, Price = ? WHERE ISBN = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
 
             if (o.getVersionID() != null)
@@ -211,20 +211,27 @@ public class BookProvider implements Provider<Book> {
                 stmt.setNull(6, java.sql.Types.NULL);
             }
 
-            if (o.getFormat() != null)
-                stmt.setInt(7, o.getFormat().ordinal());
+            if (o.getRating() != null) {
+                stmt.setFloat(7, o.getRating());
+            }
             else {
-                stmt.setNull(7, java.sql.Types.NULL);
+                stmt.setFloat(7, 0);
             }
 
-            if (o.getPrice() != null)
-                stmt.setFloat(8, o.getPrice());
+            if (o.getFormat() != null)
+                stmt.setInt(8, o.getFormat().ordinal());
             else {
                 stmt.setNull(8, java.sql.Types.NULL);
             }
 
+            if (o.getPrice() != null)
+                stmt.setFloat(9, o.getPrice());
+            else {
+                stmt.setNull(9, java.sql.Types.NULL);
+            }
+
             // WHERE condition
-            stmt.setString(9, o.getISBN());
+            stmt.setString(10, o.getISBN());
 
             stmt.executeUpdate();
             Log.l.info(String.format("%s: updated in BOOKS", o.getISBN()));
@@ -244,14 +251,15 @@ public class BookProvider implements Provider<Book> {
         }
     }
 
+    // DO WE NEED THIS
     public void remove(String ISBN) {
-        try {
-            String query = String.join("\n", "DELETE FROM BOOKS", "WHERE", String.format("ISBN = %s", ISBN));
-            Statement stmt = conn.createStatement();
-            stmt.executeQuery(query);
-            Log.l.info(String.format("%s: deleted from BOOKS", ISBN));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     String query = String.join("\n", "DELETE FROM BOOKS", "WHERE", String.format("ISBN = %s", ISBN));
+        //     Statement stmt = conn.createStatement();
+        //     stmt.executeQuery(query);
+        //     Log.l.info(String.format("%s: deleted from BOOKS", ISBN));
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        // }
     }
 }
