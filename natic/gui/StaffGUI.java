@@ -263,7 +263,7 @@ public class StaffGUI extends JFrame {
 		 */
 		JPanel Counter = new JPanel();
 		tabbedPane.addTab(styledTabName("Counter"), null, Counter, null);
-		Counter.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow][36.00,fill]"));
+		Counter.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow][36px,fill][36.00,fill]"));
 		
 		txtCounterISBN = new JTextField();
 		txtCounterEmail = new JTextField();
@@ -284,13 +284,16 @@ public class StaffGUI extends JFrame {
 		
 		JButton btnCounterCreate = new JButton("Create");
         JButton btnCounterDiscard = new JButton("Discard");
+        JButton btnCreateCustomer = new JButton("Create customer");
         
         Counter.add(txtCounterISBN, "cell 0 0,growx");
         Counter.add(txtCounterEmail, "cell 1 0,growx");
-        Counter.add(scrollCounterBookList, "cell 0 1 1 2,grow");
+        Counter.add(scrollCounterBookList, "cell 0 1 1 3,grow");
         Counter.add(scrollCounterCustomerList, "cell 1 1,grow");
-        Counter.add(btnCounterCreate, "cell 1 2,growx");
-        Counter.add(btnCounterDiscard, "flowx,cell 1 2,growx");
+        
+        Counter.add(btnCreateCustomer, "cell 1 2");
+        Counter.add(btnCounterCreate, "cell 1 3,growx");
+        Counter.add(btnCounterDiscard, "flowx,cell 1 3,growx");
 		
         
         
@@ -309,8 +312,8 @@ public class StaffGUI extends JFrame {
 		
 		JPanel BookActions = new JPanel();
 		
-        spinnerSetStock = new JSpinner();
-        spinnerSetStock.setModel(new SpinnerNumberModel(0, 0, null, 1));
+		spinnerSetStock = new JSpinner();
+		spinnerSetStock.setModel(new SpinnerNumberModel(0, 0, null, 1));
 		spinnerSetStock.setPreferredSize(new Dimension(100, 25));
 		
 		btnSetStock = new JButton("Set stock");
@@ -660,6 +663,12 @@ public class StaffGUI extends JFrame {
         btnCounterDiscard.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("btn: CounterDiscard");
+            }
+        });
+        
+        btnCreateCustomer.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("btn: CreateCustomer");
             }
         });
         
