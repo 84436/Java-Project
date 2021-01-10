@@ -10,9 +10,8 @@ import natic.book.Book;
 import natic.book.BookListProvider;
 import natic.branch.Branch;
 import natic.branch.BranchProvider;
-import natic.receipt.BuyReceipt;
+import natic.receipt.Receipt;
 import natic.receipt.ReceiptProvider;
-import natic.receipt.RentReceipt;
 import natic.review.Review;
 import natic.review.ReviewProvider;
 
@@ -131,15 +130,16 @@ public class Mediator {
             //#region: Fetch ID generators state and create
             IDGenerator ACCOUNT_IDGEN = new IDGenerator(SharedConnection, "AC");
             IDGenerator BRANCH_IDGEN = new IDGenerator(SharedConnection, "BR");
-            IDGenerator BOOK_IDGEN = new IDGenerator(SharedConnection, "BK");
             IDGenerator RECEIPT_IDGEN = new IDGenerator(SharedConnection, "RC");
             //#endregion
 
             //#region: Create providers, then init with DB connection and ID generators
             ACCOUNT = new AccountProvider(SharedConnection, ACCOUNT_IDGEN);
             BRANCH = new BranchProvider(SharedConnection, BRANCH_IDGEN);
-            BOOK = new BookProvider(SharedConnection, BOOK_IDGEN);
+            BOOK = new BookProvider(SharedConnection);
+            BOOKLIST = new BookListProvider(SharedConnection);
             RECEIPT = new ReceiptProvider(SharedConnection, RECEIPT_IDGEN);
+            REVIEW = new ReviewProvider(SharedConnection);
             //#endregion
         }
         
@@ -175,56 +175,80 @@ public class Mediator {
         ACCOUNT.add(oAccount);
     }
 
-    public ArrayList<Book> searchBook(String query) {
-        return BOOK.searchBook(query);
+    public void editAccount(natic.account.Account oAccount) {
+        ACCOUNT.edit(oAccount);
     }
 
-    public Book getBook(String ISBN) {
-        return BOOK.get(ISBN);
+    public void removeStaff(natic.account.Account oAccount) {
+        ACCOUNT.remove(oAccount);
+    }
+    
+    // BOOKS functions
+    public void addBook(Book b) {
+        BOOK.add(b);
     }
 
+    public void editBook(Book b) {
+        BOOK.edit(b);
+    }
+    
     public ArrayList<Book> getAllBooks() {
         return BOOK.getAll();
     }
 
-    public ArrayList<Book> getCustomerLibrary(String CustomerID) {
-        return null;
+    public ArrayList<Book> searchBook(String query) {
+        return BOOK.searchBook(query);
     }
 
+    // REVIEWS function
+    public void reviewBook(Review o) {
+        // Add a review
+        REVIEW.add(o);
+
+        // Calculate rating
+        Book b = BOOK.get(o.getISBN());
+        b.setRating(REVIEW.getRating(o.getISBN()));
+        BOOK.edit(b);
+    }
+
+    public ArrayList<Review> getReview(String ISBN) {
+        return REVIEW.get(ISBN);
+    }
+
+    // Buy-Rent function
     public void buyBook(String StaffID, String CustomerID, String ISBN) {
         Book b = BOOK.get(ISBN);
 
         // Add to lib
         CustomerLibrary c = new CustomerLibrary();
         c.setOwnerID(CustomerID);
-        c.setISBN(ISBN);
-        c.setExpireDate(LocalDate.of(0, 1, 1));
+        c.setBook(b);
+        c.setExpireDate(LocalDate.of(1, 1, 1));
         BOOKLIST.add(c);
 
         // Create a receipt
-        BuyReceipt receipt = new BuyReceipt();
-        receipt.setID(""); // TODO: ID here
+        Receipt receipt = new Receipt();
         receipt.setISBN(ISBN);
         receipt.setStaffID(StaffID);
         receipt.setCustomerID(CustomerID);
         receipt.setDate(LocalDate.now());
         receipt.setPrice(b.getPrice());
+        receipt.setReturnOn(LocalDate.of(1, 1, 1));
         RECEIPT.add(receipt);
     }
-    
+
     public void rentBook(String StaffID, String CustomerID, String ISBN, int numberOfMonth) {
         Book b = BOOK.get(ISBN);
 
         // Add to lib
         CustomerLibrary c = new CustomerLibrary();
         c.setOwnerID(CustomerID);
-        c.setISBN(ISBN);
+        c.setBook(b);
         c.setExpireDate(LocalDate.now().plusMonths(numberOfMonth));
         BOOKLIST.add(c);
 
         // Create a receipt
-        RentReceipt receipt = new RentReceipt();
-        receipt.setID(""); // TODO: ID here
+        Receipt receipt = new Receipt();
         receipt.setISBN(ISBN);
         receipt.setStaffID(StaffID);
         receipt.setCustomerID(CustomerID);
@@ -233,38 +257,31 @@ public class Mediator {
         receipt.setReturnOn(LocalDate.now().plusMonths(numberOfMonth));
         RECEIPT.add(receipt);
     }
-    
-    public void reviewBook(Review o) {
-        REVIEW.add(o);
 
-        Book b = BOOK.get(o.getISBN());
-        b.setRating(REVIEW.getRating(o.getISBN()));
-        BOOK.edit(b);
-    }
+    // BOOKLISTS function
+    public void addBookToBranch(String ISBN, String BranchID) {
+        BranchStockList b = new BranchStockList();
+        b.setOwnerID(BranchID);
+        b.setStock(1);
+        b.setBook(BOOK.get(ISBN));
 
-    public void addBook(Book b) {
-        BOOK.add(b);
-    }
-
-    public void editBook(Book b) {
-        BOOK.edit(b);
-    }
-
-    public void removeBook(String ISBN) {
-        BOOK.remove(ISBN);
+        BOOKLIST.add(b);
     }
 
     public void updateStock(String BranchID, String ISBN, int amount) {
         if (amount == 0) {
             BOOKLIST.removeOne(BranchID, ISBN);
-        }
-        else {
+        } else {
             BranchStockList b = new BranchStockList();
             b.setOwnerID(BranchID);
-            b.setISBN(ISBN);
+            b.setBook(BOOK.get(ISBN));
             b.setStock(amount);
             BOOKLIST.edit(b);
         }
+    }
+
+    public ArrayList<CustomerLibrary> getCustomerLibrary(String CustomerID) {
+        return BOOKLIST.getCustomerLibrary(CustomerID);
     }
     
     public void editAccount(String email, String name, String phone, LocalDate dob, String CusAddress, String branchID) {
@@ -347,5 +364,22 @@ public class Mediator {
         if (ACCOUNT.getHashPassword(email, oldPassword)) {
             ACCOUNT.changePasswordinDB(email, oldPassword, newPassword);
         }
+    }
+    
+    public ArrayList<BranchStockList> getBranchStockList(String BranchID) {
+        return BOOKLIST.getBranchLibrary(BranchID);
+    }
+
+    public ArrayList<CustomerLibrary> searchInCusLib(String CustomerID, String match) {
+        return BOOKLIST.searchInCusLib(CustomerID, match);
+    }
+
+    public ArrayList<BranchStockList> searchInBranLib(String BranchID, String match) {
+        return BOOKLIST.searchInBranLib(BranchID, match);
+    }
+
+    // RECEIPTS function
+    public ArrayList<Receipt> getAllReceipts(String CustomerID) {
+        return RECEIPT.get(CustomerID);
     }
 } 

@@ -2,7 +2,7 @@ package natic.book;
 
 public abstract class BookList {
     private String OwnerID;
-    private String ISBN;
+    private Book Book;
 
     public String getOwnerID() {
         return OwnerID;
@@ -12,11 +12,11 @@ public abstract class BookList {
         this.OwnerID = iD;
     }
 
-    public String getISBN() {
-        return ISBN;
+    public Book getBook() {
+        return Book;
     }
 
-    public void setISBN(String iSBN) {
-        ISBN = iSBN;
+    public void setBook(Book book) {
+        Book = book;
     }
 }
