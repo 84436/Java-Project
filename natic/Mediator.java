@@ -129,15 +129,16 @@ public class Mediator {
             //#region: Fetch ID generators state and create
             IDGenerator ACCOUNT_IDGEN = new IDGenerator(SharedConnection, "AC");
             IDGenerator BRANCH_IDGEN = new IDGenerator(SharedConnection, "BR");
-            IDGenerator BOOK_IDGEN = new IDGenerator(SharedConnection, "BK");
             IDGenerator RECEIPT_IDGEN = new IDGenerator(SharedConnection, "RC");
             //#endregion
 
             //#region: Create providers, then init with DB connection and ID generators
             ACCOUNT = new AccountProvider(SharedConnection, ACCOUNT_IDGEN);
             BRANCH = new BranchProvider(SharedConnection, BRANCH_IDGEN);
-            BOOK = new BookProvider(SharedConnection, BOOK_IDGEN);
+            BOOK = new BookProvider(SharedConnection);
+            BOOKLIST = new BookListProvider(SharedConnection);
             RECEIPT = new ReceiptProvider(SharedConnection, RECEIPT_IDGEN);
+            REVIEW = new ReviewProvider(SharedConnection);
             //#endregion
         }
         
@@ -201,7 +202,6 @@ public class Mediator {
 
         // Create a receipt
         BuyReceipt receipt = new BuyReceipt();
-        receipt.setID(""); // TODO: ID here
         receipt.setISBN(ISBN);
         receipt.setStaffID(StaffID);
         receipt.setCustomerID(CustomerID);
@@ -222,7 +222,6 @@ public class Mediator {
 
         // Create a receipt
         RentReceipt receipt = new RentReceipt();
-        receipt.setID(""); // TODO: ID here
         receipt.setISBN(ISBN);
         receipt.setStaffID(StaffID);
         receipt.setCustomerID(CustomerID);

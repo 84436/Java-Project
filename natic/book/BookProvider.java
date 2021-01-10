@@ -1,23 +1,20 @@
 package natic.book;
 
 import natic.Log;
-import natic.IDGenerator;
 import natic.Provider;
 import natic.book.BookEnums.BookFormat;
 import natic.book.BookEnums.BookGenre;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
 
-public class BookProvider implements Provider<Book>{
-    private ArrayList<Book> BookList;
-    private IDGenerator IDGen;
+public class BookProvider implements Provider<Book> {
     private Connection conn;
 
-    public BookProvider(Connection conn, IDGenerator idgen) {
+    public BookProvider(Connection conn) {
         this.conn = conn;
-        this.IDGen = idgen;
     }
 
     public Book get(Book o) {
@@ -77,10 +74,11 @@ public class BookProvider implements Provider<Book>{
         }
         return null;
     }
-    
+
     public ArrayList<Book> searchBook(String match) {
         try {
-            String query = String.format("SELECT * FROM Books WHERE Title LIKE '%%%s%%' OR Author LIKE '%%%s%%'", match, match);
+            String query = String.format("SELECT * FROM Books WHERE Title LIKE '%%%s%%' OR Author LIKE '%%%s%%'", match,
+                    match);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             ArrayList<Book> resList = new ArrayList<>();
@@ -108,69 +106,138 @@ public class BookProvider implements Provider<Book>{
 
     public void add(Book o) {
         try {
-            String query = String.join("\n",
-                "INSERT INTO BOOKS",
-                "(ISBN, BookID, VersionID, Title, Author, BookYear, Publisher, Genre, Rating, BookFormat, Price)",
-                "VALUES",
-                String.format(
-                    "(\"%s\", \"%s\", \"%d\", \"%s\", \"%s\", \"%s\", \"%s\", \"%.2f\", \"%s\", \"%.2f\")",
-                    o.getISBN(),
-                    o.getVersionID(),
-                    o.getTitle(),
-                    o.getAuthor(),
-                    o.getYear(),
-                    o.getPublisher(),
-                    o.getGenre().getClass().getName(),
-                    o.getRating(),
-                    o.getFormat().getClass().getName(),
-                    o.getPrice()
-                )    
-            );
-            Statement stmt = conn.createStatement();
-            stmt.executeQuery(query);
-            BookList.add(o);
+            String query = "INSERT INTO BOOKS (ISBN, VersionID, Title, Author, BookYear, Publisher, Genre, Rating, BookFormat, Price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            // Primary key
+            stmt.setString(1, o.getISBN());
+
+            if (o.getVersionID() != null)
+                stmt.setInt(2, o.getVersionID());
+            else {
+                stmt.setNull(2, java.sql.Types.NULL);
+            }
+
+            if (o.getTitle() != null)
+                stmt.setString(3, o.getTitle());
+            else {
+                stmt.setNull(3, java.sql.Types.NULL);
+            }
+
+            if (o.getAuthor() != null)
+                stmt.setString(4, o.getAuthor());
+            else {
+                stmt.setNull(4, java.sql.Types.NULL);
+            }
+
+            if (o.getYear() != null)
+                stmt.setDate(5, Date.valueOf(LocalDate.of(o.getYear().getValue(), 1, 1)));
+            else {
+                stmt.setNull(5, java.sql.Types.NULL);
+            }
+
+            if (o.getPublisher() != null)
+                stmt.setString(6, o.getPublisher());
+            else {
+                stmt.setNull(6, java.sql.Types.NULL);
+            }
+
+            if (o.getGenre() != null)
+                stmt.setInt(7, o.getGenre().ordinal());
+            else {
+                stmt.setNull(7, java.sql.Types.NULL);
+            }
+
+            // Default rating
+            stmt.setFloat(8, 0);
+
+            if (o.getFormat() != null)
+                stmt.setInt(9, o.getFormat().ordinal());
+            else {
+                stmt.setNull(9, java.sql.Types.NULL);
+            }
+
+            if (o.getPrice() != null)
+                stmt.setFloat(10, o.getPrice());
+            else {
+                stmt.setNull(10, java.sql.Types.NULL);
+            }
+
+            stmt.executeUpdate();
             Log.l.info(String.format("%s: inserted into BOOKS", o.getISBN()));
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void edit(Book o) {
         try {
-            String query = String.join("\n",
-                "UPDATE BOOKS",
-                "SET",
-                String.format(
-                    "(\"%s\", \"%d\", \"%s\", \"%s\", \"%s\", \"%s\", \"%.2f\", \"%s\", \"%.2f\")",
-                    o.getVersionID(),
-                    o.getTitle(),
-                    o.getAuthor(),
-                    o.getYear(),
-                    o.getPublisher(),
-                    o.getGenre().getClass().getName(),
-                    o.getRating(),
-                    o.getFormat().getClass().getName(),
-                    o.getPrice()
-                ),
-                "WHERE",
-                String.format("ISBN = %s", o.getISBN())
-            );
-            Statement stmt = conn.createStatement();
-            stmt.executeQuery(query);
+            String query = "UPDATE BOOKS SET VersionID = ?, Title = ?, Author = ?, BookYear = ?, Publisher = ?, Genre = ?, BookFormat = ?, Price = ? WHERE ISBN = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            if (o.getVersionID() != null)
+                stmt.setInt(1, o.getVersionID());
+            else {
+                stmt.setNull(1, java.sql.Types.NULL);
+            }
+
+            if (o.getTitle() != null)
+                stmt.setString(2, o.getTitle());
+            else {
+                stmt.setNull(2, java.sql.Types.NULL);
+            }
+
+            if (o.getAuthor() != null)
+                stmt.setString(3, o.getAuthor());
+            else {
+                stmt.setNull(3, java.sql.Types.NULL);
+            }
+
+            if (o.getYear() != null)
+                stmt.setDate(4, Date.valueOf(LocalDate.of(o.getYear().getValue(), 1, 1)));
+            else {
+                stmt.setNull(4, java.sql.Types.NULL);
+            }
+
+            if (o.getPublisher() != null)
+                stmt.setString(5, o.getPublisher());
+            else {
+                stmt.setNull(5, java.sql.Types.NULL);
+            }
+
+            if (o.getGenre() != null)
+                stmt.setInt(6, o.getGenre().ordinal());
+            else {
+                stmt.setNull(6, java.sql.Types.NULL);
+            }
+
+            if (o.getFormat() != null)
+                stmt.setInt(7, o.getFormat().ordinal());
+            else {
+                stmt.setNull(7, java.sql.Types.NULL);
+            }
+
+            if (o.getPrice() != null)
+                stmt.setFloat(8, o.getPrice());
+            else {
+                stmt.setNull(8, java.sql.Types.NULL);
+            }
+
+            // WHERE condition
+            stmt.setString(9, o.getISBN());
+
+            stmt.executeUpdate();
             Log.l.info(String.format("%s: updated in BOOKS", o.getISBN()));
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
+
     public void remove(Book o) {
         try {
             String query = String.join("\n", "DELETE FROM BOOKS", "WHERE", String.format("ISBN = %s", o.getISBN()));
             Statement stmt = conn.createStatement();
             stmt.executeQuery(query);
-            BookList.remove(o);
             Log.l.info(String.format("%s: deleted from BOOKS", o.getISBN()));
         } catch (SQLException e) {
             e.printStackTrace();

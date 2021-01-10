@@ -1,19 +1,15 @@
 package natic.review;
 
-import natic.IDGenerator;
 import natic.Log;
 import natic.Provider;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class ReviewProvider implements Provider<Review> {
-    private ArrayList<Review> ReviewList;
-    private IDGenerator IDGen;
     private Connection conn;
 
-    public ReviewProvider(Connection conn, IDGenerator idgen) {
+    public ReviewProvider(Connection conn) {
         this.conn = conn;
-        this.IDGen = idgen;
     }
 
     public Review get(Review o) {

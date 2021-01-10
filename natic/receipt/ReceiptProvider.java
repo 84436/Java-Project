@@ -7,7 +7,6 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class ReceiptProvider implements Provider<Receipt> {
-    private ArrayList<Receipt> ReceiptList;
     private IDGenerator IDGen;
     private Connection conn;
 
@@ -20,8 +19,13 @@ public class ReceiptProvider implements Provider<Receipt> {
         return null;
     }
 
+    public ArrayList<Receipt> get(String CustomerID) {
+        return null;
+    }
+
     public void add(Receipt o) {
         try {
+            o.setID(IDGen.next());
             String query;
             if (o.getClass().getName() == "BuyReceipt") {
                 query = String.format(

@@ -1,7 +1,6 @@
 package natic.receipt;
 
 import java.time.LocalDate;
-import java.util.Currency;
 
 public abstract class Receipt {
     private String ID;

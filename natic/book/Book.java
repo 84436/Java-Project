@@ -2,19 +2,18 @@ package natic.book;
 
 import natic.book.BookEnums.*;
 import java.time.Year;
-import java.util.Currency;
 
 public class Book {
     private String ISBN;
-    private int VersionID;
+    private Integer VersionID;
     private String Title;
     private String Author;
     private Year Year;
     private String Publisher;
     private BookGenre Genre;
-    private float Rating;
+    private Float Rating;
     private BookFormat Format;
-    private float Price;
+    private Float Price;
 
     public String getISBN() {
         return ISBN;
@@ -24,11 +23,11 @@ public class Book {
         this.ISBN = iSBN;
     }
 
-    public int getVersionID() {
+    public Integer getVersionID() {
         return VersionID;
     }
 
-    public void setVersionID(int versionID) {
+    public void setVersionID(Integer versionID) {
         this.VersionID = versionID;
     }
 
@@ -72,11 +71,11 @@ public class Book {
         this.Genre = genre;
     }
 
-    public float getRating() {
+    public Float getRating() {
         return Rating;
     }
 
-    public void setRating(float rating) {
+    public void setRating(Float rating) {
         this.Rating = rating;
     }
 
@@ -88,10 +87,10 @@ public class Book {
         this.Format = format;
     }
 
-    public float getPrice() {
+    public Float getPrice() {
         return Price;
     }
-    public void setPrice(float price) {
+    public void setPrice(Float price) {
         this.Price = price;
     }
 }

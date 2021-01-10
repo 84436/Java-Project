@@ -1,6 +1,5 @@
 package natic.book;
 
-import natic.IDGenerator;
 import natic.Log;
 import natic.Provider;
 import natic.book.BookEnums.BookFormat;
@@ -11,13 +10,10 @@ import java.time.Year;
 import java.util.ArrayList;
 
 public class BookListProvider implements Provider<BookList> {
-    private ArrayList<BookList> BookListList;
-    private IDGenerator IDGen;
     private Connection conn;
 
-    public BookListProvider(Connection conn, IDGenerator idgen) {
+    public BookListProvider(Connection conn) {
         this.conn = conn;
-        this.IDGen = idgen;
     }
 
     public BookList get(BookList o) {
@@ -57,22 +53,27 @@ public class BookListProvider implements Provider<BookList> {
 
     public void add(BookList o) {
         try {
-            if (o.getClass().getName() == "BranchStockList") {
+            if (o.getClass().getName() == "natic.book.BranchStockList") {
                 BranchStockList b = (BranchStockList) o;
-                String query = String.format(
-                        "INSERT INTO BranchStockLists (BranchID, ISBN, Stock) VALUES ('%s', '%s', %d)", b.getOwnerID(),
-                        b.getISBN(), b.getStock());
-                Statement stmt = conn.createStatement();
-                stmt.executeQuery(query);
+                String query = "INSERT INTO BranchStockLists (BranchID, ISBN, Stock) VALUES (?, ?, ?)";
+                PreparedStatement stmt = conn.prepareStatement(query);
+
+                stmt.setString(1, b.getOwnerID());
+                stmt.setString(2, b.getISBN());
+                stmt.setInt(3, b.getStock());
+
+                stmt.executeUpdate();
                 Log.l.info(String.format("%s: inserted into BRANCHSTOCKLISTS %s", b.getISBN(), b.getOwnerID()));
-            } else if (o.getClass().getName() == "CustomerLibrary") {
+            } else if (o.getClass().getName() == "natic.book.CustomerLibrary") {
                 CustomerLibrary c = (CustomerLibrary) o;
-                String query = String.format(
-                        "INSERT INTO CustomerLibraries (CustomerID, ISBN, ExpiryDate) VALUES ('%s', '%s', '%d-%d-%d')",
-                        c.getOwnerID(), c.getISBN(), c.getExpireDate().getYear(), c.getExpireDate().getMonth(),
-                        c.getExpireDate().getDayOfMonth());
-                Statement stmt = conn.createStatement();
-                stmt.executeQuery(query);
+                String query = "INSERT INTO CustomerLibraries (CustomerID, ISBN, ExpiryDate) VALUES (?, ?, ?)";
+                PreparedStatement stmt = conn.prepareStatement(query);
+
+                stmt.setString(1, c.getOwnerID());
+                stmt.setString(2, c.getISBN());
+                stmt.setDate(3, Date.valueOf(c.getExpireDate()));
+;
+                stmt.executeUpdate();
                 Log.l.info(String.format("%s: inserted into CUSTOMERLIBRARIES %s", c.getISBN(), c.getOwnerID()));
             }
         } catch (SQLException e) {
@@ -82,22 +83,29 @@ public class BookListProvider implements Provider<BookList> {
 
     public void edit(BookList o) {
         try {
-            if (o.getClass().getName() == "BranchStockList") {
+            Log.l.info(o.getClass().getName());
+            if (o.getClass().getName() == "natic.book.BranchStockList") {
                 BranchStockList b = (BranchStockList) o;
-                String query = String.format(
-                        "UPDATE BranchStockLists SET Stock = %d WHERE BranchID = '%s' AND ISBN = '%s'", b.getStock(),
-                        b.getOwnerID(), b.getISBN());
-                Statement stmt = conn.createStatement();
-                stmt.executeQuery(query);
+                String query = "UPDATE BranchStockLists SET Stock = ? WHERE BranchID = ? AND ISBN = ?";
+                PreparedStatement stmt = conn.prepareStatement(query);
+
+                stmt.setInt(1, b.getStock());
+                stmt.setString(2, b.getOwnerID());
+                stmt.setString(3, b.getISBN());
+
+                stmt.executeUpdate();
                 Log.l.info(String.format("%s: Updated BRANCHSTOCKLISTS %s", b.getISBN(), b.getOwnerID()));
 
-            } else if (o.getClass().getName() == "CustomerLibrary") {
+            } else if (o.getClass().getName() == "natic.book.CustomerLibrary") {
                 CustomerLibrary c = (CustomerLibrary) o;
-                String query = String.format(
-                        "UPDATE C SET ExpiryDate = '%d-%d-%d' WHERE CustomerID = '%s' AND ISBN = '%s'",
-                        c.getExpireDate().getYear(), c.getExpireDate().getMonth(), c.getOwnerID(), c.getISBN());
-                Statement stmt = conn.createStatement();
-                stmt.executeQuery(query);
+                String query = "UPDATE CUSTOMERLIBRARIES SET ExpiryDate = ? WHERE CustomerID = ? AND ISBN = ?";
+                PreparedStatement stmt = conn.prepareStatement(query);
+
+                stmt.setDate(1, Date.valueOf(c.getExpireDate()));
+                stmt.setString(2, c.getOwnerID());
+                stmt.setString(3, c.getISBN());
+
+                stmt.executeUpdate();
                 Log.l.info(String.format("%s: Updated CUSTOMERLIBRARIES %s", c.getISBN(), c.getOwnerID()));
             }
         } catch (SQLException e) {
@@ -110,10 +118,13 @@ public class BookListProvider implements Provider<BookList> {
 
     public void removeOne(String BranchID, String ISBN) {
         try {
-            String query = String.format("DELETE FROM BRANCHSTOCKLISTS WHERE BranchID = '%s' AND ISBN = '%s'", BranchID,
-                    ISBN);
-            Statement stmt = conn.createStatement();
-            stmt.executeQuery(query);
+            String query = "DELETE FROM BRANCHSTOCKLISTS WHERE BranchID = ? AND ISBN = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            stmt.setString(1, BranchID);
+            stmt.setString(2, ISBN);
+
+            stmt.executeUpdate();
             Log.l.info(String.format("%s: Delted from BRANCHSTOCKLISTS %s", ISBN, BranchID));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -123,15 +134,21 @@ public class BookListProvider implements Provider<BookList> {
     public void removeAll(String OwnerID, boolean isCustomer) {
         try {
             if (isCustomer) {
-                String query = String.format("DELETE FROM CUSTOMERLIBRARIES WHERE CustomerID = '%s'", OwnerID);
-                Statement stmt = conn.createStatement();
-                stmt.executeQuery(query);
+                String query = "DELETE FROM CUSTOMERLIBRARIES WHERE CustomerID = ?";
+                PreparedStatement stmt = conn.prepareStatement(query);
+
+                stmt.setString(1, OwnerID);
+
+                stmt.executeUpdate();
                 Log.l.info(String.format("%s: Delted from CUSTOMERLIBRARIES", OwnerID));
             }
             else {
-                String query = String.format("DELETE FROM BRANCHSTOCKLISTS WHERE BranchID = '%s'", OwnerID);
-                Statement stmt = conn.createStatement();
-                stmt.executeQuery(query);
+                String query = "DELETE FROM BRANCHSTOCKLISTS WHERE BranchID = ?";
+                PreparedStatement stmt = conn.prepareStatement(query);
+
+                stmt.setString(1, OwnerID);
+
+                stmt.executeUpdate();
                 Log.l.info(String.format("%s: Delted from BRANCHSTOCKLISTS", OwnerID));
             }
         } catch (SQLException e) {
