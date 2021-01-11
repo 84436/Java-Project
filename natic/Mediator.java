@@ -235,7 +235,7 @@ public class Mediator {
     }
 
     // Buy-Rent function
-    public void buyBook(String StaffID, String CustomerID, String ISBN) {
+    public void buyBook(String StaffID, String CustomerID, String ISBN) throws SQLException {
         Book b = BOOK.get(ISBN);
         CustomerLibrary c = BOOKLIST.getBookInCusLib(CustomerID, ISBN);
 
@@ -308,7 +308,7 @@ public class Mediator {
         RECEIPT.add(receipt);
     }
 
-    public void buyAtCounter(String StaffID, String CustomerID, ArrayList<String> ISBNs) {
+    public void buyAtCounter(String StaffID, String CustomerID, ArrayList<String> ISBNs) throws SQLException {
         for (int i = 0; i < ISBNs.size(); i++) {
             buyBook(StaffID, CustomerID, ISBNs.get(i));
         }
@@ -458,5 +458,9 @@ public class Mediator {
     // RECEIPTS function
     public ArrayList<Receipt> getAllReceipts(String CustomerID) {
         return RECEIPT.get(CustomerID);
+    }
+
+    public Staff getStaffID(String ID) throws SQLException {
+        return ACCOUNT.getStaff(ID);
     }
 }
