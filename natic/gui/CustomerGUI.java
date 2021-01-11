@@ -13,6 +13,8 @@ import java.util.*;
 import java.text.*;
 import natic.*;
 import natic.account.Customer;
+import natic.book.Book;
+import natic.review.Review;
 
 public class CustomerGUI extends JFrame {
     
@@ -39,6 +41,8 @@ public class CustomerGUI extends JFrame {
     private JTextField txtLibraryGenre;
     private JTextField txtLibraryFormat;
     private JTextField txtLibraryPrice;
+    private JTextPane txtBookReviews;
+    private JLabel lblLibraryRatingAvg;
     
     private JButton btnBuy;
     private JButton btnRent;
@@ -233,7 +237,7 @@ public class CustomerGUI extends JFrame {
         
         JPanel BookDetails = new JPanel();
         scrollBookDetails.setViewportView(BookDetails);
-        BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][][40px,center][][][][][][][]"));
+        BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][40px,center][][][]"));
         
         JLabel lblBookCover = new JLabel("");
         JLabel lblHeaderLibraryCommonFields = new JLabel(GUIHelpers.htmlHeaderSmall("Overview"));
@@ -247,6 +251,8 @@ public class CustomerGUI extends JFrame {
         JLabel lblLibraryGenre = new JLabel("Genre");
         JLabel lblLibraryFormat = new JLabel("Format");
         JLabel lblLibraryPrice = new JLabel("Price");
+        JLabel lblHeaderLibraryReviews = new JLabel(GUIHelpers.htmlHeaderSmall("Reviews"));
+        lblLibraryRatingAvg = new JLabel("Average rating"); 
         
         txtLibraryISBN = new JTextField();
         txtLibraryTitle = new JTextField();
@@ -258,6 +264,8 @@ public class CustomerGUI extends JFrame {
         txtLibraryGenre = new JTextField();
         txtLibraryFormat = new JTextField();
         txtLibraryPrice = new JTextField();
+        JSeparator sepBookDetails2 = new JSeparator();
+        txtBookReviews = new JTextPane();
         
         txtLibraryISBN.setEditable(false);
         txtLibraryTitle.setEditable(false);
@@ -288,36 +296,43 @@ public class CustomerGUI extends JFrame {
         txtLibraryGenre.setColumns(10);
         txtLibraryFormat.setColumns(10);
         txtLibraryPrice.setColumns(10);
-        
+
         sepBookDetails.setForeground(new Color(192, 192, 192));
-        
+        sepBookDetails2.setForeground(new Color(192, 192, 192));
+        txtBookReviews.setBackground(new Color(240, 240, 240));
+        txtBookReviews.setEditable(false);
+
         lblPurchaseState = new JLabel("{current rental/purchase state}");
         BookDetails.add(lblPurchaseState, "cell 0 0 2 1");
         lblPurchaseState.setHorizontalAlignment(SwingConstants.CENTER);
         
-        BookDetails.add(lblBookCover, "cell 0 1 2 1");
-        BookDetails.add(lblHeaderLibraryCommonFields, "cell 0 2 2 1");
-        BookDetails.add(lblLibraryISBN, "cell 0 3");
-        BookDetails.add(lblLibraryTitle, "cell 0 4");
-        BookDetails.add(lblLibraryAuthor, "cell 0 5");
-        BookDetails.add(lblHeaderLibraryDetails, "cell 0 7 2 1");
-        BookDetails.add(lblLibraryVersionID, "cell 0 8");
-        BookDetails.add(lblLibraryYear, "cell 0 9");
-        BookDetails.add(lblLibraryPublisher, "cell 0 10");
-        BookDetails.add(lblLibraryGenre, "cell 0 11");
-        BookDetails.add(lblLibraryFormat, "cell 0 12");
-        BookDetails.add(lblLibraryPrice, "cell 0 13");
+        BookDetails.add(lblBookCover, "cell 0 0 2 1");
+        BookDetails.add(lblHeaderLibraryCommonFields, "cell 0 1 2 1");
+        BookDetails.add(lblLibraryISBN, "cell 0 2");
+        BookDetails.add(lblLibraryTitle, "cell 0 3");
+        BookDetails.add(lblLibraryAuthor, "cell 0 4");
+        BookDetails.add(lblHeaderLibraryDetails, "cell 0 6 2 1");
+        BookDetails.add(lblLibraryVersionID, "cell 0 7");
+        BookDetails.add(lblLibraryYear, "cell 0 8");
+        BookDetails.add(lblLibraryPublisher, "cell 0 9");
+        BookDetails.add(lblLibraryGenre, "cell 0 10");
+        BookDetails.add(lblLibraryFormat, "cell 0 11");
+        BookDetails.add(lblLibraryPrice, "cell 0 12");
         
-        BookDetails.add(txtLibraryISBN, "cell 1 3,growx");
-        BookDetails.add(txtLibraryTitle, "cell 1 4,growx");
-        BookDetails.add(txtLibraryAuthor, "cell 1 5,growx");
-        BookDetails.add(sepBookDetails, "cell 0 6 2 1");
-        BookDetails.add(txtLibraryVersionID, "cell 1 8");
-        BookDetails.add(txtLibraryYear, "cell 1 9");
-        BookDetails.add(txtLibraryPublisher, "cell 1 10,growx");
-        BookDetails.add(txtLibraryGenre, "cell 1 11,growx");
-        BookDetails.add(txtLibraryFormat, "cell 1 12,growx");
-        BookDetails.add(txtLibraryPrice, "cell 1 13");
+        BookDetails.add(txtLibraryISBN, "cell 1 2,growx");
+        BookDetails.add(txtLibraryTitle, "cell 1 3,growx");
+        BookDetails.add(txtLibraryAuthor, "cell 1 4,growx");
+        BookDetails.add(sepBookDetails, "cell 0 5 2 1");
+        BookDetails.add(txtLibraryVersionID, "cell 1 7");
+        BookDetails.add(txtLibraryYear, "cell 1 8");
+        BookDetails.add(txtLibraryPublisher, "cell 1 9,growx");
+        BookDetails.add(txtLibraryGenre, "cell 1 10,growx");
+        BookDetails.add(txtLibraryFormat, "cell 1 11,growx");
+        BookDetails.add(txtLibraryPrice, "cell 1 12");
+        BookDetails.add(sepBookDetails2, "cell 0 13 2 1");
+        BookDetails.add(lblHeaderLibraryReviews, "cell 0 14 2 1");
+        BookDetails.add(lblLibraryRatingAvg, "cell 0 15 2 1");
+        BookDetails.add(txtBookReviews, "cell 0 16 2 1,grow");
         
         
         
@@ -615,5 +630,45 @@ public class CustomerGUI extends JFrame {
     
     private void populateOrdersTab() {
         Log.l.info("Orders tab populated");
+    }
+
+    private void updateBookDetailsRating(float rating) {
+        lblLibraryRatingAvg.setText(String.format("Average rating: %.1f", rating));
+    }
+
+    private void updateBookDetailsReviews(ArrayList<Review> reviews) {
+        String r = "";
+        for (int i = 0; i < reviews.size(); i++) {
+            Review each = reviews.get(i);
+            r += String.format("%s\n--%s, %d/5\n", each.getReviewText(), each.getCustomerID(), each.getReviewScore());
+            if (i < reviews.size() - 1)
+                r += "\n";
+        }
+        txtBookReviews.setText(r);
+    }
+
+    private void showBookDetails(String BookISBN) {
+        try {
+            Book b = M.getByISBN(BookISBN);
+
+            txtLibraryISBN.setText(b.getISBN());
+            txtLibraryTitle.setText(b.getTitle());
+            txtLibraryAuthor.setText(b.getAuthor());
+            txtLibraryVersionID.setText(Integer.toString(b.getVersionID()));
+            txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
+            txtLibraryPublisher.setText(b.getPublisher());
+            txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
+            txtLibraryGenre.setText(b.getGenre().name());
+            txtLibraryFormat.setText(b.getFormat().name());
+
+            txtLibraryISBN.setCaretPosition(0);
+            txtLibraryTitle.setCaretPosition(0);
+            txtLibraryAuthor.setCaretPosition(0);
+            txtLibraryPublisher.setCaretPosition(0);
+
+            updateBookDetailsRating(0);
+        } catch (SQLException exc) {
+            GUIHelpers.showErrorDialog("Unable to get selected book info", exc);
+        }
     }
 }
