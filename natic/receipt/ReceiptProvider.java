@@ -20,73 +20,58 @@ public class ReceiptProvider implements Provider<Receipt> {
         return null;
     }
 
-    public ArrayList<Receipt> get(String CustomerID) {
-        try{
-            String query = String.format("SELECT * FROM Receipts WHERE CustomerID = '%s'", CustomerID);
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            ArrayList<Receipt> resList = new ArrayList<>();
-            while (rs.next()) {
-                Receipt res = new Receipt();
-                res.setID(rs.getString("ID"));
-                res.setISBN(rs.getString("ISBN"));
-                res.setStaffID(rs.getString("StaffID"));
-                res.setCustomerID(rs.getString("CustomerID"));
-                Date reDate = rs.getDate("ReceiptDate");
-                res.setDate(LocalDate.of(reDate.getYear() + 1900, reDate.getMonth() + 1, reDate.getDate()));
-                res.setPrice(rs.getFloat("Price"));
-                Date returnDate = rs.getDate("ReturnOn");
-                res.setReturnOn(LocalDate.of(returnDate.getYear() + 1900, returnDate.getMonth() + 1, returnDate.getDate()));
+    public ArrayList<Receipt> get(String CustomerID) throws SQLException {
+        String query = String.format("SELECT * FROM Receipts WHERE CustomerID = '%s'", CustomerID);
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        ArrayList<Receipt> resList = new ArrayList<>();
+        while (rs.next()) {
+            Receipt res = new Receipt();
+            res.setID(rs.getString("ID"));
+            res.setISBN(rs.getString("ISBN"));
+            res.setStaffID(rs.getString("StaffID"));
+            res.setCustomerID(rs.getString("CustomerID"));
+            Date reDate = rs.getDate("ReceiptDate");
+            res.setDate(LocalDate.of(reDate.getYear() + 1900, reDate.getMonth() + 1, reDate.getDate()));
+            res.setPrice(rs.getFloat("Price"));
+            Date returnDate = rs.getDate("ReturnOn");
+            res.setReturnOn(LocalDate.of(returnDate.getYear() + 1900, returnDate.getMonth() + 1, returnDate.getDate()));
 
-                resList.add(res);
-            }
-            Log.l.info(String.format("%s: Get all RECEIPTS", CustomerID));
-            return resList;
+            resList.add(res);
         }
-        catch (SQLException e) {
-
-        }
-        return null;
+        Log.l.info(String.format("%s: Get all RECEIPTS", CustomerID));
+        return resList;
     }
 
-    public void add(Receipt o) {
-        try {
-            System.out.println(o.getClass().getName());
-            o.setID(IDGen.next());
-            String query = "INSERT INTO Receipts (ID, ISBN, StaffID, CustomerID, ReceiptDate, Price, ReturnOn) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = conn.prepareStatement(query);
+    public void add(Receipt o) throws SQLException {
+        System.out.println(o.getClass().getName());
+        o.setID(IDGen.next());
+        String query = "INSERT INTO Receipts (ID, ISBN, StaffID, CustomerID, ReceiptDate, Price, ReturnOn) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement stmt = conn.prepareStatement(query);
 
-            stmt.setString(1, o.getID());
-            stmt.setString(2, o.getISBN());
-            stmt.setString(3, o.getStaffID());
-            stmt.setString(4, o.getCustomerID());
-            stmt.setDate(5, Date.valueOf(o.getDate()));
-            stmt.setFloat(6, o.getPrice());
-            stmt.setDate(7, Date.valueOf(o.getReturnOn()));
+        stmt.setString(1, o.getID());
+        stmt.setString(2, o.getISBN());
+        stmt.setString(3, o.getStaffID());
+        stmt.setString(4, o.getCustomerID());
+        stmt.setDate(5, Date.valueOf(o.getDate()));
+        stmt.setFloat(6, o.getPrice());
+        stmt.setDate(7, Date.valueOf(o.getReturnOn()));
 
-            stmt.executeUpdate();
-            Log.l.info(String.format("%s: inserted into RECEIPTS", o.getID()));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        stmt.executeUpdate();
+        Log.l.info(String.format("%s: inserted into RECEIPTS", o.getID()));
     }
 
-    public void bypassReceiptForVirtualAcc(String VirtualID, String currentStaff) {
-        try {
-            String query = String.join("\n",
-                "UPDATE RECEIPTS",
-                "SET",
-                String.format("StaffID = \"%s\"", VirtualID),
-                "WHERE",
-                String.format("StaffID = \"%s\"", currentStaff)
-            );
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.executeUpdate();
-            Log.l.info(String.format("Bypass RECEIPTS from \"%s\" to \"%s\"", currentStaff, VirtualID));
-
-        } catch (SQLException exec) {
-            exec.printStackTrace();
-        }
+    public void bypassReceiptForVirtualAcc(String VirtualID, String currentStaff) throws SQLException {
+        String query = String.join("\n",
+            "UPDATE RECEIPTS",
+            "SET",
+            String.format("StaffID = \"%s\"", VirtualID),
+            "WHERE",
+            String.format("StaffID = \"%s\"", currentStaff)
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.executeUpdate();
+        Log.l.info(String.format("Bypass RECEIPTS from \"%s\" to \"%s\"", currentStaff, VirtualID));
     }
 
     // DO WE EVEN DO THIS?

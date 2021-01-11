@@ -201,28 +201,28 @@ public class Mediator {
     }
     
     // BOOKS functions
-    public void addBook(Book b) {
+    public void addBook(Book b) throws SQLException {
         BOOK.add(b);
     }
 
-    public void editBook(Book b) {
+    public void editBook(Book b) throws SQLException {
         BOOK.edit(b);
     }
 
-    public Book getByISBN(String match) {
+    public Book getByISBN(String match) throws SQLException {
         return BOOK.get(match);
     }
     
-    public ArrayList<Book> getAllBooks() {
+    public ArrayList<Book> getAllBooks() throws SQLException {
         return BOOK.getAll();
     }
 
-    public ArrayList<Book> searchBook(String query) {
+    public ArrayList<Book> searchBook(String query) throws SQLException {
         return BOOK.searchBook(query);
     }
 
     // REVIEWS function
-    public void reviewBook(Review o) {
+    public void reviewBook(Review o) throws SQLException {
         // Add a review
         REVIEW.add(o);
 
@@ -232,7 +232,7 @@ public class Mediator {
         BOOK.edit(b);
     }
 
-    public ArrayList<Review> getReview(String ISBN) {
+    public ArrayList<Review> getReview(String ISBN) throws SQLException {
         return REVIEW.get(ISBN);
     }
 
@@ -272,7 +272,7 @@ public class Mediator {
         }
     }
 
-    public void rentBook(String StaffID, String CustomerID, String ISBN, int numberOfMonth) {
+    public void rentBook(String StaffID, String CustomerID, String ISBN, int numberOfMonth) throws SQLException {
         Book b = BOOK.get(ISBN);
         CustomerLibrary c = BOOKLIST.getBookInCusLib(CustomerID, ISBN);
         Receipt receipt = new Receipt();
@@ -317,7 +317,7 @@ public class Mediator {
     }
 
     // BOOKLISTS function
-    public void addBookToBranch(String ISBN, String BranchID) {
+    public void addBookToBranch(String ISBN, String BranchID) throws SQLException {
         BranchStockList b = new BranchStockList();
         b.setOwnerID(BranchID);
         b.setStock(1);
@@ -326,7 +326,7 @@ public class Mediator {
         BOOKLIST.add(b);
     }
 
-    public void updateStock(String BranchID, String ISBN, int amount) {
+    public void updateStock(String BranchID, String ISBN, int amount) throws SQLException {
         if (amount == 0) {
             BOOKLIST.removeOne(BranchID, ISBN);
         } else {
@@ -338,11 +338,11 @@ public class Mediator {
         }
     }
 
-    public void removeBookFromBranch(String ISBN, String BranchID) {
+    public void removeBookFromBranch(String ISBN, String BranchID) throws SQLException {
         BOOKLIST.removeOne(BranchID, ISBN);
     }
 
-    public ArrayList<CustomerLibrary> getCustomerLibrary(String CustomerID) {
+    public ArrayList<CustomerLibrary> getCustomerLibrary(String CustomerID) throws SQLException {
         return BOOKLIST.getCustomerLibrary(CustomerID);
     }
     
@@ -445,20 +445,20 @@ public class Mediator {
         }
     }
     
-    public ArrayList<BranchStockList> getBranchStockList(String BranchID) {
+    public ArrayList<BranchStockList> getBranchStockList(String BranchID) throws SQLException {
         return BOOKLIST.getBranchLibrary(BranchID);
     }
 
-    public ArrayList<CustomerLibrary> searchInCusLib(String CustomerID, String match) {
+    public ArrayList<CustomerLibrary> searchInCusLib(String CustomerID, String match) throws SQLException {
         return BOOKLIST.searchInCusLib(CustomerID, match);
     }
 
-    public ArrayList<BranchStockList> searchInBranLib(String BranchID, String match) {
+    public ArrayList<BranchStockList> searchInBranLib(String BranchID, String match) throws SQLException {
         return BOOKLIST.searchInBranLib(BranchID, match);
     }
 
     // RECEIPTS function
-    public ArrayList<Receipt> getAllReceipts(String CustomerID) {
+    public ArrayList<Receipt> getAllReceipts(String CustomerID) throws SQLException {
         return RECEIPT.get(CustomerID);
     }
 
