@@ -5,15 +5,21 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
+
 import net.miginfocom.swing.MigLayout;
 
 import java.util.*;
 import natic.*;
+import natic.account.Staff;
+import natic.book.Book;
+import natic.book.BranchStockList;
 
 public class StaffGUI extends JFrame {
     
     private static final long serialVersionUID = 1L;
     Mediator M = Mediator.getInstance();
+    Staff staff;
     
     private JTextField txtAccountName;
     private JTextField txtAccountBranch;
@@ -61,7 +67,12 @@ public class StaffGUI extends JFrame {
     
     // MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
     
-    public StaffGUI() {
+    public StaffGUI(String ID) {
+        try {
+            staff = M.getStaffByID(ID);
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
         
         /**
         * Base
@@ -681,12 +692,16 @@ public class StaffGUI extends JFrame {
         switch (tabIndex) {
             case 0: populateAccountTab(); break;
             case 1: populateCounterTab(); break;
-            case 2: populateLibraryTab(); break;
+            case 2: populateLibraryTab(true); break;
             case 3: populateOrdersTab(); break;
         }
     }
     
     private void populateAccountTab() {
+        txtAccountName.setText(staff.getName());
+        txtAccountEmail.setText(staff.getEmail());
+        txtAccountPhone.setText(staff.getPhone());
+        txtAccountBranch.setText(staff.getBranchID());
         Log.l.info("Account tab populated");
     }
     
@@ -694,7 +709,43 @@ public class StaffGUI extends JFrame {
         Log.l.info("Counter tab populated");
     }
     
-    private void populateLibraryTab() {
+    private void populateLibraryTab(boolean isFilter) {
+        String[] tableHeaders = {GUIHelpers.htmlBoldText("Title"), GUIHelpers.htmlBoldText("Author"), GUIHelpers.htmlBoldText("Year")};
+
+        ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
+
+        try {
+            if (isFilter) {
+                ArrayList<BranchStockList> booksBranch = M.getBranchStockList(staff.getBranchID());
+                for (var bookBranch: booksBranch) {
+                    ArrayList<Object> record = new ArrayList<>();
+                    record.add(bookBranch.getBook().getTitle());
+                    record.add(bookBranch.getBook().getAuthor());
+                    record.add(bookBranch.getBook().getYear());
+                    tableData.add(record);
+                }
+            }   
+            else {
+                ArrayList<Book> books = M.getAllBooks();
+                for (var book: books) {
+                    ArrayList<Object> record = new ArrayList<>();
+                    record.add(book.getTitle());
+                    record.add(book.getAuthor());
+                    record.add(book.getYear());
+                    tableData.add(record);
+                }
+            }
+        }   
+        catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+        // extract and push each records
+        
+
+        CustomTableModel tbmLib = new CustomTableModel(tableHeaders, tableData);
+        tblLibrary.setRowHeight(24);
+        tblLibrary.setModel(tbmLib);
+        tblLibrary.setAutoCreateRowSorter(true);
         Log.l.info("Library tab populated");
     }
     

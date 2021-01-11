@@ -10,7 +10,7 @@ public class AccountEnums {
         //#region: Values
         CUSTOMER("Customer"),
         STAFF("Staff"),
-        ADMIN("Administrator"),
+        ADMIN("Admin"),
         UNKNOWN("unknown")
         ;
         //#endregion

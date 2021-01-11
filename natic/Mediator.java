@@ -460,7 +460,19 @@ public class Mediator {
         return RECEIPT.get(CustomerID);
     }
 
-    public Staff getStaffID(String ID) throws SQLException {
+    public Staff getStaffByID(String ID) throws SQLException {
         return ACCOUNT.getStaff(ID);
+    }
+
+    public Admin getAdminByID(String ID) throws SQLException {
+        return ACCOUNT.getAdmin(ID);
+    }
+
+    public Customer getCustomerByID(String ID) throws SQLException {
+        return ACCOUNT.getCustomer(ID);
+    }
+
+    public String getIDByEmail(String email) throws SQLException {
+        return ACCOUNT.getIDByEmail(email);
     }
 }

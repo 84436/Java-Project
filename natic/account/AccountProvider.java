@@ -8,6 +8,7 @@ import natic.account.AccountEnums.AccountType;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
 import natic.*;
 
 public class AccountProvider implements Provider<Account> {
@@ -115,9 +116,9 @@ public class AccountProvider implements Provider<Account> {
 
     public Staff getStaff(String ID) throws SQLException {
         String query = String.join("\n",
-            "SELECT * FROM STAFF",
+            "SELECT * FROM STAFF join ACCOUNTS on STAFF.ID = ACCOUNTS.ID",
             "WHERE",
-            "ID = ?"
+            "STAFF.ID = ?"
         );
         PreparedStatement stmt = conn.prepareStatement(query);
 
@@ -127,8 +128,61 @@ public class AccountProvider implements Provider<Account> {
         while (rs.next()) {
             Staff staff = new Staff();
             staff.setID(rs.getString("ID"));
+            staff.setType(AccountType.values()[rs.getInt("Type")]);
+            staff.setName(rs.getString("Name"));
+            staff.setEmail(rs.getString("Email"));
+            staff.setPhone(rs.getString("Phone"));
             staff.setBranchID(rs.getString("BranchID"));
             return staff;
+        }
+        return null;
+    }
+
+    public Admin getAdmin(String ID) throws SQLException {
+        String query = String.join("\n",
+            "SELECT * FROM ACCOUNTS",
+            "WHERE",
+            "ID = ?"
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+
+        stmt.setString(1, ID);
+        
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            Admin admin = new Admin();
+            admin.setID(rs.getString("ID"));
+            admin.setEmail(rs.getString("Email"));
+            admin.setType(AccountType.values()[rs.getInt("Type")]);
+            admin.setName(rs.getString("Name"));
+            admin.setPhone(rs.getString("Phone"));
+            return admin;
+        }
+        return null;
+    }
+
+    public Customer getCustomer(String ID) throws SQLException {
+        String query = String.join("\n",
+            "SELECT * FROM CUSTOMERS join ACCOUNTS on CUSTOMERS.ID = ACCOUNTS.ID",
+            "WHERE",
+            "CUSTOMERS.ID = ?"
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+
+        stmt.setString(1, ID);
+        
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            Customer customer = new Customer();
+            customer.setID(rs.getString("ID"));
+            customer.setType(AccountType.values()[rs.getInt("Type")]);
+            customer.setName(rs.getString("Name"));
+            customer.setEmail(rs.getString("Email"));
+            customer.setPhone(rs.getString("Phone"));
+            customer.setDoB(LocalDate.of(rs.getDate("DoB").getYear() + 1900, rs.getDate("DoB").getMonth() + 1, rs.getDate("DoB").getDate()));
+            customer.setAddress(rs.getString("Address"));
+            customer.setSignUpDate(LocalDate.of(rs.getDate("SignUpDate").getYear() + 1900, rs.getDate("SignUpDate").getMonth() + 1, rs.getDate("SignUpDate").getDate()));
+            return customer;
         }
         return null;
     }
@@ -296,9 +350,10 @@ public class AccountProvider implements Provider<Account> {
         stmt.executeUpdate();
         Log.l.info(String.format("%s: update in ACCOUNTS", o.getID()));
         stmt.close();
+        Log.l.info(oType.toString());
 
-        switch (oType) {
-            case CUSTOMER:
+        switch (oType.toString()) {
+            case "Customer":
                 Customer oc = (Customer) o;
                 String queryc = String.join("\n",
                     "UPDATE CUSTOMERS",
@@ -329,7 +384,7 @@ public class AccountProvider implements Provider<Account> {
                 Log.l.info(String.format("%s: update in CUSTOMER", o.getID()));
                 break;
 
-            case STAFF:
+            case "Staff":
                 Staff os = (Staff) o;
                 String querys = String.join("\n", 
                     "UPDATE STAFF", 
@@ -354,11 +409,11 @@ public class AccountProvider implements Provider<Account> {
                 Log.l.info(String.format("%s: update in STAFF", o.getID()));
                 break;
 
-            case ADMIN:
+            case "Admin":
                 Log.l.info(String.format("%s: account is ADMIN, no further actions taken", o.getID()));
                 break;
 
-            case UNKNOWN:
+            case "Unknown":
                 Log.l.warning(String.format("%s: something's off. The account type is UNKNOWN.", o.getID()));
                 break;
         }
@@ -568,5 +623,17 @@ public class AccountProvider implements Provider<Account> {
         }
         Log.l.info("All Staff found!");
         return accountList;
+    }
+
+    public String getIDByEmail(String email) throws SQLException {
+        String query = String.format("SELECT * FROM ACCOUNTS WHERE Email = '%s'", email);
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("ID");
+        }
+
+        return null;
     }
 }

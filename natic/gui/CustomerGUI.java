@@ -5,20 +5,25 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
+
 import net.miginfocom.swing.MigLayout;
 
 import java.util.*;
 import java.text.*;
 import natic.*;
+import natic.account.Customer;
 
 public class CustomerGUI extends JFrame {
     
     private static final long serialVersionUID = 1L;
     Mediator M = Mediator.getInstance();
+    Customer customer;
     
     private JTextField txtAccountName;
     private JTextField txtAccountEmail;
     private JTextField txtAccountPhone;
+    private JFormattedTextField ftxtAccountDoB;
     private JPasswordField pwtxtOld;
     private JPasswordField pwtxtNew;
     private JPasswordField pwtxtConfirm;
@@ -55,8 +60,13 @@ public class CustomerGUI extends JFrame {
     
     // MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
     
-    public CustomerGUI() {
-        
+    public CustomerGUI(String ID) {
+        try {
+            customer = M.getCustomerByID(ID);
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+
         /**
          * Base
          */
@@ -133,7 +143,7 @@ public class CustomerGUI extends JFrame {
         JLabel lblAccountDoB = new JLabel("Date of Birth");
         AccountInfoEdit.add(lblAccountDoB, "cell 0 4,alignx trailing");
         
-        JFormattedTextField ftxtAccountDoB = new JFormattedTextField(new SimpleDateFormat("yyyy-MM-dd"));
+        ftxtAccountDoB = new JFormattedTextField(new SimpleDateFormat("yyyy-MM-dd"));
         ftxtAccountDoB.setValue(new Date());
         AccountInfoEdit.add(ftxtAccountDoB, "cell 1 4 2 1,growx");
         
@@ -583,6 +593,10 @@ public class CustomerGUI extends JFrame {
     }
     
     private void populateAccountTab() {
+        txtAccountName.setText(customer.getName());
+        txtAccountEmail.setText(customer.getEmail());
+        txtAccountPhone.setText(customer.getPhone());
+        ftxtAccountDoB.setText(String.format("%04d-%02d-%02d", customer.getDoB().getYear(), customer.getDoB().getMonth().getValue(), customer.getDoB().getDayOfMonth()));
         Log.l.info("Account tab populated");
     }
     

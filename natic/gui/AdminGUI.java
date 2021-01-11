@@ -13,14 +13,17 @@ import net.miginfocom.swing.MigLayout;
 import java.util.*;
 import natic.*;
 import natic.account.Account;
+import natic.account.Admin;
 import natic.account.Staff;
+import natic.book.Book;
 import natic.branch.Branch;
 
 public class AdminGUI extends JFrame {
     
     private static final long serialVersionUID = 1L;
     Mediator M = Mediator.getInstance();
-    
+    Admin admin;
+
     private JTextField txtAccountName;
 	private JTextField txtAccountEmail;
 	private JTextField txtAccountPhone;
@@ -50,7 +53,12 @@ public class AdminGUI extends JFrame {
 	
 	// MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
 	
-	public AdminGUI() {
+	public AdminGUI(String ID) {
+        try {
+            admin = M.getAdminByID(ID);
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
 	    /**
 	     * Base
 	     */
@@ -527,14 +535,19 @@ public class AdminGUI extends JFrame {
         btnAccountAboutSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: AccountAboutSave");
+                
                 String name = txtAccountName.getText().trim();
                 String email = txtAccountEmail.getText().trim();
                 String phone = txtAccountPhone.getText().trim();
                 if (name.isBlank()) name = null;
                 if (email.isBlank()) email = null;
                 if (phone.isBlank()) phone = null;
+                admin.setName(name);
+                admin.setEmail(email);
+                admin.setPhone(phone);
                 try {
-                    M.editAccount(email, name, phone, null, null, null);
+                    M.editAccount(admin);
+                    populateAccountTab();
                 }
                 catch (Exception exc) {
                     exc.printStackTrace();
@@ -651,6 +664,9 @@ public class AdminGUI extends JFrame {
     }
     
     private void populateAccountTab() {
+        txtAccountName.setText(admin.getName());
+        txtAccountEmail.setText(admin.getEmail());
+        txtAccountPhone.setText(admin.getPhone());
         Log.l.info("Account tab populated");
     }
     
@@ -708,6 +724,28 @@ public class AdminGUI extends JFrame {
     }
     
     private void populateLibraryTab() {
+        String[] tableHeaders = {GUIHelpers.htmlBoldText("Title"), GUIHelpers.htmlBoldText("Author"), GUIHelpers.htmlBoldText("Year")};
+
+        ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
+
+        try {
+            ArrayList<Book> books = M.getAllBooks();
+            for (var book: books) {
+                ArrayList<Object> record = new ArrayList<>();
+                record.add(book.getTitle());
+                record.add(book.getAuthor());
+                record.add(book.getYear());
+                tableData.add(record);
+            }
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+        // extract and push each records
+
+        CustomTableModel tbmLib = new CustomTableModel(tableHeaders, tableData);
+        tblLibrary.setRowHeight(24);
+        tblLibrary.setModel(tbmLib);
+        tblLibrary.setAutoCreateRowSorter(true);
         Log.l.info("Library tab populated");
     }
 }

@@ -105,26 +105,29 @@ public class LoginGUI extends JFrame {
                     Log.l.info(oType.toString());
                     switch (oType) {
                         case CUSTOMER:
+                            String CusID = M.getIDByEmail(email);
                             txtEmail.setText("");
                             pwtxtPassword.setText("");
-                            CustomerGUI customer = new CustomerGUI();
+                            CustomerGUI customer = new CustomerGUI(CusID);
                             customer.setVisible(true);
                             setVisible(false);
                             break;
 
                         case STAFF:
+                            String StaffID = M.getIDByEmail(email);
                             txtEmail.setText("");
                             pwtxtPassword.setText("");
-                            StaffGUI staff = new StaffGUI();
+                            StaffGUI staff = new StaffGUI(StaffID);
                             staff.setVisible(true);
                             setVisible(false);
                             break;
 
                         case ADMIN:
+                            String AdminID = M.getIDByEmail(email);
                             txtEmail.setText("");
                             pwtxtPassword.setText("");
                             
-                            AdminGUI admin = new AdminGUI();
+                            AdminGUI admin = new AdminGUI(AdminID);
                             admin.setVisible(true);
                             setVisible(false);
                             
