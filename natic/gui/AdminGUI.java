@@ -878,7 +878,6 @@ public class AdminGUI extends JFrame {
         CustomTableModel tbmBranches = new CustomTableModel(tableHeaders, tableData);
         tblBranches.setRowHeight(24);
         tblBranches.setModel(tbmBranches);
-        tblBranches.setAutoCreateRowSorter(true);
         Log.l.info("Branches tab populated");
     }
 
@@ -905,7 +904,6 @@ public class AdminGUI extends JFrame {
         CustomTableModel tbmStaff = new CustomTableModel(tableHeaders, tableData);
         tblStaff.setRowHeight(24);
         tblStaff.setModel(tbmStaff);
-        tblStaff.setAutoCreateRowSorter(true);
         Log.l.info("Staff tab populated");
     }
     
@@ -931,7 +929,6 @@ public class AdminGUI extends JFrame {
         CustomTableModel tbmLib = new CustomTableModel(tableHeaders, tableData);
         tblLibrary.setRowHeight(24);
         tblLibrary.setModel(tbmLib);
-        tblLibrary.setAutoCreateRowSorter(true);
         Log.l.info("Library tab populated");
     }
 

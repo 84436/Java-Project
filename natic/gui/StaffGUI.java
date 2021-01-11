@@ -764,7 +764,6 @@ public class StaffGUI extends JFrame {
         CustomTableModel tbmLib = new CustomTableModel(tableHeaders, tableData);
         tblLibrary.setRowHeight(24);
         tblLibrary.setModel(tbmLib);
-        tblLibrary.setAutoCreateRowSorter(true);
         Log.l.info("Library tab populated");
     }
     
