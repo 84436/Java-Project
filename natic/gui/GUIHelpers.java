@@ -109,6 +109,10 @@ public class GUIHelpers {
         JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    public static void showInfoDialog(String content) {
+        JOptionPane.showMessageDialog(new JFrame(), content, "Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     // https://stackoverflow.com/a/144950
     public static void centerWindow(JFrame frame) {
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();

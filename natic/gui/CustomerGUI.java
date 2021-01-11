@@ -67,6 +67,7 @@ public class CustomerGUI extends JFrame {
     private JTextField txtOrderID;
     private JTextField txtOrderDate;
     private JTextField txtOrderStaffID;
+    private JTextField txtOrderReturnOn;
 
     private JCheckBox checkPurchased;
 
@@ -310,8 +311,8 @@ public class CustomerGUI extends JFrame {
         sepBookDetails2.setForeground(new Color(192, 192, 192));
 
         lblPurchaseState = new JLabel("{current rental/purchase state}");
+        lblPurchaseState.setHorizontalAlignment(SwingConstants.LEFT);
         BookDetails.add(lblPurchaseState, "cell 0 0 2 1");
-        lblPurchaseState.setHorizontalAlignment(SwingConstants.CENTER);
 
         BookDetails.add(lblBookCover, "cell 0 0 2 1");
         BookDetails.add(lblHeaderLibraryCommonFields, "cell 0 1 2 1");
@@ -375,12 +376,13 @@ public class CustomerGUI extends JFrame {
         JPanel OrderDetails = new JPanel();
         scrollOrderDetails.setViewportView(OrderDetails);
         OrderDetails
-                .setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][40px,center][][][][][][][][][][]"));
+                .setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][][][]"));
 
         JLabel lblHeaderOrderOverview = new JLabel(GUIHelpers.htmlHeaderSmall("Order info"));
         JLabel lblOrderID = new JLabel("Order ID");
         JLabel lblOrderDate = new JLabel("Date");
         JLabel lblOrderStaffID = new JLabel("Staff ID");
+        JLabel lblOrderReturnOn = new JLabel("Return on");
         JLabel lblHeaderOrderBookDetails = new JLabel(GUIHelpers.htmlHeaderSmall("Book details"));
         JLabel lblOrderISBN = new JLabel("ISBN");
         JLabel lblOrderTitle = new JLabel("Title");
@@ -395,6 +397,7 @@ public class CustomerGUI extends JFrame {
         txtOrderID = new JTextField();
         txtOrderDate = new JTextField();
         txtOrderStaffID = new JTextField();
+        txtOrderReturnOn = new JTextField();
         txtOrderISBN = new JTextField();
         txtOrderTitle = new JTextField();
         txtOrderAuthor = new JTextField();
@@ -408,6 +411,7 @@ public class CustomerGUI extends JFrame {
         txtOrderID.setEditable(false);
         txtOrderDate.setEditable(false);
         txtOrderStaffID.setEditable(false);
+        txtOrderReturnOn.setEditable(false);
         txtOrderISBN.setEditable(false);
         txtOrderTitle.setEditable(false);
         txtOrderAuthor.setEditable(false);
@@ -421,6 +425,7 @@ public class CustomerGUI extends JFrame {
         txtOrderID.setEnabled(false);
         txtOrderDate.setEnabled(false);
         txtOrderStaffID.setEnabled(false);
+        txtOrderReturnOn.setEnabled(false);
         txtOrderISBN.setEnabled(false);
         txtOrderTitle.setEnabled(false);
         txtOrderAuthor.setEnabled(false);
@@ -434,6 +439,7 @@ public class CustomerGUI extends JFrame {
         txtOrderID.setColumns(10);
         txtOrderDate.setColumns(10);
         txtOrderStaffID.setColumns(10);
+        txtOrderReturnOn.setColumns(10);
         txtOrderISBN.setColumns(10);
         txtOrderTitle.setColumns(10);
         txtOrderAuthor.setColumns(10);
@@ -451,30 +457,32 @@ public class CustomerGUI extends JFrame {
         OrderDetails.add(lblOrderID, "cell 0 1,alignx trailing");
         OrderDetails.add(lblOrderDate, "cell 0 2,alignx trailing");
         OrderDetails.add(lblOrderStaffID, "cell 0 3,alignx trailing");
-        OrderDetails.add(sepOrderDetails, "cell 0 4 2 1");
-        OrderDetails.add(lblHeaderOrderBookDetails, "cell 0 5 2 1");
-        OrderDetails.add(lblOrderISBN, "cell 0 6");
-        OrderDetails.add(lblOrderTitle, "cell 0 7");
-        OrderDetails.add(lblOrderAuthor, "cell 0 8");
-        OrderDetails.add(lblOrderVersionID, "cell 0 9");
-        OrderDetails.add(lblOrderYear, "cell 0 10");
-        OrderDetails.add(lblOrderPublisher, "cell 0 11");
-        OrderDetails.add(lblOrderGenre, "cell 0 12");
-        OrderDetails.add(lblOrderFormat, "cell 0 13");
-        OrderDetails.add(lblOrderPrice, "cell 0 14");
+        OrderDetails.add(lblOrderReturnOn, "cell 0 4, alignx trailing");
+        OrderDetails.add(sepOrderDetails, "cell 0 5 2 1");
+        OrderDetails.add(lblHeaderOrderBookDetails, "cell 0 6 2 1");
+        OrderDetails.add(lblOrderISBN, "cell 0 7");
+        OrderDetails.add(lblOrderTitle, "cell 0 8");
+        OrderDetails.add(lblOrderAuthor, "cell 0 9");
+        OrderDetails.add(lblOrderVersionID, "cell 0 10");
+        OrderDetails.add(lblOrderYear, "cell 0 11");
+        OrderDetails.add(lblOrderPublisher, "cell 0 12");
+        OrderDetails.add(lblOrderGenre, "cell 0 13");
+        OrderDetails.add(lblOrderFormat, "cell 0 14");
+        OrderDetails.add(lblOrderPrice, "cell 0 15");
 
         OrderDetails.add(txtOrderID, "cell 1 1,growx");
         OrderDetails.add(txtOrderDate, "cell 1 2,growx");
         OrderDetails.add(txtOrderStaffID, "cell 1 3,growx");
-        OrderDetails.add(txtOrderISBN, "cell 1 6,growx");
-        OrderDetails.add(txtOrderTitle, "cell 1 7,growx");
-        OrderDetails.add(txtOrderAuthor, "cell 1 8,growx");
-        OrderDetails.add(txtOrderVersionID, "cell 1 9");
-        OrderDetails.add(txtOrderYear, "cell 1 10");
-        OrderDetails.add(txtOrderPublisher, "cell 1 11,growx");
-        OrderDetails.add(txtOrderGenre, "cell 1 12,growx");
-        OrderDetails.add(txtOrderFormat, "cell 1 13,growx");
-        OrderDetails.add(txtOrderPrice, "cell 1 14");
+        OrderDetails.add(txtOrderReturnOn, "cell 1 4,growx");
+        OrderDetails.add(txtOrderISBN, "cell 1 7,growx");
+        OrderDetails.add(txtOrderTitle, "cell 1 8,growx");
+        OrderDetails.add(txtOrderAuthor, "cell 1 9,growx");
+        OrderDetails.add(txtOrderVersionID, "cell 1 10");
+        OrderDetails.add(txtOrderYear, "cell 1 11");
+        OrderDetails.add(txtOrderPublisher, "cell 1 12,growx");
+        OrderDetails.add(txtOrderGenre, "cell 1 13,growx");
+        OrderDetails.add(txtOrderFormat, "cell 1 14,growx");
+        OrderDetails.add(txtOrderPrice, "cell 1 15");
 
         /**
          * Cosmetics, etc.
@@ -575,6 +583,7 @@ public class CustomerGUI extends JFrame {
                 try {
                     M.editAccount(customer);
                     populateAccountTab();
+                    GUIHelpers.showInfoDialog("Account information saved");
                 } catch (Exception exc) {
                     GUIHelpers.showErrorDialog("Unable to edit account", exc);
                 }
@@ -602,6 +611,7 @@ public class CustomerGUI extends JFrame {
                         pwtxtOld.setText("");
                         pwtxtNew.setText("");
                         pwtxtConfirm.setText("");
+                        GUIHelpers.showInfoDialog("Password changed");
                     } else {
                         GUIHelpers.showErrorDialog("Password does not match", null);
                         pwtxtOld.setText("");
@@ -636,9 +646,9 @@ public class CustomerGUI extends JFrame {
                 String staffID = "AC00000000";
                 try {
                     M.buyBook(staffID, customer.getID(), BookISBN);
+                    GUIHelpers.showInfoDialog("Book bought");
                 } catch (SQLException exc) {
                     GUIHelpers.showErrorDialog("Unable to buy Book", exc);
-                    exc.printStackTrace();
                 }
             }
         });
@@ -650,9 +660,9 @@ public class CustomerGUI extends JFrame {
                 String staffID = "AC00000000";
                 try {
                     M.rentBook(staffID, customer.getID(), BookISBN, 1);
+                    GUIHelpers.showInfoDialog("Book rented for one (more) month");
                 } catch (SQLException exc) {
-                GUIHelpers.showErrorDialog("Unable to rent Book", exc);
-                exc.printStackTrace();
+                    GUIHelpers.showErrorDialog("Unable to rent Book", exc);
                 }
             }
         });
@@ -711,7 +721,7 @@ public class CustomerGUI extends JFrame {
                     }
 
                 } catch (SQLException exec) {
-                    exec.printStackTrace();
+                    GUIHelpers.showErrorDialog("Unable to search library", exec);
                 }
                 // extract and push each records
 
@@ -953,6 +963,10 @@ public class CustomerGUI extends JFrame {
             txtOrderISBN.setText(rec.getISBN());
             txtOrderID.setText(rec.getID());
             txtOrderStaffID.setText(rec.getStaffID());
+            txtOrderReturnOn.setText(rec.getReturnOn().toString());
+            if (txtOrderReturnOn.getText().equals("0001-01-01")) {
+                txtOrderReturnOn.setText("n/a (pernamently bought)");
+            }
             txtOrderPrice.setText(Float.toString(rec.getPrice()));
             txtOrderDate.setText(rec.getDate().toString());
             txtOrderTitle.setText(b.getTitle());

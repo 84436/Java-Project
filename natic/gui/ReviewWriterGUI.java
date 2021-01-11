@@ -148,7 +148,7 @@ public class ReviewWriterGUI extends JFrame {
                     dispose();
                 }
                 catch (Exception exc) {
-                    GUIHelpers.showErrorDialog("Unable to submit review.", exc);
+                    GUIHelpers.showErrorDialog("Unable to submit review. Check if you have already submitted a review before.", exc);
                 }
             }
         });

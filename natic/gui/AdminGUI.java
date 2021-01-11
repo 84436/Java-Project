@@ -414,6 +414,7 @@ public class AdminGUI extends JFrame {
         cboxLibraryGenre = new JComboBox();
         cboxLibraryFormat = new JComboBox();
         spinnerLibraryPrice = new JSpinner();
+        spinnerLibraryRentPrice = new JSpinner();
         JButton btnLibrarySave = new JButton("Save changes");
         JSeparator sepBookDetails2 = new JSeparator();
         JButton btnLibraryShowReviews = new JButton("Show reviews");
@@ -447,6 +448,7 @@ public class AdminGUI extends JFrame {
         spinnerLibraryYear.setEditor(ne_spinnerLibraryYear);
         spinnerLibraryVersionID.setEditor(ne_spinnerLibraryVersionID);
         spinnerLibraryPrice.setEditor(ne_spinnerLibraryPrice);
+        spinnerLibraryRentPrice.setEditor(ne_spinnerLibraryRentPrice);
 
         BookDetails.add(lblBookCover, "cell 0 0 2 1");
         BookDetails.add(lblHeaderLibraryCommonFields, "cell 0 1 2 1");
@@ -584,6 +586,7 @@ public class AdminGUI extends JFrame {
                 try {
                     M.editAccount(admin);
                     populateAccountTab();
+                    GUIHelpers.showInfoDialog("Account information saved");
                 }
                 catch (Exception exc) {
                     GUIHelpers.showErrorDialog("Unable to edit account", exc);
@@ -608,6 +611,7 @@ public class AdminGUI extends JFrame {
                         pwtxtOld.setText("");
                         pwtxtNew.setText("");
                         pwtxtConfirm.setText("");
+                        GUIHelpers.showInfoDialog("Password changed");
                     } else {
                         GUIHelpers.showErrorDialog("Password does not match", null);
                         pwtxtOld.setText("");
@@ -617,7 +621,7 @@ public class AdminGUI extends JFrame {
                 }
                 catch (Exception exc) {
                     GUIHelpers.showErrorDialog("Unable to change password", exc);
-                } 
+                }
             }
         });
 
@@ -656,7 +660,7 @@ public class AdminGUI extends JFrame {
                         tableData.add(record);
                     }
                 } catch (SQLException exec) {
-                    exec.printStackTrace();
+                    GUIHelpers.showErrorDialog("Unable to populate branch list", exec);
                 }
 
                 CustomTableModel tbmBranches = new CustomTableModel(tableHeaders, tableData);
@@ -701,6 +705,7 @@ public class AdminGUI extends JFrame {
                     txtBranchID.setText("");
                     txtBranchName.setText("");
                     txtBranchAddress.setText("");
+                    GUIHelpers.showInfoDialog("Branch removed");
                 } catch (SQLException exc) {
                     GUIHelpers.showErrorDialog("Unable to delete branch", exc);
                 }
@@ -730,6 +735,7 @@ public class AdminGUI extends JFrame {
                 try{
                     M.editBranch(b);
                     populateBranchesTab();
+                    GUIHelpers.showInfoDialog("Branch saved");
                 }
                 catch (SQLException exc) {
                     GUIHelpers.showErrorDialog("Unable to edit branch", exc);
@@ -795,7 +801,7 @@ public class AdminGUI extends JFrame {
                         tableData.add(record);
                 }
                 } catch (SQLException exec) {
-                    exec.printStackTrace();
+                    GUIHelpers.showErrorDialog("Unable to search staff", exec);
                 }
 
                 CustomTableModel tbmStaff = new CustomTableModel(tableHeaders, tableData);
@@ -842,10 +848,10 @@ public class AdminGUI extends JFrame {
                     txtStaffName.setText("");
                     txtStaffEmail.setText("");
                     txtStaffPhone.setText("");
-
                     cboxStaffBranch.removeAllItems();
+                    GUIHelpers.showInfoDialog("Staff removed");
                 } catch (SQLException exc) {
-                    GUIHelpers.showErrorDialog("Unable to delete branch", exc);
+                    GUIHelpers.showErrorDialog("Unable to delete staff", exc);
                 }
 
             }
@@ -884,6 +890,7 @@ public class AdminGUI extends JFrame {
                 try {
                     M.editAccount(s);
                     populateStaffTab();
+                    GUIHelpers.showInfoDialog("Staff saved");
                 } catch (SQLException exc) {
                     GUIHelpers.showErrorDialog("Unable to edit staff", exc);
                 }
@@ -951,7 +958,7 @@ public class AdminGUI extends JFrame {
                         tableData.add(record);
                     }
                 } catch (SQLException exec) {
-                    exec.printStackTrace();
+                    GUIHelpers.showErrorDialog("Unable to search library", exec);
                 }
                 // extract and push each records
 
@@ -981,8 +988,9 @@ public class AdminGUI extends JFrame {
                 b.setYear(Year.now());
                 b.setGenre(BookGenre.OTHER);
                 b.setFormat(BookFormat.EBOOK);
-                b.setRating(new Float(0));
-                b.setPrice(new Float(0));
+                b.setRating(Float.valueOf(0));
+                b.setBuyPrice(Float.valueOf(0));
+                b.setRentPrice(Float.valueOf(0));
 
                 try{
                     M.addBook(b);
@@ -1008,6 +1016,7 @@ public class AdminGUI extends JFrame {
                 Integer genre = cboxLibraryGenre.getSelectedIndex();
                 Integer format = cboxLibraryFormat.getSelectedIndex();
                 float price = (Float) spinnerLibraryPrice.getValue();
+                float rentPrice = (Float) spinnerLibraryRentPrice.getValue();
 
                 if (isbn.isBlank())
                     return;
@@ -1024,13 +1033,15 @@ public class AdminGUI extends JFrame {
                 b.setPublisher(publisher);
                 b.setVersionID((int)versionid);
                 b.setYear(Year.of(year));
-                b.setPrice(price);
+                b.setBuyPrice(price);
+                b.setRentPrice(rentPrice);
                 b.setFormat(BookFormat.values()[format]);
                 b.setGenre(BookGenre.values()[genre]);
 
                 try {
                     M.editBook(b);
                     populateLibraryTab();
+                    GUIHelpers.showInfoDialog("Book information saved");
                 } catch (SQLException exc) {
                     GUIHelpers.showErrorDialog("Unable to edit book", exc);
                 }
