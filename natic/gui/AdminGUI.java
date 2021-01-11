@@ -52,6 +52,7 @@ public class AdminGUI extends JFrame {
     private JTextField txtLibraryTitle;
     private JTextField txtLibraryAuthor;
     private JTextField txtLibraryPublisher;
+    private JTextField txtNewBookISBN;
 	
 	// MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
 	
@@ -331,7 +332,7 @@ public class AdminGUI extends JFrame {
         /**
          * Library
          */
-        
+
         JPanel Library = new JPanel();
         tabbedPane.addTab(GUIHelpers.htmlTabName("Library"), null, Library, null);
         Library.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow]"));
@@ -341,10 +342,17 @@ public class AdminGUI extends JFrame {
         GUIHelpers.addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
         
         JPanel BookActions = new JPanel();
+        BookActions.setLayout(new MigLayout("", "[225px,grow,fill][100px,fill]", "[34px]"));
+        
+        txtNewBookISBN = new JTextField();
+        GUIHelpers.addPlaceholderText(txtNewBookISBN, "ISBN");
+        txtNewBookISBN.setPreferredSize(new Dimension(10, 25));
         
         JButton btnLibraryAdd = new JButton("Add");
         btnLibraryAdd.setPreferredSize(new Dimension(100, 25));
-        BookActions.add(btnLibraryAdd);
+        
+        BookActions.add(txtNewBookISBN, "cell 0 0,alignx center,aligny center");
+        BookActions.add(btnLibraryAdd, "cell 1 0,alignx left,aligny center");
         
         tblLibrary = new JTable();
         
