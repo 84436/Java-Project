@@ -350,7 +350,6 @@ public class AccountProvider implements Provider<Account> {
         stmt.executeUpdate();
         Log.l.info(String.format("%s: update in ACCOUNTS", o.getID()));
         stmt.close();
-        Log.l.info(oType.toString());
 
         switch (oType.toString()) {
             case "Customer":
@@ -385,28 +384,7 @@ public class AccountProvider implements Provider<Account> {
                 break;
 
             case "Staff":
-                Staff os = (Staff) o;
-                String querys = String.join("\n", 
-                    "UPDATE STAFF", 
-                    "SET",
-                    "BranchID = ?", 
-                    "WHERE", 
-                    "ID = ?"
-                );
-
-                PreparedStatement stmts = conn.prepareStatement(querys);                    
-
-                if (os.getBranchID() != null) {
-                    stmts.setString(1, os.getBranchID());
-                } else {
-                    stmts.setNull(1, java.sql.Types.NULL);
-                }
-
-                // WHERE statement
-                stmts.setString(3, os.getID());
-
-                stmts.executeUpdate();
-                Log.l.info(String.format("%s: update in STAFF", o.getID()));
+                Log.l.info(String.format("%s: account is STAFF, no further actions taken", o.getID()));
                 break;
 
             case "Admin":
@@ -514,7 +492,7 @@ public class AccountProvider implements Provider<Account> {
             String.format("BranchID = \"%s\"", oldBranchID)
         );
         PreparedStatement stmt = conn.prepareStatement(query);
-        stmt.executeQuery();
+        stmt.executeUpdate();
     }
 
     public void removeStaffFromBranch(String ID) throws SQLException {
