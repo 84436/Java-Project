@@ -9,6 +9,8 @@ import natic.account.AccountEnums.AccountType;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.regex.*;
 
 import net.miginfocom.swing.MigLayout;
@@ -133,6 +135,9 @@ public class SignupGUI extends JFrame {
                 newCustomer.setPass(password);
                 newCustomer.setType(AccountType.CUSTOMER);
                 newCustomer.setName("");
+                newCustomer.setDoB(LocalDate.now());
+                newCustomer.setAddress("");
+                newCustomer.setSignUpDate(LocalDate.now());
 
                 try {
                     M.createAccount(newCustomer);
