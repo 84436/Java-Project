@@ -165,17 +165,15 @@ public class Mediator {
 
     public AccountType checkLogin(String email, String password) throws SQLException {
         if ((email != null && password != null)) {
-            if (ACCOUNT.getEmailforLogin(email)) {
-                if (ACCOUNT.checkPassword(email, password)) {
-                    return ACCOUNT.getType(email);
-                }
-            } 
+            if (!(ACCOUNT.getEmailforLogin(email) || ACCOUNT.checkPassword(email, password)))
+                return AccountType.UNKNOWN;
+            
+            return ACCOUNT.getType(email);
         }
         else {
             Log.l.info(String.format("%s: NOT FOUND", email));
             return AccountType.UNKNOWN;
         }
-        return null;
     }
     
     public void createAccount(Account oAccount) throws SQLException {

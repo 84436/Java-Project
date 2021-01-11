@@ -22,13 +22,13 @@ public class AccountProvider implements Provider<Account> {
     public boolean getEmailforLogin(String email) throws SQLException {
         String query = String.join("\n", 
             "SELECT * from ACCOUNTS",
-            "WHERE",
-            String.format("Email = \"%s\"", email)
+            "WHERE Email = ?"
         );
         PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setString(1, email);
         ResultSet rs = stmt.executeQuery();
         
-        if (rs != null) {
+        if (rs.next()) {
             Log.l.info(String.format("%s: found!", email));
             return true;
         }
@@ -38,8 +38,8 @@ public class AccountProvider implements Provider<Account> {
 
     public boolean checkPassword(String email, String password) throws SQLException {
         String query = String.join("\n", 
-            "SELECT ac.Email, ac.Pass",
-            "FROM ACCOUNTS as ac",
+            "SELECT Email, Pass",
+            "FROM ACCOUNTS",
             "WHERE Email = ?"  
         );
         
@@ -51,16 +51,12 @@ public class AccountProvider implements Provider<Account> {
         }
         ResultSet rs = stmt.executeQuery();
         
-        if (rs != null) {
-            while (rs.next()) {
-                if (BCrypt.checkpw(password, rs.getString("Pass"))) {
-                    Log.l.info("ACCOUNT: Found!");
-                    return true;
-                }
-            }
+        boolean result = false;
+        if (rs.next()) {
+            result = BCrypt.checkpw(password, rs.getString("Pass"));
         }
-
-        return false;
+        Log.l.info("Password check: " + result);
+        return result;
     }
 
     // public AccountType getType(String email, String password) {
@@ -96,13 +92,14 @@ public class AccountProvider implements Provider<Account> {
         
         String query = String.join("\n", 
             "SELECT * from Accounts",
-            "WHERE", 
-            String.format("Email = %s", email)
+            "WHERE Email = ?"
         );
 
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setString(1, email);
+        ResultSet rs = stmt.executeQuery();
+        
+        rs.next();
         int result = rs.getInt("Type");
         switch (result) {
             case 0 : AccountType ac = AccountType.CUSTOMER; return ac;
@@ -471,7 +468,7 @@ public class AccountProvider implements Provider<Account> {
         PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet rs = stmt.executeQuery();
 
-        if (rs != null) {
+        if (rs.next()) {
             Log.l.info(String.format("%s: STAFF in %s", StaffID, BranchID));
             return true;
         }
