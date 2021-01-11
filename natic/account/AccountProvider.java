@@ -116,7 +116,23 @@ public class AccountProvider implements Provider<Account> {
         return null;
     }
 
-    public Staff getStaff(String ID) {
+    public Staff getStaff(String ID) throws SQLException {
+        String query = String.join("\n",
+            "SELECT * FROM STAFF",
+            "WHERE",
+            "ID = ?"
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+
+        stmt.setString(1, ID);
+        
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            Staff staff = new Staff();
+            staff.setID(rs.getString("ID"));
+            staff.setBranchID(rs.getString("BranchID"));
+            return staff;
+        }
         return null;
     }
 
