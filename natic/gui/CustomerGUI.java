@@ -85,7 +85,8 @@ public class CustomerGUI extends JFrame {
         setTitle("NATiC: Customer");
         GUIHelpers.setGlobalFont("SansSerif", Font.PLAIN, 14);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 800, 600);
+        setBounds(0, 0, 1024, 768);
+        GUIHelpers.centerWindow(this);
         getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
         
         // Base tabbed layout
@@ -99,7 +100,7 @@ public class CustomerGUI extends JFrame {
          */
         
         JPanel Account = new JPanel();
-        tabbedPane.addTab(GUIHelpers.htmlTabName("{customer}"), null, Account, null);
+        tabbedPane.addTab(GUIHelpers.htmlTabName("Account"), null, Account, null);
         Account.setLayout(new MigLayout("", "[grow,fill]", "[grow][36.00,fill]"));
         
         JPanel AccountInfoEdit = new JPanel();
