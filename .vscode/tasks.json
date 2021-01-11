@@ -1,0 +1,71 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        // build: clean build folder
+        {
+            "label": "@all: Clean build folder",
+            "type": "shell",
+            "command": "rd /s /q ${workspaceFolder}\\bin && mkdir ${workspaceFolder}\\bin"
+        },
+
+        // build all
+        {
+            "label": "@all: Build",
+            "type": "shell",
+            "command": "javac",
+            "args": [
+                // compile to
+                "-d", "${workspaceFolder}\\bin",
+                // utf-8
+                "-encoding", "utf8",
+                // include everything
+                "-cp", "${workspaceFolder}\\lib\\*",
+                "${workspaceFolder}\\natic\\*.java",
+                "${workspaceFolder}\\natic\\gui\\*.java",
+                "${workspaceFolder}\\natic\\account\\*.java",
+                "${workspaceFolder}\\natic\\book\\*.java",
+                "${workspaceFolder}\\natic\\branch\\*.java",
+                "${workspaceFolder}\\natic\\receipt\\*.java",
+                "${workspaceFolder}\\natic\\review\\*.java",
+                "${workspaceFolder}\\App.java"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": "@all: Clean build folder"
+        },
+
+        // test: code sandbox (manually testing components)
+        {
+            "label": "test: Run",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-cp", "${workspaceFolder}\\lib\\*;${workspaceFolder}\\bin",
+                "test.java"
+            ],
+            "problemMatcher": [],
+            "group": "test",
+            "dependsOn": "@all: Build"
+        },
+
+        // App: the app itself
+        {
+            "label": "App: Run",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-cp", "${workspaceFolder}\\lib\\*;${workspaceFolder}\\bin",
+                "App.java"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": "@all: Build"
+        }
+    ]
+}
