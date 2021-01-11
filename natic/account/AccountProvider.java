@@ -54,7 +54,9 @@ public class AccountProvider implements Provider<Account> {
         
         boolean result = false;
         if (rs.next()) {
-            result = BCrypt.checkpw(password, rs.getString("Pass"));
+            String hashed = rs.getString("Pass");
+            Log.l.info(hashed);
+            result = BCrypt.checkpw(password, hashed);
         }
         Log.l.info("Password check: " + result);
         return result;

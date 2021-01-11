@@ -394,6 +394,9 @@ public class Mediator {
     public void changePassword(String email, String oldPassword, String newPassword) throws SQLException {
         if (ACCOUNT.checkPassword(email, oldPassword)) {
             ACCOUNT.changePasswordinDB(email, newPassword);
+            Log.l.info("Password changed");
+        } else {
+            Log.l.info("Password does not change");
         }
     }
     

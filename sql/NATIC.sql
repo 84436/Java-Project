@@ -154,7 +154,7 @@ VALUES
     ("AC00000004", "Lý Quốc GH", "gh.lyquoc@email.com", "0928471742", 0, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
     ("AC00000005", "Phạm Lê IJ", "ij.phamle@email.com", "0728471238", 1, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
     ("AC00000006", "Vũ Thị XY", "xy.vuthi@email.com", "0734591231", 0, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
-    ("AC00000007", NULL, "1@a.c", NULL, 2, "$2y$10$KT4MrG03rFY8Rvdl5xO/veZT9.VxooWKZasfzw.meKIYcY7Pf/D5i")
+    ("AC00000007", NULL, "1@a.c", NULL, 2, "$2a$10$1oHZJ/JEfSzUxnikOByr8efKZUA1qBWYpvIvR/rlBxigwrWBYFLf.")
 ;
 
 INSERT INTO Customers (ID, DoB, Address, SignUpDate)

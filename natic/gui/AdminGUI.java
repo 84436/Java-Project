@@ -589,6 +589,30 @@ public class AdminGUI extends JFrame {
         btnPasswordSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: PasswordSave");
+                String oldPwd = pwtxtOld.getText();
+                String newPwd = pwtxtNew.getText();
+                String confirmPwd = pwtxtConfirm.getText();
+
+                if (oldPwd.isBlank()) oldPwd = null;
+                if (newPwd.isBlank()) newPwd = null;
+                if (confirmPwd.isBlank()) confirmPwd = null;
+
+                try {
+                    if (newPwd.equals(confirmPwd)) {
+                        M.changePassword(admin.getEmail(), oldPwd, newPwd);
+                        pwtxtOld.setText("");
+                        pwtxtNew.setText("");
+                        pwtxtConfirm.setText("");
+                    } else {
+                        GUIHelpers.showErrorDialog("Password does not match", null);
+                        pwtxtOld.setText("");
+                        pwtxtNew.setText("");
+                        pwtxtConfirm.setText("");
+                    }
+                }
+                catch (Exception exc) {
+                    GUIHelpers.showErrorDialog("Unable to change password", exc);
+                } 
             }
         });
 
