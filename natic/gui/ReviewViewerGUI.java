@@ -3,7 +3,6 @@ package natic.gui;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import java.awt.event.*;
 
 import java.util.*;
 import natic.review.Review;
@@ -42,12 +41,6 @@ public class ReviewViewerGUI extends JFrame {
         GUIHelpers.centerWindow(this);
         GUIHelpers.setGlobalFont("SansSerif", Font.PLAIN, 14);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        // addWindowListener(new WindowAdapter() {
-        //     public void windowClosing(WindowEvent we) {
-        //         dispose();
-        //     }
-        // });
 
         contentPane = new JPanel();
         contentPane.setBackground(new Color(255, 255, 255));

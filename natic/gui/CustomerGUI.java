@@ -243,7 +243,7 @@ public class CustomerGUI extends JFrame {
         
         JPanel BookDetails = new JPanel();
         scrollBookDetails.setViewportView(BookDetails);
-        BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][40px,center][][][36px,fill]"));
+        BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][40px,center][][][36px,fill][36px,fill]"));
         
         JLabel lblBookCover = new JLabel("");
         JLabel lblHeaderLibraryCommonFields = new JLabel(GUIHelpers.htmlHeaderSmall("Overview"));
@@ -272,6 +272,7 @@ public class CustomerGUI extends JFrame {
         txtLibraryPrice = new JTextField();
         JSeparator sepBookDetails2 = new JSeparator();
         JButton btnLibraryShowReviews = new JButton("Show reviews");
+        JButton btnLibraryAddReview = new JButton("Leave a review");
         
         txtLibraryISBN.setEditable(false);
         txtLibraryTitle.setEditable(false);
@@ -337,6 +338,7 @@ public class CustomerGUI extends JFrame {
         BookDetails.add(lblHeaderLibraryReviews, "cell 0 14 2 1");
         BookDetails.add(lblLibraryRatingAvg, "cell 0 15 2 1");
         BookDetails.add(btnLibraryShowReviews, "cell 0 16 2 1");
+        BookDetails.add(btnLibraryAddReview, "cell 0 17 2 1");
         
         
         
@@ -700,6 +702,15 @@ public class CustomerGUI extends JFrame {
             }
         });
         
+        btnLibraryAddReview.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Log.l.info("btn: LibraryAddReview");
+                String isbn = txtLibraryISBN.getText().trim();
+                String bookName = txtLibraryTitle.getText().trim();
+                ReviewWriterGUI reviewWriterFrame = new ReviewWriterGUI(customer.getID(), isbn, bookName);
+            }
+        });
+
         tblLibrary.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 int selectedRow = tblLibrary.getSelectedRow();
