@@ -67,7 +67,8 @@ CREATE TABLE Books (
     Genre       INT1,
     Rating      FLOAT,
     BookFormat  INT1,
-    Price       FLOAT,
+    BuyPrice    FLOAT,
+    RentPrice   FLOAT,
     -- Genre
         -- EDUCATION: 0
         -- SCIENCE: 1
@@ -180,13 +181,13 @@ VALUES
     ("AC00000005", "BR00000001")
 ;
 
-INSERT INTO Books (ISBN, VersionID, Title, Author, BookYear, Publisher, Genre, Rating, BookFormat, Price)
+INSERT INTO Books (ISBN, VersionID, Title, Author, BookYear, Publisher, Genre, Rating, BookFormat, BuyPrice, RentPrice)
 VALUES
-    ("9781292263427", 13, "Computer Science: An Overview", "Brookshear & Brylow", "2019-01-01", "Pearson", 0, 0.0, 1, 1865.00),
-    ("9781524763169", 1, "A Promised Land", "Barack Obama", "2020-01-01", "Crown", 5, 0.0, 1, 580.00),
-    ("9781506706382", 1, "The Legend of Zelda Encyclopedia", "Nintendo", "2018-01-01", "Dark Horse Books ", 2, 0.0, 1, 580.00),
-    ("9780062457714", 2, "The Subtle Art of Not Giving a F*ck", "Mark Manson", "2016-01-01", "Harper", 4, 0.0, 1, 350.00),
-    ("9780062316103", 1, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "2015-01-01", "Harper Collins", 1, 0.0, 2, 305.00)
+    ("9781292263427", 13, "Computer Science: An Overview", "Brookshear & Brylow", "2019-01-01", "Pearson", 0, 4.0, 1, 1865.00, 100.00),
+    ("9781524763169", 1, "A Promised Land", "Barack Obama", "2020-01-01", "Crown", 5, 0.0, 1, 580.00, 50.00),
+    ("9781506706382", 1, "The Legend of Zelda Encyclopedia", "Nintendo", "2018-01-01", "Dark Horse Books ", 2, 0.0, 1, 580.00, 50.00),
+    ("9780062457714", 2, "The Subtle Art of Not Giving a F*ck", "Mark Manson", "2016-01-01", "Harper", 4, 0.0, 1, 350.00, 30.00),
+    ("9780062316103", 1, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "2015-01-01", "Harper Collins", 1, 0.0, 2, 305.00, 30.00)
 ;
 
 INSERT INTO CustomerLibraries (CustomerID, ISBN, ExpiryDate)
@@ -215,5 +216,5 @@ VALUES
 
 INSERT INTO Reviews (CustomerID, ISBN, ReviewScore, ReviewText)
 VALUES
-    ("AC00000002", "9781524763169", 4.0, "The book is a rather good choice for almost beginners. Almost - because it is very useful to complete some introductory course in Python first, it will help to better understand examples in the book.")
+    ("AC00000002", "9781292263427", 4.0, "The book is a rather good choice for almost beginners. Almost - because it is very useful to complete some introductory course in Python first, it will help to better understand examples in the book.")
 ;
