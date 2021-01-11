@@ -47,6 +47,7 @@ public class CustomerGUI extends JFrame {
     private JTextField txtLibraryGenre;
     private JTextField txtLibraryFormat;
     private JTextField txtLibraryPrice;
+    private JTextField txtLibraryRentPrice;
     private JLabel lblLibraryRatingAvg;
 
     private JButton btnBuy;
@@ -239,7 +240,7 @@ public class CustomerGUI extends JFrame {
 
         JPanel BookDetails = new JPanel();
         scrollBookDetails.setViewportView(BookDetails);
-        BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][40px,center][][][36px,fill][36px,fill]"));
+        BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][][40px,center][][][36px,fill][36px,fill]"));
         
         JLabel lblBookCover = new JLabel("");
         JLabel lblHeaderLibraryCommonFields = new JLabel(GUIHelpers.htmlHeaderSmall("Overview"));
@@ -252,7 +253,8 @@ public class CustomerGUI extends JFrame {
         JLabel lblLibraryPublisher = new JLabel("Publisher");
         JLabel lblLibraryGenre = new JLabel("Genre");
         JLabel lblLibraryFormat = new JLabel("Format");
-        JLabel lblLibraryPrice = new JLabel("Price");
+        JLabel lblLibraryPrice = new JLabel("Price (Buy)");
+        JLabel lblLibraryRentPrice = new JLabel("Price (Rent)");
         JLabel lblHeaderLibraryReviews = new JLabel(GUIHelpers.htmlHeaderSmall("Reviews"));
         lblLibraryRatingAvg = new JLabel("Average rating");
 
@@ -266,6 +268,7 @@ public class CustomerGUI extends JFrame {
         txtLibraryGenre = new JTextField();
         txtLibraryFormat = new JTextField();
         txtLibraryPrice = new JTextField();
+        txtLibraryRentPrice = new JTextField();
         JSeparator sepBookDetails2 = new JSeparator();
         JButton btnLibraryShowReviews = new JButton("Show reviews");
         JButton btnLibraryAddReview = new JButton("Leave a review");
@@ -279,6 +282,7 @@ public class CustomerGUI extends JFrame {
         txtLibraryGenre.setEditable(false);
         txtLibraryFormat.setEditable(false);
         txtLibraryPrice.setEditable(false);
+        txtLibraryRentPrice.setEditable(false);
 
         txtLibraryISBN.setEnabled(false);
         txtLibraryTitle.setEnabled(false);
@@ -289,6 +293,7 @@ public class CustomerGUI extends JFrame {
         txtLibraryGenre.setEnabled(false);
         txtLibraryFormat.setEnabled(false);
         txtLibraryPrice.setEnabled(false);
+        txtLibraryRentPrice.setEnabled(false);
 
         txtLibraryISBN.setColumns(10);
         txtLibraryTitle.setColumns(10);
@@ -299,6 +304,7 @@ public class CustomerGUI extends JFrame {
         txtLibraryGenre.setColumns(10);
         txtLibraryFormat.setColumns(10);
         txtLibraryPrice.setColumns(10);
+        txtLibraryRentPrice.setColumns(10);
 
         sepBookDetails.setForeground(new Color(192, 192, 192));
         sepBookDetails2.setForeground(new Color(192, 192, 192));
@@ -319,6 +325,7 @@ public class CustomerGUI extends JFrame {
         BookDetails.add(lblLibraryGenre, "cell 0 10");
         BookDetails.add(lblLibraryFormat, "cell 0 11");
         BookDetails.add(lblLibraryPrice, "cell 0 12");
+        BookDetails.add(lblLibraryRentPrice, "cell 0 13");
 
         BookDetails.add(txtLibraryISBN, "cell 1 2,growx");
         BookDetails.add(txtLibraryTitle, "cell 1 3,growx");
@@ -330,11 +337,12 @@ public class CustomerGUI extends JFrame {
         BookDetails.add(txtLibraryGenre, "cell 1 10,growx");
         BookDetails.add(txtLibraryFormat, "cell 1 11,growx");
         BookDetails.add(txtLibraryPrice, "cell 1 12");
-        BookDetails.add(sepBookDetails2, "cell 0 13 2 1");
-        BookDetails.add(lblHeaderLibraryReviews, "cell 0 14 2 1");
-        BookDetails.add(lblLibraryRatingAvg, "cell 0 15 2 1");
-        BookDetails.add(btnLibraryShowReviews, "cell 0 16 2 1");
-        BookDetails.add(btnLibraryAddReview, "cell 0 17 2 1");
+        BookDetails.add(txtLibraryRentPrice, "cell 1 13");
+        BookDetails.add(sepBookDetails2, "cell 0 14 2 1");
+        BookDetails.add(lblHeaderLibraryReviews, "cell 0 15 2 1");
+        BookDetails.add(lblLibraryRatingAvg, "cell 0 16 2 1");
+        BookDetails.add(btnLibraryShowReviews, "cell 0 17 2 1");
+        BookDetails.add(btnLibraryAddReview, "cell 0 18 2 1");
         
         
         
@@ -879,16 +887,6 @@ public class CustomerGUI extends JFrame {
         lblLibraryRatingAvg.setText(String.format("Average rating: %.1f", rating));
     }
 
-    private void updateBookDetailsReviews(ArrayList<Review> reviews) {
-        String r = "";
-        for (int i = 0; i < reviews.size(); i++) {
-            Review each = reviews.get(i);
-            r += String.format("%s\n--%s, %d/5\n", each.getReviewText(), each.getCustomerID(), each.getReviewScore());
-            if (i < reviews.size() - 1)
-                r += "\n";
-        }
-    }
-
     private void showBookDetails(String BookISBN, boolean isPurchased) {
         try {
             if (!isPurchased) {
@@ -900,9 +898,10 @@ public class CustomerGUI extends JFrame {
                 txtLibraryVersionID.setText(Integer.toString(b.getVersionID()));
                 txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
                 txtLibraryPublisher.setText(b.getPublisher());
-                txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
-                txtLibraryGenre.setText(b.getGenre().name());
-                txtLibraryFormat.setText(b.getFormat().name());
+                txtLibraryPrice.setText(String.format("%.02f", b.getBuyPrice()));
+                txtLibraryRentPrice.setText(String.format("%.02f", b.getRentPrice()));
+                txtLibraryGenre.setText(b.getGenre().toString());
+                txtLibraryFormat.setText(b.getFormat().toString());
 
                 txtLibraryISBN.setCaretPosition(0);
                 txtLibraryTitle.setCaretPosition(0);
@@ -928,9 +927,10 @@ public class CustomerGUI extends JFrame {
                 txtLibraryVersionID.setText(Integer.toString(b.getVersionID()));
                 txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
                 txtLibraryPublisher.setText(b.getPublisher());
-                txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
-                txtLibraryGenre.setText(b.getGenre().name());
-                txtLibraryFormat.setText(b.getFormat().name());
+                txtLibraryPrice.setText(String.format("%.02f", b.getBuyPrice()));
+                txtLibraryRentPrice.setText(String.format("%.02f", b.getRentPrice()));
+                txtLibraryGenre.setText(b.getGenre().toString());
+                txtLibraryFormat.setText(b.getFormat().toString());
 
                 txtLibraryISBN.setCaretPosition(0);
                 txtLibraryTitle.setCaretPosition(0);
@@ -956,9 +956,9 @@ public class CustomerGUI extends JFrame {
             txtOrderPrice.setText(Float.toString(rec.getPrice()));
             txtOrderDate.setText(rec.getDate().toString());
             txtOrderTitle.setText(b.getTitle());
-            txtOrderGenre.setText(b.getGenre().name());
+            txtOrderGenre.setText(b.getGenre().toString());
             txtOrderAuthor.setText(b.getAuthor());
-            txtOrderFormat.setText(b.getFormat().name());
+            txtOrderFormat.setText(b.getFormat().toString());
             txtOrderPublisher.setText(b.getPublisher());
             txtOrderVersionID.setText(Integer.toString(b.getVersionID()));
             txtOrderYear.setText(Integer.toString(b.getYear().getValue()));

@@ -63,6 +63,7 @@ public class AdminGUI extends JFrame {
     private JComboBox cboxLibraryGenre;
     private JComboBox cboxLibraryFormat;
     private JSpinner spinnerLibraryPrice;
+    private JSpinner spinnerLibraryRentPrice;
 
 	// MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
 
@@ -385,7 +386,7 @@ public class AdminGUI extends JFrame {
 
         JPanel BookDetails = new JPanel();
         scrollBookDetails.setViewportView(BookDetails);
-        BookDetails.setLayout(new MigLayout("", "[80.00px,grow,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][36px,fill][40px,center][][][36px,fill]"));
+        BookDetails.setLayout(new MigLayout("", "[80.00px,grow,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][][36px,fill][40px,center][][][36px,fill]"));
 
         JLabel lblBookCover = new JLabel("");
         JLabel lblHeaderLibraryCommonFields = new JLabel(GUIHelpers.htmlHeaderSmall("Overview"));
@@ -398,7 +399,8 @@ public class AdminGUI extends JFrame {
         JLabel lblLibraryPublisher = new JLabel("Publisher");
         JLabel lblLibraryGenre = new JLabel("Genre");
         JLabel lblLibraryFormat = new JLabel("Format");
-        JLabel lblLibraryPrice = new JLabel("Price");
+        JLabel lblLibraryPrice = new JLabel("Price (Buy)");
+        JLabel lblLibraryRentPrice = new JLabel("Price (Rent)");
         JLabel lblHeaderLibraryReviews = new JLabel(GUIHelpers.htmlHeaderSmall("Reviews"));
         lblLibraryRatingAvg = new JLabel("Average rating"); 
 
@@ -428,16 +430,19 @@ public class AdminGUI extends JFrame {
         spinnerLibraryVersionID.setModel(new SpinnerNumberModel(Byte.valueOf((byte) 1), Byte.valueOf((byte) 1), Byte.valueOf((byte) 127), Byte.valueOf((byte) 1)));
         spinnerLibraryYear.setModel(new SpinnerNumberModel(Short.valueOf((short) 2021), Short.valueOf((short) 1900), Short.valueOf((short) 2100), Short.valueOf((short) 1)));
         spinnerLibraryPrice.setModel(new SpinnerNumberModel(Float.valueOf((float) 0), Float.valueOf((float) 0), null, Float.valueOf((float) 1)));
+        spinnerLibraryRentPrice.setModel(new SpinnerNumberModel(Float.valueOf((float) 0), Float.valueOf((float) 0), null, Float.valueOf((float) 1)));
 
         // https://stackoverflow.com/a/12453923
         JSpinner.NumberEditor ne_spinnerLibraryYear = new JSpinner.NumberEditor(spinnerLibraryYear, "####");
         JSpinner.NumberEditor ne_spinnerLibraryVersionID = new JSpinner.NumberEditor(spinnerLibraryVersionID, "####");
         JSpinner.NumberEditor ne_spinnerLibraryPrice = new JSpinner.NumberEditor(spinnerLibraryPrice, "0.00");
+        JSpinner.NumberEditor ne_spinnerLibraryRentPrice = new JSpinner.NumberEditor(spinnerLibraryRentPrice, "0.00");
 
         // https://stackoverflow.com/a/22702058
         ne_spinnerLibraryYear.getTextField().setHorizontalAlignment(JTextField.LEFT);
         ne_spinnerLibraryVersionID.getTextField().setHorizontalAlignment(JTextField.LEFT);
         ne_spinnerLibraryPrice.getTextField().setHorizontalAlignment(JTextField.LEFT);
+        ne_spinnerLibraryRentPrice.getTextField().setHorizontalAlignment(JTextField.LEFT);
 
         spinnerLibraryYear.setEditor(ne_spinnerLibraryYear);
         spinnerLibraryVersionID.setEditor(ne_spinnerLibraryVersionID);
@@ -455,6 +460,7 @@ public class AdminGUI extends JFrame {
         BookDetails.add(lblLibraryGenre, "cell 0 10");
         BookDetails.add(lblLibraryFormat, "cell 0 11");
         BookDetails.add(lblLibraryPrice, "cell 0 12");
+        BookDetails.add(lblLibraryRentPrice, "cell 0 13");
 
         BookDetails.add(txtLibraryISBN, "cell 1 2,growx");
         BookDetails.add(txtLibraryTitle, "cell 1 3,growx");
@@ -466,11 +472,12 @@ public class AdminGUI extends JFrame {
         BookDetails.add(cboxLibraryGenre, "cell 1 10,growx");
         BookDetails.add(cboxLibraryFormat, "cell 1 11,growx");
         BookDetails.add(spinnerLibraryPrice, "cell 1 12");
-        BookDetails.add(btnLibrarySave, "cell 0 13 2 1");
-        BookDetails.add(sepBookDetails2, "cell 0 14 2 1");
-        BookDetails.add(lblHeaderLibraryReviews, "cell 0 15 2 1");
-        BookDetails.add(lblLibraryRatingAvg, "cell 0 16 2 1");
-        BookDetails.add(btnLibraryShowReviews, "cell 0 17 2 1,grow");
+        BookDetails.add(spinnerLibraryRentPrice, "cell 1 13");
+        BookDetails.add(btnLibrarySave, "cell 0 14 2 1");
+        BookDetails.add(sepBookDetails2, "cell 0 15 2 1");
+        BookDetails.add(lblHeaderLibraryReviews, "cell 0 16 2 1");
+        BookDetails.add(lblLibraryRatingAvg, "cell 0 17 2 1");
+        BookDetails.add(btnLibraryShowReviews, "cell 0 18 2 1,grow");
 
 
 
@@ -1213,7 +1220,8 @@ public class AdminGUI extends JFrame {
             spinnerLibraryVersionID.setValue(b.getVersionID());
             spinnerLibraryYear.setValue(b.getYear().getValue());
             txtLibraryPublisher.setText(b.getPublisher());
-            spinnerLibraryPrice.setValue(b.getPrice());
+            spinnerLibraryPrice.setValue(b.getBuyPrice());
+            spinnerLibraryRentPrice.setValue(b.getRentPrice());
 
             cboxLibraryGenre.removeAllItems();
             cboxLibraryFormat.removeAllItems();
