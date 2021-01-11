@@ -202,7 +202,7 @@ public class StaffGUI extends JFrame {
         * Counter
         */
         JPanel Counter = new JPanel();
-        tabbedPane.addTab(GUIHelpers.htmlTabName("Counter"), null, Counter, null);
+        //  tabbedPane.addTab(GUIHelpers.htmlTabName("Counter"), null, Counter, null);
         Counter.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow][36px,fill][36.00,fill]"));
         
         txtCounterISBN = new JTextField();
@@ -585,9 +585,9 @@ public class StaffGUI extends JFrame {
             public void stateChanged(ChangeEvent e) {
                 final HashMap<Integer, String> tabMap = new HashMap<>() {{
                     put(0, "Account");
-                    put(1, "Counter");
-                    put(2, "Library");
-                    put(3, "Orders");
+                    // put(1, "Counter");
+                    put(1, "Library");
+                    put(2, "Orders");
                 }};
                 int tabIndex = tabbedPane.getSelectedIndex();
                 Log.l.info("Tab changed to: " + tabMap.get(tabIndex));
@@ -890,9 +890,9 @@ public class StaffGUI extends JFrame {
     private void populateTab(int tabIndex) {
         switch (tabIndex) {
             case 0: populateAccountTab(); break;
-            case 1: populateCounterTab(); break;
-            case 2: populateLibraryTab(true); break;
-            case 3: populateOrdersTab(); break;
+            // case 1: populateCounterTab(); break;
+            case 1: populateLibraryTab(true); break;
+            case 2: populateOrdersTab(); break;
         }
     }
     
@@ -978,16 +978,6 @@ public class StaffGUI extends JFrame {
         lblLibraryRatingAvg.setText(String.format("Average rating: %.1f", rating));
     }
 
-    private void updateBookDetailsReviews(ArrayList<Review> reviews) {
-        String r = "";
-        for (int i = 0; i < reviews.size(); i++) {
-            Review each = reviews.get(i);
-            r += String.format("%s\n--%s, %d/5\n", each.getReviewText(), each.getCustomerID(), each.getReviewScore());
-            if (i < reviews.size() - 1)
-                r += "\n";
-        }
-    }
-
     private void showBookDetails(String BookISBN, boolean isBranchOnly) {
         try {
             if (!isBranchOnly) {
@@ -1000,8 +990,8 @@ public class StaffGUI extends JFrame {
                 txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
                 txtLibraryPublisher.setText(b.getPublisher());
                 txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
-                txtLibraryGenre.setText(b.getGenre().name());
-                txtLibraryFormat.setText(b.getFormat().name());
+                txtLibraryGenre.setText(b.getGenre().toString());
+                txtLibraryFormat.setText(b.getFormat().toString());
 
                 txtLibraryISBN.setCaretPosition(0);
                 txtLibraryTitle.setCaretPosition(0);
@@ -1022,8 +1012,8 @@ public class StaffGUI extends JFrame {
                 txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
                 txtLibraryPublisher.setText(b.getPublisher());
                 txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
-                txtLibraryGenre.setText(b.getGenre().name());
-                txtLibraryFormat.setText(b.getFormat().name());
+                txtLibraryGenre.setText(b.getGenre().toString());
+                txtLibraryFormat.setText(b.getFormat().toString());
 
                 txtLibraryISBN.setCaretPosition(0);
                 txtLibraryTitle.setCaretPosition(0);
@@ -1049,9 +1039,9 @@ public class StaffGUI extends JFrame {
             txtOrderPrice.setText(Float.toString(rec.getPrice()));
             txtOrderDate.setText(rec.getDate().toString());
             txtOrderTitle.setText(b.getTitle());
-            txtOrderGenre.setText(b.getGenre().name());
+            txtOrderGenre.setText(b.getGenre().toString());
             txtOrderAuthor.setText(b.getAuthor());
-            txtOrderFormat.setText(b.getFormat().name());
+            txtOrderFormat.setText(b.getFormat().toString());
             txtOrderPublisher.setText(b.getPublisher());
             txtOrderVersionID.setText(Integer.toString(b.getVersionID()));
             txtOrderYear.setText(Integer.toString(b.getYear().getValue()));
