@@ -224,7 +224,7 @@ public class Mediator {
         receipt.setStaffID(StaffID);
         receipt.setCustomerID(CustomerID);
         receipt.setDate(LocalDate.now());
-        receipt.setPrice(b.getPrice());
+        receipt.setPrice(b.getBuyPrice());
         receipt.setReturnOn(LocalDate.of(1, 1, 1));
         RECEIPT.add(receipt);
 
@@ -272,7 +272,7 @@ public class Mediator {
         receipt.setStaffID(StaffID);
         receipt.setCustomerID(CustomerID);
         receipt.setDate(LocalDate.now());
-        receipt.setPrice(b.getPrice());
+        receipt.setPrice(b.getRentPrice());
         RECEIPT.add(receipt);
     }
 

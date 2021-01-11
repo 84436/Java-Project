@@ -13,7 +13,8 @@ public class Book {
     private BookGenre Genre;
     private Float Rating;
     private BookFormat Format;
-    private Float Price;
+    private Float BuyPrice;
+    private Float RentPrice;
 
     public String getISBN() {
         return ISBN;
@@ -87,10 +88,19 @@ public class Book {
         this.Format = format;
     }
 
-    public Float getPrice() {
-        return Price;
+    public Float getBuyPrice() {
+        return BuyPrice;
     }
-    public void setPrice(Float price) {
-        this.Price = price;
+
+    public void setBuyPrice(Float buyPrice) {
+        BuyPrice = buyPrice;
+    }
+
+    public Float getRentPrice() {
+        return RentPrice;
+    }
+
+    public void setRentPrice(Float rentPrice) {
+        RentPrice = rentPrice;
     }
 }

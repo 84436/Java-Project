@@ -38,7 +38,9 @@ public class BookProvider implements Provider<Book> {
             res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
             res.setRating(rs.getFloat("Rating"));
             res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
-            res.setPrice(rs.getFloat("Price"));
+            res.setBuyPrice(rs.getFloat("BuyPrice"));
+            res.setRentPrice(rs.getFloat("RentPrice"));
+
             resList.add(res);
         }
         Log.l.info("None: Get all books returned");
@@ -60,7 +62,8 @@ public class BookProvider implements Provider<Book> {
             res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
             res.setRating(rs.getFloat("Rating"));
             res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
-            res.setPrice(rs.getFloat("Price"));
+            res.setBuyPrice(rs.getFloat("BuyPrice"));
+            res.setRentPrice(rs.getFloat("RentPrice"));
         }
         Log.l.info(String.format("%s: Get by ISBN returned", ISBN));
         return res;
@@ -83,7 +86,9 @@ public class BookProvider implements Provider<Book> {
             res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
             res.setRating(rs.getFloat("Rating"));
             res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
-            res.setPrice(rs.getFloat("Price"));
+            res.setBuyPrice(rs.getFloat("BuyPrice"));
+            res.setRentPrice(rs.getFloat("RentPrice"));
+
             resList.add(res);
         }
         Log.l.info(String.format("%s: Searching by query returned", match));
@@ -91,7 +96,7 @@ public class BookProvider implements Provider<Book> {
     }
 
     public void add(Book o) throws SQLException {
-        String query = "INSERT INTO BOOKS (ISBN, VersionID, Title, Author, BookYear, Publisher, Genre, Rating, BookFormat, Price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO BOOKS (ISBN, VersionID, Title, Author, BookYear, Publisher, Genre, Rating, BookFormat, BuyPrice, RentPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = conn.prepareStatement(query);
 
         // Primary key
@@ -142,10 +147,16 @@ public class BookProvider implements Provider<Book> {
             stmt.setNull(9, java.sql.Types.NULL);
         }
 
-        if (o.getPrice() != null)
-            stmt.setFloat(10, o.getPrice());
+        if (o.getBuyPrice() != null)
+            stmt.setFloat(10, o.getBuyPrice());
         else {
             stmt.setNull(10, java.sql.Types.NULL);
+        }
+
+        if (o.getRentPrice() != null)
+            stmt.setFloat(11, o.getRentPrice());
+        else {
+            stmt.setNull(11, java.sql.Types.NULL);
         }
 
         stmt.executeUpdate();
@@ -153,7 +164,7 @@ public class BookProvider implements Provider<Book> {
     }
 
     public void edit(Book o) throws SQLException {
-        String query = "UPDATE BOOKS SET VersionID = ?, Title = ?, Author = ?, BookYear = ?, Publisher = ?, Genre = ?, Rating = ?, BookFormat = ?, Price = ? WHERE ISBN = ?";
+        String query = "UPDATE BOOKS SET VersionID = ?, Title = ?, Author = ?, BookYear = ?, Publisher = ?, Genre = ?, Rating = ?, BookFormat = ?, BuyPrice = ?, RentPrice = ? WHERE ISBN = ?";
         PreparedStatement stmt = conn.prepareStatement(query);
 
         if (o.getVersionID() != null)
@@ -205,14 +216,20 @@ public class BookProvider implements Provider<Book> {
             stmt.setNull(8, java.sql.Types.NULL);
         }
 
-        if (o.getPrice() != null)
-            stmt.setFloat(9, o.getPrice());
+        if (o.getBuyPrice() != null)
+            stmt.setFloat(9, o.getBuyPrice());
         else {
             stmt.setNull(9, java.sql.Types.NULL);
         }
 
+        if (o.getRentPrice() != null)
+            stmt.setFloat(10, o.getRentPrice());
+        else {
+            stmt.setNull(10, java.sql.Types.NULL);
+        }
+
         // WHERE condition
-        stmt.setString(10, o.getISBN());
+        stmt.setString(11, o.getISBN());
 
         stmt.executeUpdate();
         Log.l.info(String.format("%s: updated in BOOKS", o.getISBN()));

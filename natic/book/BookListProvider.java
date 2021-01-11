@@ -40,7 +40,8 @@ public class BookListProvider implements Provider<BookList> {
             res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
             res.setRating(rs.getFloat("Rating"));
             res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
-            res.setPrice(rs.getFloat("Price"));
+            res.setBuyPrice(rs.getFloat("BuyPrice"));
+            res.setRentPrice(rs.getFloat("RentPrice"));
 
             CustomerLibrary cres = new CustomerLibrary();
             cres.setOwnerID(rs.getString("CustomerID"));
@@ -72,7 +73,8 @@ public class BookListProvider implements Provider<BookList> {
             res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
             res.setRating(rs.getFloat("Rating"));
             res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
-            res.setPrice(rs.getFloat("Price"));
+            res.setBuyPrice(rs.getFloat("BuyPrice"));
+            res.setRentPrice(rs.getFloat("RentPrice"));
 
             BranchStockList cres = new BranchStockList();
             cres.setOwnerID(rs.getString("BranchID"));
@@ -103,7 +105,8 @@ public class BookListProvider implements Provider<BookList> {
             res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
             res.setRating(rs.getFloat("Rating"));
             res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
-            res.setPrice(rs.getFloat("Price"));
+            res.setBuyPrice(rs.getFloat("BuyPrice"));
+            res.setRentPrice(rs.getFloat("RentPrice"));
 
             BranchStockList bres = new BranchStockList();
             bres.setOwnerID(rs.getString("BranchID"));
@@ -134,7 +137,8 @@ public class BookListProvider implements Provider<BookList> {
             res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
             res.setRating(rs.getFloat("Rating"));
             res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
-            res.setPrice(rs.getFloat("Price"));
+            res.setBuyPrice(rs.getFloat("BuyPrice"));
+            res.setRentPrice(rs.getFloat("RentPrice"));
 
             CustomerLibrary cres = new CustomerLibrary();
             cres.setOwnerID(rs.getString("CustomerID"));
@@ -166,7 +170,8 @@ public class BookListProvider implements Provider<BookList> {
             res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
             res.setRating(rs.getFloat("Rating"));
             res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
-            res.setPrice(rs.getFloat("Price"));
+            res.setBuyPrice(rs.getFloat("BuyPrice"));
+            res.setRentPrice(rs.getFloat("RentPrice"));
 
             cres = new CustomerLibrary();
             cres.setOwnerID(rs.getString("CustomerID"));
@@ -196,7 +201,8 @@ public class BookListProvider implements Provider<BookList> {
             res.setGenre(BookGenre.values()[rs.getInt("Genre")]);
             res.setRating(rs.getFloat("Rating"));
             res.setFormat(BookFormat.values()[rs.getInt("BookFormat")]);
-            res.setPrice(rs.getFloat("Price"));
+            res.setBuyPrice(rs.getFloat("BuyPrice"));
+            res.setRentPrice(rs.getFloat("RentPrice"));
 
             bres = new BranchStockList();
             bres.setOwnerID(rs.getString("BranchID"));
