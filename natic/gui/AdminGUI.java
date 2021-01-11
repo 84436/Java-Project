@@ -1166,7 +1166,7 @@ public class AdminGUI extends JFrame {
         String r = "";
         for (int i = 0; i < reviews.size(); i++) {
             Review each = reviews.get(i);
-            r += String.format("%s\n--%s, %d/5\n", each.getReviewText(), each.getCustomerName(), each.getReviewScore());
+            r += String.format("%s\n--%s, %d/5\n", each.getReviewText(), each.getCustomerID(), each.getReviewScore());
             if (i < reviews.size() - 1)
                 r += "\n";
         }
