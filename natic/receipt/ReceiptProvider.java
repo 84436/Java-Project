@@ -20,9 +20,8 @@ public class ReceiptProvider implements Provider<Receipt> {
         return null;
     }
 
-    public Receipt getByID(String ReceiptID, String CustomerID) throws SQLException {
-        String query = String.format("SELECT * FROM Receipts WHERE CustomerID = '%s' AND ID = '%s'", CustomerID,
-                ReceiptID);
+    public Receipt getByID(String ReceiptID) throws SQLException {
+        String query = String.format("SELECT * FROM Receipts WHERE ID = '%s'", ReceiptID);
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         Receipt res = null;
@@ -38,7 +37,7 @@ public class ReceiptProvider implements Provider<Receipt> {
             Date returnDate = rs.getDate("ReturnOn");
             res.setReturnOn(LocalDate.of(returnDate.getYear() + 1900, returnDate.getMonth() + 1, returnDate.getDate()));
         }
-        Log.l.info(String.format("%s of %s: Get RECEIPTS", ReceiptID, CustomerID));
+        Log.l.info(String.format("%s: Get RECEIPTS", ReceiptID));
         return res;
     }
 
