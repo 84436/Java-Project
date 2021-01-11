@@ -6,6 +6,8 @@ import natic.Provider;
 import java.sql.*;
 import java.util.ArrayList;
 
+import com.mysql.cj.xdevapi.Result;
+
 public class BranchProvider implements Provider<Branch> {
     private IDGenerator IDGen;
     private Connection conn;
@@ -145,5 +147,37 @@ public class BranchProvider implements Provider<Branch> {
 
         Log.l.info("Get branch by ID");
         return branch;
+    }
+
+    public ArrayList<Branch> searchBranchByNameOrAddress(String match) throws SQLException {
+        String query = String.join("\n",
+            "SELECT * FROM BRANCHES",
+            "WHERE",
+            "Name LIKE ? OR Address LIKE ?"
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+
+        if (match != null) {
+            stmt.setString(1, "%" + match + "%");
+        } else {
+            stmt.setNull(1, java.sql.Types.NULL);
+        }
+
+        if (match != null) {
+            stmt.setString(2, "%" + match + "%");
+        } else {
+            stmt.setNull(2, java.sql.Types.NULL);
+        }
+        ResultSet rs = stmt.executeQuery();
+        ArrayList<Branch> branchList = new ArrayList<>();
+        
+        while (rs.next()) {
+            Branch branch = new Branch();
+            branch.setID(rs.getString("ID"));
+            branch.setName(rs.getString("Name"));
+            branch.setAddress(rs.getString("Address"));
+            branchList.add(branch);
+        }
+        return branchList;
     }
 }

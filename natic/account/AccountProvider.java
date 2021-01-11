@@ -635,4 +635,38 @@ public class AccountProvider implements Provider<Account> {
 
         return null;
     }
+
+    public ArrayList<Staff> searchStaffByEmailOrName(String match) throws SQLException {
+        String query = String.join("\n",
+            "SELECT * FROM ACCOUNTS JOIN STAFF ON ACCOUNTS.ID = STAFF.ID",
+            "WHERE",
+            "Name LIKE ? OR Email LIKE ?"
+        );
+        PreparedStatement stmt = conn.prepareStatement(query);
+        if (match != null) {
+            stmt.setString(1, "%" + match + "%");
+        } else {
+            stmt.setNull(1, java.sql.Types.NULL);
+        }
+
+        if (match != null) {
+            stmt.setString(2, "%" + match + "%");
+        } else {
+            stmt.setNull(2, java.sql.Types.NULL);
+        }
+        ResultSet rs = stmt.executeQuery();
+        ArrayList<Staff> staffList = new ArrayList<>();
+
+        while (rs.next()) {
+            Staff staff = new Staff();
+            staff.setID(rs.getString("ID"));
+            staff.setName(rs.getString("Name"));
+            staff.setEmail(rs.getString("Email"));
+            staff.setPhone(rs.getString("Phone"));
+            staff.setBranchID(rs.getString("BranchID"));
+            staffList.add(staff);
+        }
+
+        return staffList;
+    }
 }

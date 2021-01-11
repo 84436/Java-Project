@@ -412,4 +412,12 @@ public class Mediator {
     public String getIDByEmail(String email) throws SQLException {
         return ACCOUNT.getIDByEmail(email);
     }
+
+    public ArrayList<Staff> searchStaff(String match) throws SQLException {
+        return ACCOUNT.searchStaffByEmailOrName(match);
+    }
+
+    public ArrayList<Branch> searchBranch(String match) throws SQLException {
+        return BRANCH.searchBranchByNameOrAddress(match);
+    }
 }
