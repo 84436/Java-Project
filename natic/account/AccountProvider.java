@@ -247,8 +247,8 @@ public class AccountProvider implements Provider<Account> {
                 Customer oc = (Customer) o;
                 String queryc = String.join("\n",
                     "INSERT INTO CUSTOMERS",
-                    "(ID, DoB, Address, SignUpDate, BookListID)",
-                    "VALUES (?, ?, ?, ?, ?)"
+                    "(ID, DoB, Address, SignUpDate)",
+                    "VALUES (?, ?, ?, ?)"
                 );
 
                 PreparedStatement stmtc = conn.prepareStatement(queryc);
@@ -271,12 +271,6 @@ public class AccountProvider implements Provider<Account> {
                     stmtc.setDate(4, Date.valueOf(LocalDate.of(oc.getSignUpDate().getYear(), oc.getSignUpDate().getMonth().getValue(), oc.getSignUpDate().getDayOfMonth())));
                 } else {
                     stmtc.setNull(4, java.sql.Types.NULL);
-                }
-
-                if (oc.getBookListID() != null) {
-                    stmtc.setString(5, oc.getBookListID());
-                } else {
-                    stmtc.setNull(5, java.sql.Types.NULL);
                 }
                 
                 stmtc.executeUpdate();
