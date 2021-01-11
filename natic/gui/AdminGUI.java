@@ -15,6 +15,7 @@ import natic.*;
 import natic.account.Account;
 import natic.account.Admin;
 import natic.account.Staff;
+import natic.account.AccountEnums.AccountType;
 import natic.book.Book;
 import natic.branch.Branch;
 
@@ -43,6 +44,7 @@ public class AdminGUI extends JFrame {
     private JTextField txtStaffName;
     private JTextField txtStaffEmail;
     private JTextField txtStaffPhone;
+    private JComboBox cboxStaffBranch;
     
     private JTable tblLibrary;
     private JTextField txtLibrarySearch;
@@ -295,7 +297,7 @@ public class AdminGUI extends JFrame {
         txtStaffName = new JTextField();
         txtStaffEmail = new JTextField();
         txtStaffPhone = new JTextField();
-        JComboBox cboxStaffBranch = new JComboBox();
+        cboxStaffBranch = new JComboBox();
         JButton btnStaffSave = new JButton("Save changes");
         
         txtStaffID.setEditable(false);
@@ -665,6 +667,7 @@ public class AdminGUI extends JFrame {
                     txtBranchName.setEnabled(false);
                     txtBranchAddress.setEditable(false);
                     txtBranchAddress.setEnabled(false);
+                    btnBranchSave.setEnabled(false);
                 }
                 else {
                     btnBranchRemove.setEnabled(true);
@@ -672,7 +675,7 @@ public class AdminGUI extends JFrame {
                     txtBranchName.setEnabled(true);
                     txtBranchAddress.setEditable(true);
                     txtBranchAddress.setEnabled(true);
-
+                    btnBranchSave.setEnabled(true);
                 }
 
                 showBranchDetails(BranchID);
@@ -694,22 +697,123 @@ public class AdminGUI extends JFrame {
         btnStaffAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: StaffAdd");
+
+                Staff s = new Staff();
+                s.setBranchID("BR00000000");
+                s.setType(AccountType.STAFF);
+
+                try {
+                    M.addStaff(s);
+                    populateStaffTab();
+                } catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to add new staff", exc);
+                }
             }
         });
         
         btnStaffRemove.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: StaffRemove");
+
+                int selectedRow = tblStaff.getSelectedRow();
+
+                if (selectedRow == -1) {
+                    return;
+                }
+
+                String StaffID = (String) tblStaff.getModel().getValueAt(selectedRow, 0);
+
+                try {
+                    M.removeStaff(StaffID);
+                    populateStaffTab();
+                    txtStaffID.setText("");
+                    txtStaffName.setText("");
+                    txtStaffEmail.setText("");
+                    txtStaffPhone.setText("");
+
+                    cboxStaffBranch.removeAllItems();
+                } catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to delete branch", exc);
+                }
+
             }
         });
         
         btnStaffSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: StaffSave");
+
+                Staff s = new Staff();
+
+                String id = txtStaffID.getText().trim();
+                String name = txtStaffName.getText().trim();
+                String email = txtStaffEmail.getText().trim();
+                String phone = txtStaffPhone.getText().trim();
+                String branch = cboxStaffBranch.getSelectedItem().toString();
+
+                if (id.isBlank())
+                    return;
+                if (name.isBlank())
+                    name = null;
+                if (email.isBlank())
+                    email = null;
+                if (phone.isBlank())
+                    phone = null;
+                if (branch.isBlank())
+                    branch = null;
+
+                s.setID(id);
+                s.setName(name);
+                s.setEmail(email);
+                s.setPhone(phone);
+                s.setBranchID(branch);
+                s.setType(AccountType.STAFF);
+
+                try {
+                    M.editAccount(s);
+                    populateStaffTab();
+                } catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to edit branch", exc);
+                }
+
             }
         });
         
+        tblStaff.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = tblStaff.getSelectedRow();
+                Log.l.info("Selected row index: " + selectedRow);
 
+                if (selectedRow == -1)
+                    return;
+
+                String StaffID = (String) tblStaff.getModel().getValueAt(selectedRow, 0);
+
+                if (StaffID.equals("AC00000000")) {
+                    btnStaffRemove.setEnabled(false);
+                    txtStaffName.setEditable(false);
+                    txtStaffName.setEnabled(false);
+                    txtStaffEmail.setEditable(false);
+                    txtStaffEmail.setEnabled(false);
+                    txtStaffPhone.setEditable(false);
+                    txtStaffPhone.setEnabled(false);
+                    btnStaffSave.setEnabled(false);
+                    cboxStaffBranch.setEnabled(false);
+                } else {
+                    btnStaffRemove.setEnabled(true);
+                    txtStaffName.setEditable(true);
+                    txtStaffName.setEnabled(true);
+                    txtStaffEmail.setEditable(true);
+                    txtStaffEmail.setEnabled(true);
+                    txtStaffPhone.setEditable(true);
+                    txtStaffPhone.setEnabled(true);
+                    btnStaffSave.setEnabled(true);
+                    cboxStaffBranch.setEnabled(true);
+                }
+
+                showStaffDetails(StaffID);
+            }
+        });
 
         /**
          * Events -> Library
@@ -736,7 +840,7 @@ public class AdminGUI extends JFrame {
         Log.l.info("Admin GUI init'd");
     }
     
-    private void populateTab(int tabIndex) {
+	private void populateTab(int tabIndex) {
         switch (tabIndex) {
             case 0: populateAccountTab(); break;
             case 1: populateBranchesTab(); break;
@@ -832,7 +936,7 @@ public class AdminGUI extends JFrame {
     }
 
     private void showBranchDetails(String BranchID) {
-        try{
+        try {
             Branch b = M.getBranch(BranchID);
             txtBranchID.setText(b.getID());
             txtBranchName.setText(b.getName());
@@ -840,9 +944,41 @@ public class AdminGUI extends JFrame {
 
             txtBranchName.setCaretPosition(0);
             txtBranchAddress.setCaretPosition(0);
-        }
-        catch (SQLException exc) {
+        } catch (SQLException exc) {
             GUIHelpers.showErrorDialog("Unable to get selected branch info", exc);
         }
+    }
+
+    private void showStaffDetails(String StaffID) {
+        try {
+            Staff s = M.getStaffByID(StaffID);
+            txtStaffID.setText(s.getID());
+            txtStaffName.setText(s.getName());
+            txtStaffEmail.setText(s.getEmail());
+            txtStaffPhone.setText(s.getPhone());
+
+            ArrayList<Branch> br = M.getAllBranch();
+            
+            cboxStaffBranch.removeAllItems();
+            
+            int index = -1;
+
+            for (int i = 0; i < br.size(); i++) {
+                Branch b = br.get(i);
+                cboxStaffBranch.addItem(b.getID());
+                if (b.getID().equals(s.getBranchID())) {
+                    index = i;
+                }
+            }
+
+            cboxStaffBranch.setSelectedIndex(index);
+            
+            txtStaffName.setCaretPosition(0);
+            txtStaffEmail.setCaretPosition(0);
+            txtStaffPhone.setCaretPosition(0);
+        } catch (SQLException exc) {
+            GUIHelpers.showErrorDialog("Unable to get selected branch info", exc);
+        }
+
     }
 }

@@ -352,24 +352,15 @@ public class Mediator {
     }
 
     public void addStaff(Account oAccount) throws SQLException {
-        Staff add = new Staff();
-        add.setEmail(oAccount.getEmail());
-        add.setName(oAccount.getName());
-        add.setPhone(oAccount.getPhone());
-        add.setBranchID("BR00000000");
-        add.setType(AccountType.STAFF);
-        ACCOUNT.add(add);
+        ACCOUNT.add(oAccount);
     }
 
-    public void removeStaff(String ID, String BranchID) throws SQLException {
-        if (BranchID != null && ID != null) {
-            RECEIPT.bypassReceiptForVirtualAcc("AC00000000", ID);
-            ACCOUNT.removeStaffFromBranch(ID);
-            Log.l.info(String.format("%s: STAFF in %s", ID, BranchID));
-        } else {
-            Log.l.info("These fields must have value");
-            return;
-        }
+    public void removeStaff(String ID) throws SQLException {
+        Staff s = ACCOUNT.getStaff(ID);
+        RECEIPT.bypassReceiptForVirtualAcc("AC00000000", ID);
+        ACCOUNT.removeStaffFromBranch(ID);
+        ACCOUNT.remove(s);
+        Log.l.info(String.format("%s: STAFF in %s", ID, s.getBranchID()));
     }
 
     public ArrayList<Staff> getAllStaff() throws SQLException {
