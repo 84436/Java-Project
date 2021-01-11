@@ -594,6 +594,25 @@ public class StaffGUI extends JFrame {
         btnAccountAboutSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: AccountAboutSave");
+
+                String name = txtAccountName.getText().trim();
+                String email = txtAccountEmail.getText().trim();
+                String phone = txtAccountPhone.getText().trim();
+                if (name.isBlank())
+                    name = null;
+                if (email.isBlank())
+                    email = null;
+                if (phone.isBlank())
+                    phone = null;
+                staff.setName(name);
+                staff.setEmail(email);
+                staff.setPhone(phone);
+                try {
+                    M.editAccount(staff);
+                    populateAccountTab();
+                } catch (Exception exc) {
+                    exc.printStackTrace();
+                }
             }
         });
         

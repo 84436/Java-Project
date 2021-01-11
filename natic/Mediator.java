@@ -162,41 +162,6 @@ public class Mediator {
         //     }
         // }
     }
-
-    public AccountType checkLogin(String email, String password) throws SQLException {
-        if ((email != null && password != null)) {
-            if (!(ACCOUNT.getEmailforLogin(email) || ACCOUNT.checkPassword(email, password)))
-                return AccountType.UNKNOWN;
-            
-            return ACCOUNT.getType(email);
-        }
-        else {
-            Log.l.info(String.format("%s: NOT FOUND", email));
-            return AccountType.UNKNOWN;
-        }
-    }
-    
-    public void createAccount(Account oAccount) throws SQLException {
-        ACCOUNT.add(oAccount);
-    }
-
-    public void editAccount(Account oAccount) throws SQLException {
-        ACCOUNT.edit(oAccount);
-    }
-
-    public void removeStaff(Account oAccount) throws SQLException {
-        ACCOUNT.remove(oAccount);
-    }
-
-    public void addStaff(Account oAccount) throws SQLException {
-        Staff add = new Staff();
-        add.setEmail(oAccount.getEmail());
-        add.setName(oAccount.getName());
-        add.setPhone(oAccount.getPhone());
-        add.setBranchID("BR00000000");
-        add.setType(AccountType.STAFF);
-        ACCOUNT.add(add);
-    }
     
     // BOOKS functions
     public void addBook(Book b) throws SQLException {
@@ -344,38 +309,56 @@ public class Mediator {
         return BOOKLIST.getCustomerLibrary(CustomerID);
     }
     
-    public void editAccount(String email, String name, String phone, LocalDate dob, String CusAddress, String branchID) throws SQLException {
-        if (ACCOUNT.getEmailforLogin(email)) {
-            AccountType oType = ACCOUNT.getType(email);
-            switch (oType.getClass().getName()) {
-                case "Customer":
-                    Customer updateCus = new Customer();
-                    updateCus.setName(name);
-                    updateCus.setPhone(phone);
-                    updateCus.setAddress(CusAddress);
-                    updateCus.setDoB(dob);
-                    ACCOUNT.edit(updateCus);
-                    break;
+    public ArrayList<BranchStockList> getBranchStockList(String BranchID) throws SQLException {
+        return BOOKLIST.getBranchLibrary(BranchID);
+    }
 
-                case "Staff":
-                    Staff updateStaff = new Staff();
-                    updateStaff.setName(name);
-                    updateStaff.setPhone(phone);
-                    updateStaff.setBranchID(branchID);
-                    ACCOUNT.edit(updateStaff);
-                    break;
+    public ArrayList<CustomerLibrary> searchInCusLib(String CustomerID, String match) throws SQLException {
+        return BOOKLIST.searchInCusLib(CustomerID, match);
+    }
 
-                case "Admin":
-                    Admin updateAdmin = new Admin();
-                    updateAdmin.setName(name);
-                    updateAdmin.setPhone(phone);
-                    ACCOUNT.edit(updateAdmin);
-                    break;
-                
-                case "Unknown":
-                    break;
-            }
+    public ArrayList<BranchStockList> searchInBranLib(String BranchID, String match) throws SQLException {
+        return BOOKLIST.searchInBranLib(BranchID, match);
+    }
+
+    // RECEIPTS function
+    public ArrayList<Receipt> getAllReceipts(String CustomerID) throws SQLException {
+        return RECEIPT.get(CustomerID);
+    }
+
+    // ACCOUNTS functions
+    public AccountType checkLogin(String email, String password) throws SQLException {
+        if ((email != null && password != null)) {
+            if (!(ACCOUNT.getEmailforLogin(email) || ACCOUNT.checkPassword(email, password)))
+                return AccountType.UNKNOWN;
+
+            return ACCOUNT.getType(email);
+        } else {
+            Log.l.info(String.format("%s: NOT FOUND", email));
+            return AccountType.UNKNOWN;
         }
+    }
+
+    public void createAccount(Account oAccount) throws SQLException {
+        ACCOUNT.add(oAccount);
+    }
+
+    public void editAccount(Account oAccount) throws SQLException {
+        ACCOUNT.edit(oAccount);
+    }
+
+    public void removeStaff(Account oAccount) throws SQLException {
+        ACCOUNT.remove(oAccount);
+    }
+
+    public void addStaff(Account oAccount) throws SQLException {
+        Staff add = new Staff();
+        add.setEmail(oAccount.getEmail());
+        add.setName(oAccount.getName());
+        add.setPhone(oAccount.getPhone());
+        add.setBranchID("BR00000000");
+        add.setType(AccountType.STAFF);
+        ACCOUNT.add(add);
     }
 
     public void removeStaff(String ID, String BranchID) throws SQLException {
@@ -398,43 +381,23 @@ public class Mediator {
         return BRANCH.getAll();
     }
 
+    public Branch getBranch(String BranchID) throws SQLException {
+        return BRANCH.get(BranchID);
+    }
+    
     public void addBranch(Branch branch) throws SQLException {
         BRANCH.add(branch);
     }
-
-    public void removeBranch(String ID) throws SQLException {
-        BOOKLIST.removeAll(ID, false);
-        BRANCH.remove(ID);
-    }
-
-    public void addBranch(String BranchID, String name, String address) throws SQLException {
-        if (!BRANCH.checkExistBranch(BranchID)){
-            Branch newBranch = new Branch();
-            newBranch.setID(BranchID);
-            newBranch.setName(name);
-            newBranch.setAddress(address);
-            BRANCH.add(newBranch);
-        }
-    }
     
-    public void editBranch(String BranchID, String name, String address) throws SQLException {
-        if (BRANCH.checkExistBranch(BranchID)) {
-            Branch updateBranch = new Branch();
-            updateBranch.setName(name);
-            updateBranch.setAddress(address);
-            BRANCH.edit(updateBranch);
-        } 
+    public void editBranch(Branch b) throws SQLException {
+        BRANCH.edit(b);
     }
 
     public void deleteBranch(String ID) throws SQLException {
-        ArrayList<Account> staffList = ACCOUNT.getAllStaffAtBranch(ID);
-        if (staffList == null) {
-            BRANCH.remove(ID);
-        } else {
-            String newBranchID = "BR00000000";
-            ACCOUNT.setBranchForStaff(ID, newBranchID);
-            BRANCH.remove(ID);
-        }
+        String newBranchID = "BR00000000";
+        BOOKLIST.removeAll(ID, false);
+        ACCOUNT.setBranchForStaff(ID, newBranchID);
+        BRANCH.remove(ID);
     }
 
     public void changePassword(String email, String oldPassword, String newPassword) throws SQLException {
@@ -443,23 +406,6 @@ public class Mediator {
         }
     }
     
-    public ArrayList<BranchStockList> getBranchStockList(String BranchID) throws SQLException {
-        return BOOKLIST.getBranchLibrary(BranchID);
-    }
-
-    public ArrayList<CustomerLibrary> searchInCusLib(String CustomerID, String match) throws SQLException {
-        return BOOKLIST.searchInCusLib(CustomerID, match);
-    }
-
-    public ArrayList<BranchStockList> searchInBranLib(String BranchID, String match) throws SQLException {
-        return BOOKLIST.searchInBranLib(BranchID, match);
-    }
-
-    // RECEIPTS function
-    public ArrayList<Receipt> getAllReceipts(String CustomerID) throws SQLException {
-        return RECEIPT.get(CustomerID);
-    }
-
     public Staff getStaffByID(String ID) throws SQLException {
         return ACCOUNT.getStaff(ID);
     }

@@ -48,19 +48,25 @@ public class BranchProvider implements Provider<Branch> {
     }
 
     public void edit(Branch o) throws SQLException {
-        String query = String.join("\n",
-            "UPDATE BRANCHES",
-            "SET",
-            String.format(
-                "Name = \"%s\", Address = \"%s\"", 
-                o.getName(),
-                o.getAddress()
-            ),
-            "WHERE",
-            String.format("ID = \"%s\"", o.getID())
-        );
-        Statement stmt = conn.createStatement();
-        stmt.executeQuery(query);
+        String query = "UPDATE BRANCHES SET Name = ?, Address = ? WHERE ID = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+
+        if (o.getName() != null) {
+            stmt.setString(1, o.getName());
+        }
+        else {
+            stmt.setNull(1, 0);
+        }
+
+        if (o.getAddress() != null) {
+            stmt.setString(2, o.getAddress());
+        } else {
+            stmt.setNull(2, 0);
+        }
+
+        stmt.setString(3, o.getID());
+
+        stmt.executeUpdate();
         Log.l.info(String.format("%s: update in BRANCHES", o.getID()));
     }
     
@@ -107,7 +113,6 @@ public class BranchProvider implements Provider<Branch> {
     }
     
     public ArrayList<Branch> getAll() throws SQLException {
-        
         String query = "SELECT * FROM BRANCHES";
         PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet rs = stmt.executeQuery();
@@ -120,8 +125,25 @@ public class BranchProvider implements Provider<Branch> {
             branch.setAddress(rs.getString("Address"));
             branchList.add(branch);
         }
-        
+
         Log.l.info("All branch get");
         return branchList;
+    }
+    
+    public Branch get(String BranchID) throws SQLException {
+        String query = String.format("SELECT * FROM BRANCHES WHERE ID = '%s'", BranchID);
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        Branch branch = null;
+
+        if (rs.next()) {
+            branch = new Branch();
+            branch.setID(rs.getString("ID"));
+            branch.setName(rs.getString("Name"));
+            branch.setAddress(rs.getString("Address"));
+        }
+
+        Log.l.info("Get branch by ID");
+        return branch;
     }
 }

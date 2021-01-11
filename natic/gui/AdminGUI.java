@@ -215,7 +215,7 @@ public class AdminGUI extends JFrame {
         
         JLabel lblBranchID = new JLabel("ID");
         JLabel lblBranchName = new JLabel("Name");
-        JLabel lblBranchAddress = new JLabel("Email");
+        JLabel lblBranchAddress = new JLabel("Address");
         
         txtBranchID = new JTextField();
         txtBranchName = new JTextField();
@@ -550,7 +550,7 @@ public class AdminGUI extends JFrame {
                     populateAccountTab();
                 }
                 catch (Exception exc) {
-                    exc.printStackTrace();
+                    GUIHelpers.showErrorDialog("Unable to edit account", exc);
                 }
             }
         });
@@ -582,18 +582,69 @@ public class AdminGUI extends JFrame {
         btnBranchAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: BranchAdd");
+
+                Branch b = new Branch();
+                try{
+                    M.addBranch(b);
+                    populateBranchesTab();
+                }
+                catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to add new branch", exc);
+                }
             }
         });
         
         btnBranchRemove.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: BranchRemove");
+
+                int selectedRow = tblBranches.getSelectedRow();
+
+                if (selectedRow == -1) {
+                    return;    
+                }
+
+                String BranchID = (String) tblBranches.getModel().getValueAt(selectedRow, 0);
+
+                try {
+                    M.deleteBranch(BranchID);
+                    populateBranchesTab();
+                    txtBranchID.setText("");
+                    txtBranchName.setText("");
+                    txtBranchAddress.setText("");
+                } catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to delete branch", exc);
+                }
             }
         });
         
         btnBranchSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: BranchSave");
+
+                Branch b = new Branch();
+
+                String id = txtBranchID.getText().trim();
+                String name = txtBranchName.getText().trim();
+                String address = txtBranchAddress.getText().trim();
+                if (id.isBlank())
+                    return;
+                if (name.isBlank())
+                    name = null;
+                if (address.isBlank())
+                    address = null;
+
+                b.setID(id);
+                b.setName(name);
+                b.setAddress(address);
+
+                try{
+                    M.editBranch(b);
+                    populateBranchesTab();
+                }
+                catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to edit branch", exc);
+                }
             }
         });
 
@@ -605,11 +656,26 @@ public class AdminGUI extends JFrame {
                 if (selectedRow == -1)
                     return;
                 
+                
                 String BranchID = (String) tblBranches.getModel().getValueAt(selectedRow, 0);
-                String BranchName = (String) tblBranches.getModel().getValueAt(selectedRow, 1);
-                Log.l.info("Selected row: " + BranchID + " " + BranchName);
 
-                showBranchDetails();
+                if (BranchID.equals("BR00000000")) {
+                    btnBranchRemove.setEnabled(false);
+                    txtBranchName.setEditable(false);
+                    txtBranchName.setEnabled(false);
+                    txtBranchAddress.setEditable(false);
+                    txtBranchAddress.setEnabled(false);
+                }
+                else {
+                    btnBranchRemove.setEnabled(true);
+                    txtBranchName.setEditable(true);
+                    txtBranchName.setEnabled(true);
+                    txtBranchAddress.setEditable(true);
+                    txtBranchAddress.setEnabled(true);
+
+                }
+
+                showBranchDetails(BranchID);
             }
         });
         
@@ -765,6 +831,18 @@ public class AdminGUI extends JFrame {
         Log.l.info("Library tab populated");
     }
 
-    private void showBranchDetails() {
+    private void showBranchDetails(String BranchID) {
+        try{
+            Branch b = M.getBranch(BranchID);
+            txtBranchID.setText(b.getID());
+            txtBranchName.setText(b.getName());
+            txtBranchAddress.setText(b.getAddress());
+
+            txtBranchName.setCaretPosition(0);
+            txtBranchAddress.setCaretPosition(0);
+        }
+        catch (SQLException exc) {
+            GUIHelpers.showErrorDialog("Unable to get selected branch info", exc);
+        }
     }
 }
