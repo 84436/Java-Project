@@ -623,12 +623,28 @@ public class CustomerGUI extends JFrame {
         btnBuy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: Buy");
+                String BookISBN = txtLibraryISBN.getText();
+                String staffID = "AC00000000";
+                try {
+                    M.buyBook(staffID, customer.getID(), BookISBN);
+                } catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to buy Book", exc);
+                    exc.printStackTrace();
+                }
             }
         });
         
         btnRent.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: Rent");
+                String BookISBN = txtLibraryISBN.getText();
+                String staffID = "AC00000000";
+                // try {
+                //     // M.rentBook(staffID, customer.getID(), BookISBN, );
+                // } catch (SQLException exc) {
+                //     GUIHelpers.showErrorDialog("Unable to buy Book", exc);
+                //     exc.printStackTrace();
+                // }
             }
         });
         
@@ -731,7 +747,7 @@ public class CustomerGUI extends JFrame {
 
                 String ReceiptID = (String) tblOrders.getModel().getValueAt(selectedRow, 0);
 
-                showBookDetails(ReceiptID, true);
+                showReceiptDetails(ReceiptID);
             }
         });
 
@@ -829,8 +845,6 @@ public class CustomerGUI extends JFrame {
         CustomTableModel tbmOrder = new CustomTableModel(tableHeaders, tableData);
         tblOrders.setRowHeight(24);
         tblOrders.setModel(tbmOrder);
-        Log.l.info("Library tab populated");
-
         Log.l.info("Orders tab populated");
     }
 
@@ -902,11 +916,25 @@ public class CustomerGUI extends JFrame {
         }
     }
 
-    private void showReceiptDetails() {
-        // try {
-            
-        // } catch (SQLException exc) {
-        //     GUIHelpers.showErrorDialog("Unable to get receipt", exc);
-        // }
+    private void showReceiptDetails(String ReceiptID) {
+        try {
+            Receipt rec = M.getReceiptByID(ReceiptID);
+            Book b = M.getByISBN(rec.getISBN());
+
+            txtOrderISBN.setText(rec.getISBN());
+            txtOrderID.setText(rec.getID());
+            txtOrderStaffID.setText(rec.getStaffID());
+            txtOrderPrice.setText(Float.toString(rec.getPrice()));
+            txtOrderDate.setText(rec.getDate().toString());
+            txtOrderTitle.setText(b.getTitle());
+            txtOrderGenre.setText(b.getGenre().name());
+            txtOrderAuthor.setText(b.getAuthor());
+            txtOrderFormat.setText(b.getFormat().name());
+            txtOrderPublisher.setText(b.getPublisher());
+            txtOrderVersionID.setText(Integer.toString(b.getVersionID()));
+            txtOrderYear.setText(Integer.toString(b.getYear().getValue()));
+        } catch (SQLException exc) {
+            GUIHelpers.showErrorDialog("Unable to get receipt", exc);
+        }
     }
 }
