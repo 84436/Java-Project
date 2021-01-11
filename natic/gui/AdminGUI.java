@@ -920,6 +920,29 @@ public class AdminGUI extends JFrame {
         btnLibraryAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: LibraryAdd");
+
+                String isbn = txtNewBookISBN.getText();
+
+                if (isbn.isBlank()) {
+                    GUIHelpers.showErrorDialog("Empty ISBN", null);
+                    return;
+                }
+
+                Book b = new Book();
+                b.setISBN(isbn);
+                b.setVersionID(1);
+                b.setYear(Year.now());
+                b.setGenre(BookGenre.OTHER);
+                b.setFormat(BookFormat.EBOOK);
+                b.setRating(new Float(0));
+                b.setPrice(new Float(0));
+
+                try{
+                    M.addBook(b);
+                    populateLibraryTab();
+                } catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to add new book", exc);
+                }
             }
         });
 
@@ -933,8 +956,8 @@ public class AdminGUI extends JFrame {
                 String title = txtLibraryTitle.getText().trim();
                 String author = txtLibraryAuthor.getText().trim();
                 String publisher = txtLibraryPublisher.getText().trim();
-                int versionid = (Integer)spinnerLibraryVersionID.getValue();
-                int year = (Integer)spinnerLibraryYear.getValue();
+                int versionid = Integer.parseInt(spinnerLibraryVersionID.getValue().toString());
+                int year = Integer.parseInt(spinnerLibraryYear.getValue().toString());
                 Integer genre = cboxLibraryGenre.getSelectedIndex();
                 Integer format = cboxLibraryFormat.getSelectedIndex();
                 float price = (Float) spinnerLibraryPrice.getValue();
@@ -952,7 +975,7 @@ public class AdminGUI extends JFrame {
                 b.setTitle(title);
                 b.setAuthor(author);
                 b.setPublisher(publisher);
-                b.setVersionID(versionid);
+                b.setVersionID((int)versionid);
                 b.setYear(Year.of(year));
                 b.setPrice(price);
                 b.setFormat(BookFormat.values()[format]);
@@ -960,7 +983,7 @@ public class AdminGUI extends JFrame {
 
                 try {
                     M.editBook(b);
-                    populateStaffTab();
+                    populateLibraryTab();
                 } catch (SQLException exc) {
                     GUIHelpers.showErrorDialog("Unable to edit book", exc);
                 }
