@@ -596,6 +596,22 @@ public class AdminGUI extends JFrame {
                 Log.l.info("btn: BranchSave");
             }
         });
+
+        tblBranches.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = tblBranches.getSelectedRow();
+                Log.l.info("Selected row index: " + selectedRow);
+                
+                if (selectedRow == -1)
+                    return;
+                
+                String BranchID = (String) tblBranches.getModel().getValueAt(selectedRow, 0);
+                String BranchName = (String) tblBranches.getModel().getValueAt(selectedRow, 1);
+                Log.l.info("Selected row: " + BranchID + " " + BranchName);
+
+                showBranchDetails();
+            }
+        });
         
 
 
@@ -747,5 +763,8 @@ public class AdminGUI extends JFrame {
         tblLibrary.setModel(tbmLib);
         tblLibrary.setAutoCreateRowSorter(true);
         Log.l.info("Library tab populated");
+    }
+
+    private void showBranchDetails() {
     }
 }

@@ -11,7 +11,8 @@ public class App {
 					Mediator m = Mediator.getInstance();
 					m.init();
 					LoginGUI frame = new LoginGUI();
-					frame.setVisible(true);
+                    frame.setVisible(true);
+                    frame.getRootPane().requestFocus(false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
