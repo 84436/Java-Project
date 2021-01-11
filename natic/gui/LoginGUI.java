@@ -21,10 +21,7 @@ public class LoginGUI extends JFrame {
 
     private JPanel contentPane;
     private JTextField txtEmail;
-    private JLabel Label_Cus;
-    private JLabel Label_Q;
-    private JButton btnSignUp;
-    private JPasswordField pwtxtPassword;
+    private JPasswordField pwtxtCurrent;
 
     private static final String PLACEHOLDER_EMAIL = "Email";
     private static final String PLACEHOLDER_PASSWORD = "Password";
@@ -38,56 +35,62 @@ public class LoginGUI extends JFrame {
             ;
         }
 
+        setTitle("NATiC: Sign In");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 500, 400);
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        setContentPane(contentPane);
-        contentPane.setLayout(new MigLayout("fillx", "[][grow][]", "[][][][][][grow][]"));
+        setBounds(0, 0, 500, 400);
+        GUIHelpers.centerWindow(this);
+        GUIHelpers.setGlobalFont("SansSerif", Font.PLAIN, 14);
 
-        JLabel Label = new JLabel("NATiC");
-        Label.setFont(new Font("Tahoma", Font.BOLD, 40));
-        contentPane.add(Label, "cell 1 0,alignx center");
+        contentPane = new JPanel();
+        setContentPane(contentPane);
+        contentPane.setLayout(new MigLayout("fillx", "[36px][grow,fill][36px]", "[72px][36px,fill][36px,fill][36px,fill][36px,fill][][36px,fill][grow]"));
+
+        setBackground(Color.WHITE);
+        contentPane.setBackground(Color.WHITE);
+
+        JLabel lblAppName = new JLabel("NATiC");
+        lblAppName.setHorizontalAlignment(SwingConstants.CENTER);
+        lblAppName.setFont(new Font("SansSerif", Font.BOLD, 36));
+        contentPane.add(lblAppName, "cell 1 0");
 
         txtEmail = new JTextField();
         GUIHelpers.addPlaceholderText(txtEmail, PLACEHOLDER_EMAIL);
-        txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 16));
-        contentPane.add(txtEmail, "cell 1 1,alignx center");
-        txtEmail.setColumns(15);
+        contentPane.add(txtEmail, "cell 1 1");
+        txtEmail.setColumns(20);
 
-        pwtxtPassword = new JPasswordField();
-        GUIHelpers.addPlaceholderText(pwtxtPassword, PLACEHOLDER_PASSWORD);
-        pwtxtPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
-        contentPane.add(pwtxtPassword, "cell 1 2,alignx center");
-        pwtxtPassword.setColumns(15);
+        pwtxtCurrent = new JPasswordField();
+        GUIHelpers.addPlaceholderText(pwtxtCurrent, PLACEHOLDER_PASSWORD);
+        contentPane.add(pwtxtCurrent, "cell 1 2");
+        pwtxtCurrent.setColumns(20);
 
-        Label_Cus = new JLabel("Customer only:");
-        Label_Cus.setFont(new Font("Tahoma", Font.BOLD, 15));
-        contentPane.add(Label_Cus, "flowx,cell 1 5,alignx center");
+        JLabel lblSignUpPrompt = new JLabel("<html><body><b>Customers only:</b> No account yet?<body></html>");
+        lblSignUpPrompt.setHorizontalAlignment(SwingConstants.CENTER);
+        contentPane.add(lblSignUpPrompt, "flowx,cell 1 5");
 
-        Label_Q = new JLabel("No account yet?");
-        Label_Q.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        contentPane.add(Label_Q, "cell 1 5");
-
-        btnSignUp = new JButton("Sign Up");
+        JButton btnSignUp = new JButton("Sign Up");
+        btnSignUp.setPreferredSize(new Dimension(100, 25));
+        contentPane.add(btnSignUp, "cell 1 6");
         btnSignUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 txtEmail.setText("");
-                pwtxtPassword.setText("");
+                pwtxtCurrent.setText("");
                 SignupGUI signup = new SignupGUI();
                 signup.setVisible(true);
                 signup.getRootPane().requestFocus(false);
                 dispose();
             }
         });
-        btnSignUp.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        contentPane.add(btnSignUp, "cell 1 6,alignx center");
+
+        CompoundBorder CBorder4 = new CompoundBorder(new LineBorder(new Color(192, 192, 192)), new EmptyBorder(4, 4, 4, 4));
+        txtEmail.setBorder(CBorder4);
+        pwtxtCurrent.setBorder(CBorder4);
 
         JButton btnSignIn = new JButton("Sign In");
+        contentPane.add(btnSignIn, "cell 1 3");
         btnSignIn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 String email = txtEmail.getText().trim();
-                String password = new String(pwtxtPassword.getPassword());
+                String password = new String(pwtxtCurrent.getPassword());
                 
                 Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
                 
@@ -108,7 +111,7 @@ public class LoginGUI extends JFrame {
                         case CUSTOMER:
                             String CusID = M.getIDByEmail(email);
                             txtEmail.setText("");
-                            pwtxtPassword.setText("");
+                            pwtxtCurrent.setText("");
                             CustomerGUI customer = new CustomerGUI(CusID);
                             customer.setVisible(true);
                             dispose();
@@ -117,7 +120,7 @@ public class LoginGUI extends JFrame {
                         case STAFF:
                             String StaffID = M.getIDByEmail(email);
                             txtEmail.setText("");
-                            pwtxtPassword.setText("");
+                            pwtxtCurrent.setText("");
                             StaffGUI staff = new StaffGUI(StaffID);
                             staff.setVisible(true);
                             dispose();
@@ -126,7 +129,7 @@ public class LoginGUI extends JFrame {
                         case ADMIN:
                             String AdminID = M.getIDByEmail(email);
                             txtEmail.setText("");
-                            pwtxtPassword.setText("");
+                            pwtxtCurrent.setText("");
                             
                             AdminGUI admin = new AdminGUI(AdminID);
                             admin.setVisible(true);
@@ -142,9 +145,6 @@ public class LoginGUI extends JFrame {
                     GUIHelpers.showErrorDialog("Unknown error occured while logging in", exc);
                 }
             }
-        });
-
-        btnSignIn.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        contentPane.add(btnSignIn, "cell 1 3,alignx center");
+        });   
     }
 }

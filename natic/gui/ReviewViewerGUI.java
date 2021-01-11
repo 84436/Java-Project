@@ -17,14 +17,19 @@ public class ReviewViewerGUI extends JFrame {
         String r = "";
         r += "<html><body style=\"font-size: 18pt;\">";
 
-        for (int i = 0; i < reviews.size(); i++) {
-            Review each = reviews.get(i);
-            r += String.format(
-                "<p><i style=\"font-family: Serif;\">%s</i><br><b style=\"font-family: SansSerif; font-size: 16pt;\">-- %s, ★ %s/5<b></p><br>",
-                each.getReviewText(), each.getCustomerID(), Integer.toString(each.getReviewScore())
-            );
-            if (i < reviews.size() - 1)
-                r += "<br>";
+        if (reviews.size() == 0) {
+            r += "<p style=\"font-family: SansSerif; font-weight: bold; text-align: center;\">No reviews available.</p>";
+        }
+        else {
+            for (int i = 0; i < reviews.size(); i++) {
+                Review each = reviews.get(i);
+                r += String.format(
+                    "<p><i style=\"font-family: Serif;\">%s</i><br><b style=\"font-family: SansSerif; font-size: 16pt;\">-- %s, ★ %s/5<b></p><br>",
+                    each.getReviewText(), each.getCustomerName(), Integer.toString(each.getReviewScore())
+                );
+                if (i < reviews.size() - 1)
+                    r += "<br>";
+            }
         }
 
         r += "</body></html>";
@@ -33,14 +38,16 @@ public class ReviewViewerGUI extends JFrame {
     
     public ReviewViewerGUI(ArrayList<Review> reviews) {
         setTitle("Reviews");
-        setBounds(100, 100, 500, 700);
+        setBounds(0, 0, 500, 700);
+        GUIHelpers.centerWindow(this);
         GUIHelpers.setGlobalFont("SansSerif", Font.PLAIN, 14);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent we) {
-                dispose();
-            }
-        });
+        // addWindowListener(new WindowAdapter() {
+        //     public void windowClosing(WindowEvent we) {
+        //         dispose();
+        //     }
+        // });
 
         contentPane = new JPanel();
         contentPane.setBackground(new Color(255, 255, 255));
