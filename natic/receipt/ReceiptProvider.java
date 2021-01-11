@@ -20,6 +20,27 @@ public class ReceiptProvider implements Provider<Receipt> {
         return null;
     }
 
+    public Receipt getByID(String ReceiptID, String CustomerID) throws SQLException {
+        String query = String.format("SELECT * FROM Receipts WHERE CustomerID = '%s' AND ID = '%s'", CustomerID, ReceiptID);
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        Receipt res = null;
+        if (rs.next()) {
+            res = new Receipt();
+            res.setID(rs.getString("ID"));
+            res.setISBN(rs.getString("ISBN"));
+            res.setStaffID(rs.getString("StaffID"));
+            res.setCustomerID(rs.getString("CustomerID"));
+            Date reDate = rs.getDate("ReceiptDate");
+            res.setDate(LocalDate.of(reDate.getYear() + 1900, reDate.getMonth() + 1, reDate.getDate()));
+            res.setPrice(rs.getFloat("Price"));
+            Date returnDate = rs.getDate("ReturnOn");
+            res.setReturnOn(LocalDate.of(returnDate.getYear() + 1900, returnDate.getMonth() + 1, returnDate.getDate()));
+        }
+        Log.l.info(String.format("%s of %s: Get RECEIPTS", ReceiptID, CustomerID));
+        return res;
+    }
+
     public ArrayList<Receipt> get(String CustomerID) throws SQLException {
         String query = String.format("SELECT * FROM Receipts WHERE CustomerID = '%s'", CustomerID);
         Statement stmt = conn.createStatement();

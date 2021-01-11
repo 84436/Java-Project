@@ -333,6 +333,10 @@ public class Mediator {
         return RECEIPT.get(CustomerID);
     }
 
+    public Receipt getReceiptByID(String ReceiptID, String CustomerID) throws SQLException {
+        return RECEIPT.getByID(ReceiptID, CustomerID);
+    }
+
     // ACCOUNTS functions
     public AccountType checkLogin(String email, String password) throws SQLException {
         if ((email != null && password != null)) {
