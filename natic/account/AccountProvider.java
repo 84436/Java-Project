@@ -398,7 +398,7 @@ public class AccountProvider implements Provider<Account> {
                         oc.getID()
                     )
                 );
-                PreparedStatement stmtc = conn.prepareStatement(query);
+                PreparedStatement stmtc = conn.prepareStatement(queryc);
                 stmtc.executeUpdate();
                 Log.l.info(String.format("%s: delete from CUSTOMER", o.getID()));
                 break;
@@ -550,17 +550,19 @@ public class AccountProvider implements Provider<Account> {
         return accountList;
     }
 
-    public ArrayList<Account> getALlStaff() throws SQLException {
-        String query = "SELECT * FROM ACCOUNTS";
+    public ArrayList<Staff> getALlStaff() throws SQLException {
+        String query = "SELECT * FROM ACCOUNTS join STAFF on ACCOUNTS.ID = STAFF.ID";
         PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet rs = stmt.executeQuery();
-        ArrayList<Account> accountList = new ArrayList<>();
+        ArrayList<Staff> accountList = new ArrayList<>();
         while (rs.next()) {
             if (rs.getInt("Type") == 1) {
                 Staff staff = new Staff();
+                staff.setID(rs.getString("ID"));
+                staff.setPhone(rs.getString("Phone"));
                 staff.setEmail(rs.getString("Email"));
                 staff.setName(rs.getString("Name"));
-                staff.setPhone(rs.getString("Phone"));
+                staff.setBranchID(rs.getString("BranchID"));
                 accountList.add(staff);
             }
         }

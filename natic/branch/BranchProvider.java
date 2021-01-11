@@ -120,6 +120,7 @@ public class BranchProvider implements Provider<Branch> {
             branch.setAddress(rs.getString("Address"));
             branchList.add(branch);
         }
+        
         Log.l.info("All branch get");
         return branchList;
     }

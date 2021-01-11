@@ -8,6 +8,8 @@ public class App {
         EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					Mediator m = Mediator.getInstance();
+					m.init();
 					LoginGUI frame = new LoginGUI();
 					frame.setVisible(true);
 				} catch (Exception e) {

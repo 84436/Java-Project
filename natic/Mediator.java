@@ -389,7 +389,7 @@ public class Mediator {
         }
     }
 
-    public ArrayList<Account> getAllStaff() throws SQLException {
+    public ArrayList<Staff> getAllStaff() throws SQLException {
         return ACCOUNT.getALlStaff();
     }
 

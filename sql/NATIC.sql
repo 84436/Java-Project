@@ -146,13 +146,13 @@ VALUES
 
 INSERT INTO Accounts (ID, Name, Email, Phone, Type, Pass)
 VALUES
-    ("AC00000000", NULL, NULL, NULL, 1, NULL),
-    ("AC00000001", "Nguyễn Văn AB", "ab.nguyen@email.com", NULL, 2, NULL),
-    ("AC00000002", "Trần Văn CD", "cd.tran@email.com", "0123456789", 0, NULL),
-    ("AC00000003", "Lê Thị EF", "ef.lethi@email.com", NULL, 1, NULL),
-    ("AC00000004", "Lý Quốc GH", "gh.lyquoc@email.com", "0928471742", 0, NULL),
-    ("AC00000005", "Phạm Lê IJ", "ij.phamle@email.com", "0728471238", 1, NULL),
-    ("AC00000006", "Vũ Thị XY", "xy.vuthi@email.com", "0734591231", 0, NULL)
+    ("AC00000000", "Virtual Account", NULL, NULL, 1, NULL),
+    ("AC00000001", "Nguyễn Văn AB", "ab.nguyen@email.com", NULL, 2, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
+    ("AC00000002", "Trần Văn CD", "cd.tran@email.com", "0123456789", 0, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
+    ("AC00000003", "Lê Thị EF", "ef.lethi@email.com", NULL, 1, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
+    ("AC00000004", "Lý Quốc GH", "gh.lyquoc@email.com", "0928471742", 0, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
+    ("AC00000005", "Phạm Lê IJ", "ij.phamle@email.com", "0728471238", 1, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
+    ("AC00000006", "Vũ Thị XY", "xy.vuthi@email.com", "0734591231", 0, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca")
 ;
 
 INSERT INTO Customers (ID, DoB, Address, SignUpDate)
@@ -164,7 +164,7 @@ VALUES
 
 INSERT INTO Branches (ID, Name, Address)
 VALUES
-    ("BR00000000", NULL, NULL),
+    ("BR00000000", "NATiC Virtual Branch", NULL),
     ("BR00000001", "NATiC Nguyễn Văn Cừ", "200 Nguyễn Văn Cừ Phường 4 Quận 5 TPHCM"),
     ("BR00000002", "NATiC Lê Trọng Tấn", "12 Lê Trọng Tấn Tây Thạnh Tân Phú TPHCM"),
     ("BR00000003", "NATiC Nguyễn Trãi", "320 Nguyễn Trãi Phường 7 Quận 5 TPHCM"),

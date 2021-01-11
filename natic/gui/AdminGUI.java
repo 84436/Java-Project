@@ -6,11 +6,15 @@ import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 
 import net.miginfocom.swing.MigLayout;
 
 import java.util.*;
 import natic.*;
+import natic.account.Account;
+import natic.account.Staff;
+import natic.branch.Branch;
 
 public class AdminGUI extends JFrame {
     
@@ -47,7 +51,6 @@ public class AdminGUI extends JFrame {
 	// MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
 	
 	public AdminGUI() {
-	    
 	    /**
 	     * Base
 	     */
@@ -653,70 +656,22 @@ public class AdminGUI extends JFrame {
     
     private void populateBranchesTab() {
         String[] tableHeaders = {GUIHelpers.htmlBoldText("ID"), GUIHelpers.htmlBoldText("Name")};
-        
-        Object[][] rawData = {
-            {"BR00000000", "NATiC Virtual Branch"},
-            {"BR00000001", "NATiC Nguyen Van Cu"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000004", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
-            {"BR00000005", "NATiC Nguyen Thi Minh Khai"}
-        };
 
-        // extract and push each records
         ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
-        for (var each_record: rawData) {
-            ArrayList<Object> record = new ArrayList<>();
-            for (var each_field: each_record) {
-                record.add(each_field);
-            }
-            tableData.add(record);
+
+        try {
+            ArrayList<Branch> branches = M.getAllBranch();
+            for (var branch: branches) {
+                ArrayList<Object> record = new ArrayList<>();
+                record.add(branch.getID());
+                record.add(branch.getName());
+                tableData.add(record);
         }
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+        // extract and push each records
+        
 
         CustomTableModel tbmBranches = new CustomTableModel(tableHeaders, tableData);
         tblBranches.setRowHeight(24);
@@ -726,6 +681,29 @@ public class AdminGUI extends JFrame {
     }
 
     private void populateStaffTab() {
+        String[] tableHeaders = {GUIHelpers.htmlBoldText("ID"), GUIHelpers.htmlBoldText("Name"), GUIHelpers.htmlBoldText("Email")};
+
+        ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
+
+        try {
+            ArrayList<Staff> staffList = M.getAllStaff();
+            for (var staff: staffList) {
+                ArrayList<Object> record = new ArrayList<>();
+                record.add(staff.getID());
+                record.add(staff.getName());
+                record.add(staff.getEmail());
+                tableData.add(record);
+        }
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+        // extract and push each records
+        
+
+        CustomTableModel tbmStaff = new CustomTableModel(tableHeaders, tableData);
+        tblStaff.setRowHeight(24);
+        tblStaff.setModel(tbmStaff);
+        tblStaff.setAutoCreateRowSorter(true);
         Log.l.info("Staff tab populated");
     }
     
