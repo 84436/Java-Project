@@ -56,7 +56,6 @@ public class AdminGUI extends JFrame {
     private JTextField txtLibraryAuthor;
     private JTextField txtLibraryPublisher;
     private JTextField txtNewBookISBN;
-    private JTextPane txtBookReviews;
     private JLabel lblLibraryRatingAvg;
 	
     private JSpinner spinnerLibraryVersionID;
@@ -385,7 +384,7 @@ public class AdminGUI extends JFrame {
 
         JPanel BookDetails = new JPanel();
         scrollBookDetails.setViewportView(BookDetails);
-        BookDetails.setLayout(new MigLayout("", "[80.00px,grow,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][36px,fill][40px,center][][][grow]"));
+        BookDetails.setLayout(new MigLayout("", "[80.00px,grow,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][36px,fill][40px,center][][][36px,fill]"));
 
         JLabel lblBookCover = new JLabel("");
         JLabel lblHeaderLibraryCommonFields = new JLabel(GUIHelpers.htmlHeaderSmall("Overview"));
@@ -414,15 +413,13 @@ public class AdminGUI extends JFrame {
         spinnerLibraryPrice = new JSpinner();
         JButton btnLibrarySave = new JButton("Save changes");
         JSeparator sepBookDetails2 = new JSeparator();
-        txtBookReviews = new JTextPane();
+        JButton btnLibraryShowReviews = new JButton("Show reviews");
 
         txtLibraryISBN.setEditable(false);
         txtLibraryISBN.setEnabled(false);
         txtLibraryISBN.setColumns(10);
         sepBookDetails.setForeground(new Color(192, 192, 192));
         sepBookDetails2.setForeground(new Color(192, 192, 192));
-        txtBookReviews.setBackground(new Color(240, 240, 240));
-        txtBookReviews.setEditable(false);
         txtLibraryTitle.setColumns(10);
         txtLibraryAuthor.setColumns(10);
         txtLibraryPublisher.setColumns(10);
@@ -472,7 +469,7 @@ public class AdminGUI extends JFrame {
         BookDetails.add(sepBookDetails2, "cell 0 14 2 1");
         BookDetails.add(lblHeaderLibraryReviews, "cell 0 15 2 1");
         BookDetails.add(lblLibraryRatingAvg, "cell 0 16 2 1");
-        BookDetails.add(txtBookReviews, "cell 0 17 2 1,grow");
+        BookDetails.add(btnLibraryShowReviews, "cell 0 17 2 1,grow");
 
 
 
@@ -1032,6 +1029,20 @@ public class AdminGUI extends JFrame {
             }
         });
 
+        btnLibraryShowReviews.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Log.l.info("btn: LibraryShowReviews");
+                try {
+                    String isbn = txtLibraryISBN.getText().trim();
+                    ArrayList<Review> reviews = M.getReview(isbn);
+                    ReviewViewerGUI reviewViewerFrame = new ReviewViewerGUI(reviews);
+                }
+                catch (Exception exc) {
+                    GUIHelpers.showErrorDialog("Unable to show reviews for books", exc);
+                }
+            }
+        });
+
 
         tblLibrary.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
@@ -1191,17 +1202,6 @@ public class AdminGUI extends JFrame {
         lblLibraryRatingAvg.setText(String.format("Average rating: %.1f", rating));
     }
 
-    private void updateBookDetailsReviews(ArrayList<Review> reviews) {
-        String r = "";
-        for (int i = 0; i < reviews.size(); i++) {
-            Review each = reviews.get(i);
-            r += String.format("%s\n--%s, %d/5\n", each.getReviewText(), each.getCustomerID(), each.getReviewScore());
-            if (i < reviews.size() - 1)
-                r += "\n";
-        }
-        txtBookReviews.setText(r);
-    }
-
     private void showBookDetails(String BookISBN) {
         try {
             Book b = M.getByISBN(BookISBN);
@@ -1235,8 +1235,9 @@ public class AdminGUI extends JFrame {
             txtLibraryTitle.setCaretPosition(0);
             txtLibraryAuthor.setCaretPosition(0);
             txtLibraryPublisher.setCaretPosition(0);
+            
+            updateBookDetailsRating(b.getRating());
 
-            updateBookDetailsRating(0);
         } catch (SQLException exc) {
             GUIHelpers.showErrorDialog("Unable to get selected book info", exc);
         }
