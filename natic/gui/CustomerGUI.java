@@ -3,18 +3,18 @@ package natic.gui;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
-import javax.swing.plaf.*;
-
 import java.awt.*;
 import java.awt.event.*;
-
 import net.miginfocom.swing.MigLayout;
+
 import java.util.*;
 import java.text.*;
+import natic.*;
 
 public class CustomerGUI extends JFrame {
     
     private static final long serialVersionUID = 1L;
+    Mediator M = Mediator.getInstance();
     
     private JTextField txtAccountName;
     private JTextField txtAccountEmail;
@@ -53,82 +53,6 @@ public class CustomerGUI extends JFrame {
     private JTextField txtOrderDate;
     private JTextField txtOrderStaffID;
     
-    // https://stackoverflow.com/a/27873384
-    // It's hard to believe Java Swing can understand HTML4 for basic formatting, but it _does_
-    
-    private static String styledTabName(String tabName) {
-        String template = "<html><body style=\"%s\">%s</body></html>";
-        String style = "margin: 20px 5px; font-family: SansSerif; font-size: 14pt; font-weight: bold;";
-        return String.format(template, style, tabName);
-    }
-    
-    private static String styledHeaderLabel(String text) {
-        String template = "<html><body style=\"%s\">%s</body></html>";
-        String style = "font-weight: bold; font-size: 24pt";
-        return String.format(template, style, text);
-    }
-    
-    private static String styledHeaderSmallLabel(String text) {
-        String template = "<html><body style=\"%s\">%s</body></html>";
-        String style = "font-weight: bold; font-size: 18pt";
-        return String.format(template, style, text);
-    }
-    
-    // adapted from https://stackoverflow.com/a/7434935
-    private static void setGlobalFont(String family, int style, int size) {
-        var newFont = new FontUIResource(family, style, size);
-        var keys = UIManager.getLookAndFeelDefaults().keys();
-        while (keys.hasMoreElements()) {
-            var key = keys.nextElement();
-            var value = UIManager.get(key);
-            if (value instanceof javax.swing.plaf.FontUIResource) {
-                UIManager.getLookAndFeelDefaults().replace(key, newFont);
-            }
-        }
-    }
-    
-    /**
-     * A non-intrusive method for adding pseudo-placeholder text in JTextFields.
-     * (Why "pseudo"? There's a pretty obvious UX bug in this implementation.)
-     * @param field Instance of JTextField
-     * @param text Placeholder string
-     */
-    private static void addPlaceholderText(JTextField field, String text) {
-        // Initial state should be placeholder
-        field.setForeground(Color.GRAY);
-        field.setText(text);
-        
-        // Subsequent states
-        field.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (field.getText().equals(text)) {
-                    field.setForeground(Color.BLACK);
-                    field.setText("");
-                }
-            }
-            public void focusLost(FocusEvent e) {
-                if (field.getText().isBlank()) {
-                    field.setForeground(Color.GRAY);
-                    field.setText(text);
-                }
-            }
-        });
-    }
-    
-    private static void addPasswordRevealToggleEvent(JToggleButton btn, JPasswordField passfield) {
-        btn.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (btn.isSelected()) {
-                    passfield.setEchoChar('\u0000');
-                }
-                else {
-                    passfield.setEchoChar('●'); // default
-                }
-            }
-        });
-    }
-    
     // MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
     
     public CustomerGUI() {
@@ -146,7 +70,7 @@ public class CustomerGUI extends JFrame {
         
         // Basics
         setTitle("NATiC: Customer");
-        setGlobalFont("SansSerif", Font.PLAIN, 14);
+        GUIHelpers.setGlobalFont("SansSerif", Font.PLAIN, 14);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 800, 600);
         getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
@@ -162,7 +86,7 @@ public class CustomerGUI extends JFrame {
          */
         
         JPanel Account = new JPanel();
-        tabbedPane.addTab(styledTabName("{customer}"), null, Account, null);
+        tabbedPane.addTab(GUIHelpers.htmlTabName("{customer}"), null, Account, null);
         Account.setLayout(new MigLayout("", "[grow,fill]", "[grow][36.00,fill]"));
         
         JPanel AccountInfoEdit = new JPanel();
@@ -183,7 +107,7 @@ public class CustomerGUI extends JFrame {
          * Account Panel -> About
          */
         
-        JLabel lblHeaderAccountAbout = new JLabel(styledHeaderLabel("About you"));
+        JLabel lblHeaderAccountAbout = new JLabel(GUIHelpers.htmlHeader("About you"));
         JLabel lblAccountName = new JLabel("Name");
         JLabel lblAccountEmail = new JLabel("Email");
         JLabel lblAccountPhone = new JLabel("Phone");
@@ -219,7 +143,7 @@ public class CustomerGUI extends JFrame {
          * Account Panel -> Password
          */
         
-        JLabel lblHeaderPassword = new JLabel(styledHeaderLabel("Password"));
+        JLabel lblHeaderPassword = new JLabel(GUIHelpers.htmlHeader("Password"));
         JLabel lblPasswordOld = new JLabel("Old password");
         JLabel lblPasswordNew = new JLabel("New password");
         JLabel lblPasswordConfirm = new JLabel("Confirm password");
@@ -232,9 +156,9 @@ public class CustomerGUI extends JFrame {
         JToggleButton btnPasswordOldReveal = new JToggleButton("👁");
         JToggleButton btnPasswordNewReveal = new JToggleButton("👁");
         JToggleButton btnPasswordConfirmReveal = new JToggleButton("👁");
-        addPasswordRevealToggleEvent(btnPasswordOldReveal, pwtxtOld);
-        addPasswordRevealToggleEvent(btnPasswordNewReveal, pwtxtNew);
-        addPasswordRevealToggleEvent(btnPasswordConfirmReveal, pwtxtConfirm);
+        GUIHelpers.addPasswordRevealToggleEvent(btnPasswordOldReveal, pwtxtOld);
+        GUIHelpers.addPasswordRevealToggleEvent(btnPasswordNewReveal, pwtxtNew);
+        GUIHelpers.addPasswordRevealToggleEvent(btnPasswordConfirmReveal, pwtxtConfirm);
         
         AccountInfoEdit.add(lblHeaderPassword, "cell 0 7 3 1");
         AccountInfoEdit.add(lblPasswordOld, "cell 0 8,alignx trailing");
@@ -255,12 +179,12 @@ public class CustomerGUI extends JFrame {
          */
         
         JPanel Library = new JPanel();
-        tabbedPane.addTab(styledTabName("Library"), null, Library, null);
+        tabbedPane.addTab(GUIHelpers.htmlTabName("Library"), null, Library, null);
         Library.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][][grow]"));
         
         txtLibrarySearch = new JTextField();
         txtLibrarySearch.setColumns(20);
-        addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
+        GUIHelpers.addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
         
         JCheckBox checkPurchased = new JCheckBox("Show only purchased books");
         
@@ -302,11 +226,11 @@ public class CustomerGUI extends JFrame {
         BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][][40px,center][][][][][][][]"));
         
         JLabel lblBookCover = new JLabel("");
-        JLabel lblHeaderLibraryCommonFields = new JLabel(styledHeaderSmallLabel("Overview"));
+        JLabel lblHeaderLibraryCommonFields = new JLabel(GUIHelpers.htmlHeaderSmall("Overview"));
         JLabel lblLibraryISBN = new JLabel("ISBN");
         JLabel lblLibraryTitle = new JLabel("Title");
         JLabel lblLibraryAuthor = new JLabel("Author");
-        JLabel lblHeaderLibraryDetails = new JLabel(styledHeaderSmallLabel("Details"));
+        JLabel lblHeaderLibraryDetails = new JLabel(GUIHelpers.htmlHeaderSmall("Details"));
         JLabel lblLibraryVersionID = new JLabel("Version ID");
         JLabel lblLibraryYear = new JLabel("Year");
         JLabel lblLibraryPublisher = new JLabel("Publisher");
@@ -392,7 +316,7 @@ public class CustomerGUI extends JFrame {
          */
         
         JPanel Orders = new JPanel();
-        tabbedPane.addTab(styledTabName("Orders"), null, Orders, null);
+        tabbedPane.addTab(GUIHelpers.htmlTabName("Orders"), null, Orders, null);
         Orders.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[grow]"));
         
         tblOrders = new JTable();
@@ -419,11 +343,11 @@ public class CustomerGUI extends JFrame {
         scrollOrderDetails.setViewportView(OrderDetails);
         OrderDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][40px,center][][][][][][][][][][]"));
         
-        JLabel lblHeaderOrderOverview = new JLabel(styledHeaderSmallLabel("Order info"));
+        JLabel lblHeaderOrderOverview = new JLabel(GUIHelpers.htmlHeaderSmall("Order info"));
         JLabel lblOrderID = new JLabel("Order ID");
         JLabel lblOrderDate = new JLabel("Date");
         JLabel lblOrderStaffID = new JLabel("Staff ID");
-        JLabel lblHeaderOrderBookDetails = new JLabel(styledHeaderSmallLabel("Book details"));
+        JLabel lblHeaderOrderBookDetails = new JLabel(GUIHelpers.htmlHeaderSmall("Book details"));
         JLabel lblOrderISBN = new JLabel("ISBN");
         JLabel lblOrderTitle = new JLabel("Title");
         JLabel lblOrderAuthor = new JLabel("Author");
@@ -557,11 +481,33 @@ public class CustomerGUI extends JFrame {
         scrollOrders              .getViewport().setOpaque(false);
         scrollOrderDetails        .getViewport().setOpaque(false);
         
-        // Always select 2nd tab on startup
-        tabbedPane.setSelectedIndex(1);
         
+
+
+
+        /**
+         * Events (Main)
+         */
+
         // Library -> that checkbox: fire default state
         toggleLibraryView(checkPurchased.isSelected());
+
+        // Tab: change on index change
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                final HashMap<Integer, String> tabMap = new HashMap<>() {{
+                    put(0, "Account");
+                    put(1, "Library");
+                    put(2, "Orders");
+                }};
+                int tabIndex = tabbedPane.getSelectedIndex();
+                Log.l.info("Tab changed to: " + tabMap.get(tabIndex));
+                populateTab(tabIndex);
+            }
+        });
+        
+        // Tab: always select 2nd tab on startup
+        tabbedPane.setSelectedIndex(1);
         
         /**
          * Events -> Account
@@ -569,19 +515,19 @@ public class CustomerGUI extends JFrame {
         
         btnAccountAboutSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: AccountAboutSave");
+                Log.l.info("btn: AccountAboutSave");
             }
         });
         
         btnPasswordSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: PasswordSave");
+                Log.l.info("btn: PasswordSave");
             }
         });
         
         btnLogOut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: LogOut");
+                Log.l.info("btn: LogOut");
             }
         });
         
@@ -591,19 +537,19 @@ public class CustomerGUI extends JFrame {
         
         btnBuy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: Buy");
+                Log.l.info("btn: Buy");
             }
         });
         
         btnRent.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: Rent");
+                Log.l.info("btn: Rent");
             }
         });
         
         checkPurchased.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("check: LibraryPurchasedOnly: " + checkPurchased.isSelected());
+                Log.l.info("check: LibraryPurchasedOnly: " + checkPurchased.isSelected());
                 toggleLibraryView(checkPurchased.isSelected());
             }
         });
@@ -611,6 +557,8 @@ public class CustomerGUI extends JFrame {
         /**
          * Events -> Orders
          */
+
+        Log.l.info("Customer GUI init'd");
     }
     
     private void toggleLibraryView(boolean purchasedOnly) {
@@ -624,5 +572,25 @@ public class CustomerGUI extends JFrame {
             btnRent             .setEnabled(true);
             lblPurchaseState    .setVisible(false);
         }
+    }
+
+    private void populateTab(int tabIndex) {
+        switch (tabIndex) {
+            case 0: populateAccountTab(); break;
+            case 1: populateLibraryTab(); break;
+            case 2: populateOrdersTab(); break;
+        }
+    }
+    
+    private void populateAccountTab() {
+        Log.l.info("Account tab populated");
+    }
+    
+    private void populateLibraryTab() {
+        Log.l.info("Library tab populated");
+    }
+    
+    private void populateOrdersTab() {
+        Log.l.info("Orders tab populated");
     }
 }

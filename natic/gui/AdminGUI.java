@@ -3,16 +3,19 @@ package natic.gui;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
-import javax.swing.plaf.*;
 
 import java.awt.*;
 import java.awt.event.*;
 
 import net.miginfocom.swing.MigLayout;
 
+import java.util.*;
+import natic.*;
+
 public class AdminGUI extends JFrame {
     
     private static final long serialVersionUID = 1L;
+    Mediator M = Mediator.getInstance();
     
     private JTextField txtAccountName;
 	private JTextField txtAccountEmail;
@@ -40,82 +43,6 @@ public class AdminGUI extends JFrame {
     private JTextField txtLibraryTitle;
     private JTextField txtLibraryAuthor;
     private JTextField txtLibraryPublisher;
-    
-	// https://stackoverflow.com/a/27873384
-	// It's hard to believe Java Swing can understand HTML4 for basic formatting, but it _does_
-    
-	private static String styledTabName(String tabName) {
-	    String template = "<html><body style=\"%s\">%s</body></html>";
-	    String style = "margin: 20px 5px; font-family: SansSerif; font-size: 14pt; font-weight: bold;";
-	    return String.format(template, style, tabName);
-	}
-	
-	private static String styledHeaderLabel(String text) {
-	    String template = "<html><body style=\"%s\">%s</body></html>";
-	    String style = "font-weight: bold; font-size: 24pt";
-	    return String.format(template, style, text);
-	}
-	
-	private static String styledHeaderSmallLabel(String text) {
-        String template = "<html><body style=\"%s\">%s</body></html>";
-        String style = "font-weight: bold; font-size: 18pt";
-        return String.format(template, style, text);
-    }
-	
-	// adapted from https://stackoverflow.com/a/7434935
-	private static void setGlobalFont(String family, int style, int size) {
-	    var newFont = new FontUIResource(family, style, size);
-	    var keys = UIManager.getLookAndFeelDefaults().keys();
-	    while (keys.hasMoreElements()) {
-	        var key = keys.nextElement();
-	        var value = UIManager.get(key);
-	        if (value instanceof javax.swing.plaf.FontUIResource) {
-	            UIManager.getLookAndFeelDefaults().replace(key, newFont);
-	        }
-	    }
-	}
-	
-	/**
-	 * A non-intrusive method for adding pseudo-placeholder text in JTextFields.
-	 * (Why "pseudo"? There's a pretty obvious UX bug in this implementation.)
-	 * @param field Instance of JTextField
-	 * @param text Placeholder string
-	 */
-	private static void addPlaceholderText(JTextField field, String text) {
-	    // Initial state should be placeholder
-	    field.setForeground(Color.GRAY);
-	    field.setText(text);
-        
-        // Subsequent states
-	    field.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (field.getText().equals(text)) {
-                    field.setForeground(Color.BLACK);
-                    field.setText("");
-                }
-            }
-            public void focusLost(FocusEvent e) {
-                if (field.getText().isBlank()) {
-                    field.setForeground(Color.GRAY);
-                    field.setText(text);
-                }
-            }
-        });
-	}
-	
-	private static void addPasswordRevealToggleEvent(JToggleButton btn, JPasswordField passfield) {
-	    btn.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (btn.isSelected()) {
-                    passfield.setEchoChar('\u0000');
-                }
-                else {
-                    passfield.setEchoChar('●'); // default
-                }
-            }
-        });
-	}
 	
 	// MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
 	
@@ -133,8 +60,8 @@ public class AdminGUI extends JFrame {
         }
 	    
 	    // Basics
-	    setTitle("NATiC: Admin");
-        setGlobalFont("SansSerif", Font.PLAIN, 14);
+        setTitle("NATiC: Admin");
+        GUIHelpers.setGlobalFont("SansSerif", Font.PLAIN, 14);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
@@ -150,7 +77,7 @@ public class AdminGUI extends JFrame {
 		 */
 		
 		JPanel Account = new JPanel();
-		tabbedPane.addTab(styledTabName("admin"), null, Account, null);
+		tabbedPane.addTab(GUIHelpers.htmlTabName("admin"), null, Account, null);
 		Account.setLayout(new MigLayout("", "[grow,fill]", "[grow][36.00,fill]"));
 		
 		JPanel AccountInfoEdit = new JPanel();
@@ -171,7 +98,7 @@ public class AdminGUI extends JFrame {
          * Account Panel -> About
          */
 		
-		JLabel lblHeaderAccountAbout = new JLabel(styledHeaderLabel("About you"));
+		JLabel lblHeaderAccountAbout = new JLabel(GUIHelpers.htmlHeader("About you"));
 		JLabel lblAccountName = new JLabel("Name");
 		JLabel lblAccountEmail = new JLabel("Email");
 		JLabel lblAccountPhone = new JLabel("Phone");
@@ -200,7 +127,7 @@ public class AdminGUI extends JFrame {
          * Account Panel -> Password
          */
 		
-		JLabel lblHeaderPassword = new JLabel(styledHeaderLabel("Password"));
+		JLabel lblHeaderPassword = new JLabel(GUIHelpers.htmlHeader("Password"));
 		JLabel lblPasswordOld = new JLabel("Old password");
 		JLabel lblPasswordNew = new JLabel("New password");
 		JLabel lblPasswordConfirm = new JLabel("Confirm password");
@@ -213,9 +140,9 @@ public class AdminGUI extends JFrame {
         JToggleButton btnPasswordOldReveal = new JToggleButton("👁");
         JToggleButton btnPasswordNewReveal = new JToggleButton("👁");
         JToggleButton btnPasswordConfirmReveal = new JToggleButton("👁");
-        addPasswordRevealToggleEvent(btnPasswordOldReveal, pwtxtOld);
-        addPasswordRevealToggleEvent(btnPasswordNewReveal, pwtxtNew);
-        addPasswordRevealToggleEvent(btnPasswordConfirmReveal, pwtxtConfirm);
+        GUIHelpers.addPasswordRevealToggleEvent(btnPasswordOldReveal, pwtxtOld);
+        GUIHelpers.addPasswordRevealToggleEvent(btnPasswordNewReveal, pwtxtNew);
+        GUIHelpers.addPasswordRevealToggleEvent(btnPasswordConfirmReveal, pwtxtConfirm);
         
 		AccountInfoEdit.add(lblHeaderPassword, "cell 0 6 3 1");
 		AccountInfoEdit.add(lblPasswordOld, "cell 0 7,alignx trailing");
@@ -236,12 +163,12 @@ public class AdminGUI extends JFrame {
 		 */
 		
 		JPanel Branches = new JPanel();
-		tabbedPane.addTab(styledTabName("Branches"), null, Branches, null);
+		tabbedPane.addTab(GUIHelpers.htmlTabName("Branches"), null, Branches, null);
 		Branches.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow]"));
 		
 		txtBranchSearch = new JTextField();
 		txtBranchSearch.setColumns(20);
-        addPlaceholderText(txtBranchSearch, "Search by name or address");
+        GUIHelpers.addPlaceholderText(txtBranchSearch, "Search by name or address");
 		
 		JPanel BranchActions = new JPanel();
 		
@@ -308,12 +235,12 @@ public class AdminGUI extends JFrame {
          */
         
         JPanel Staff = new JPanel();
-        tabbedPane.addTab(styledTabName("Staff"), null, Staff, null);
+        tabbedPane.addTab(GUIHelpers.htmlTabName("Staff"), null, Staff, null);
         Staff.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow]"));
         
         txtStaffSearch = new JTextField();
         txtStaffSearch.setColumns(20);
-        addPlaceholderText(txtStaffSearch, "Search by name or email");
+        GUIHelpers.addPlaceholderText(txtStaffSearch, "Search by name or email");
         
         JPanel StaffActions = new JPanel();
         
@@ -393,12 +320,12 @@ public class AdminGUI extends JFrame {
          */
         
         JPanel Library = new JPanel();
-        tabbedPane.addTab(styledTabName("Library"), null, Library, null);
+        tabbedPane.addTab(GUIHelpers.htmlTabName("Library"), null, Library, null);
         Library.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow]"));
         
         txtLibrarySearch = new JTextField();
         txtLibrarySearch.setColumns(20);
-        addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
+        GUIHelpers.addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
         
         JPanel BookActions = new JPanel();
         
@@ -429,11 +356,11 @@ public class AdminGUI extends JFrame {
         BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][grow][36px,fill]"));
         
         JLabel lblBookCover = new JLabel("");
-        JLabel lblHeaderLibraryCommonFields = new JLabel(styledHeaderSmallLabel("Overview"));
+        JLabel lblHeaderLibraryCommonFields = new JLabel(GUIHelpers.htmlHeaderSmall("Overview"));
         JLabel lblLibraryISBN = new JLabel("ISBN");
         JLabel lblLibraryTitle = new JLabel("Title");
         JLabel lblLibraryAuthor = new JLabel("Author");
-        JLabel lblHeaderLibraryDetails = new JLabel(styledHeaderSmallLabel("Details"));
+        JLabel lblHeaderLibraryDetails = new JLabel(GUIHelpers.htmlHeaderSmall("Details"));
         JLabel lblLibraryVersionID = new JLabel("Version ID");
         JLabel lblLibraryYear = new JLabel("Year");
         JLabel lblLibraryPublisher = new JLabel("Publisher");
@@ -552,109 +479,257 @@ public class AdminGUI extends JFrame {
         scrollStaff           .getViewport().setOpaque(false);
         scrollStaffDetails    .getViewport().setOpaque(false);
 		scrollLibrary         .getViewport().setOpaque(false);
-		scrollBookDetails     .getViewport().setOpaque(false);
-		
-		// Always select 2nd tab on startup
+        scrollBookDetails     .getViewport().setOpaque(false);
+
+        // Table: minimum height = viewport height
+        tblBranches .setFillsViewportHeight(true);
+        tblLibrary  .setFillsViewportHeight(true);
+        tblStaff    .setFillsViewportHeight(true);
+
+        // Table: single selection only
+        tblBranches .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblLibrary  .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblStaff    .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+
+
+        /**
+         * Events (Main)
+         */
+
+        // Tab: change on index change
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                final HashMap<Integer, String> tabMap = new HashMap<>() {{
+                    put(0, "Account");
+                    put(1, "Branches");
+                    put(2, "Staff");
+                    put(3, "Library");
+                }};
+                int tabIndex = tabbedPane.getSelectedIndex();
+                Log.l.info("Tab changed to: " + tabMap.get(tabIndex));
+                populateTab(tabIndex);
+            }
+        });
+        
+        // Tab: always select 2nd tab on startup
         tabbedPane.setSelectedIndex(1);
         
+
+
         /**
          * Events -> Account
          */
         
         btnAccountAboutSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: AccountAboutSave");
+                Log.l.info("btn: AccountAboutSave");
+                String name = txtAccountName.getText().trim();
+                String email = txtAccountEmail.getText().trim();
+                String phone = txtAccountPhone.getText().trim();
+                if (name.isBlank()) name = null;
+                if (email.isBlank()) email = null;
+                if (phone.isBlank()) phone = null;
+                try {
+                    M.editAccount(email, name, phone, null, null, null);
+                }
+                catch (Exception exc) {
+                    exc.printStackTrace();
+                }
             }
         });
         
         btnPasswordSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: PasswordSave");
+                Log.l.info("btn: PasswordSave");
             }
         });
         
         btnLogOut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: LogOut");
+                Log.l.info("btn: LogOut");
             }
         });
         
+
+
         /**
          * Events -> Branches
          */
-        
+
         txtBranchSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("txt: BranchSearch");
+                Log.l.info("txt: BranchSearch");
             }
         });
         
         btnBranchAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: BranchAdd");
+                Log.l.info("btn: BranchAdd");
             }
         });
         
         btnBranchRemove.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: BranchRemove");
+                Log.l.info("btn: BranchRemove");
             }
         });
         
         btnBranchSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: BranchSave");
+                Log.l.info("btn: BranchSave");
             }
         });
         
+
+
         /**
          * Events -> Staff
          */
         
         txtStaffSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("txt: StaffSearch");
+                Log.l.info("txt: StaffSearch");
             }
         });
         
         btnStaffAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: StaffAdd");
+                Log.l.info("btn: StaffAdd");
             }
         });
         
         btnStaffRemove.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: StaffRemove");
+                Log.l.info("btn: StaffRemove");
             }
         });
         
         btnStaffSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: StaffSave");
+                Log.l.info("btn: StaffSave");
             }
         });
         
+
+
         /**
          * Events -> Library
          */
         
         txtLibrarySearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("txt: LibrarySearch");
+                Log.l.info("txt: LibrarySearch");
             }
         });
         
         btnLibraryAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: LibraryAdd");
+                Log.l.info("btn: LibraryAdd");
             }
         });
         
         btnLibrarySave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: LibrarySave");
+                Log.l.info("btn: LibrarySave");
             }
         });
-	}
+
+        Log.l.info("Admin GUI init'd");
+    }
+    
+    private void populateTab(int tabIndex) {
+        switch (tabIndex) {
+            case 0: populateAccountTab(); break;
+            case 1: populateBranchesTab(); break;
+            case 2: populateStaffTab(); break;
+            case 3: populateLibraryTab(); break;
+        }
+    }
+    
+    private void populateAccountTab() {
+        Log.l.info("Account tab populated");
+    }
+    
+    private void populateBranchesTab() {
+        String[] tableHeaders = {GUIHelpers.htmlBoldText("ID"), GUIHelpers.htmlBoldText("Name")};
+        
+        Object[][] rawData = {
+            {"BR00000000", "NATiC Virtual Branch"},
+            {"BR00000001", "NATiC Nguyen Van Cu"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000004", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000002", "NATiC Nguyen Thi Minh Khai"},
+            {"BR00000005", "NATiC Nguyen Thi Minh Khai"}
+        };
+
+        // extract and push each records
+        ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
+        for (var each_record: rawData) {
+            ArrayList<Object> record = new ArrayList<>();
+            for (var each_field: each_record) {
+                record.add(each_field);
+            }
+            tableData.add(record);
+        }
+
+        CustomTableModel tbmBranches = new CustomTableModel(tableHeaders, tableData);
+        tblBranches.setRowHeight(24);
+        tblBranches.setModel(tbmBranches);
+        tblBranches.setAutoCreateRowSorter(true);
+        Log.l.info("Branches tab populated");
+    }
+
+    private void populateStaffTab() {
+        Log.l.info("Staff tab populated");
+    }
+    
+    private void populateLibraryTab() {
+        Log.l.info("Library tab populated");
+    }
 }

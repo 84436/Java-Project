@@ -3,26 +3,27 @@ package natic.gui;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
-import javax.swing.plaf.*;
-
 import java.awt.*;
 import java.awt.event.*;
-
 import net.miginfocom.swing.MigLayout;
+
+import java.util.*;
+import natic.*;
 
 public class StaffGUI extends JFrame {
     
     private static final long serialVersionUID = 1L;
+    Mediator M = Mediator.getInstance();
     
     private JTextField txtAccountName;
-	private JTextField txtAccountBranch;
-	private JTextField txtAccountEmail;
-	private JTextField txtAccountPhone;
-	private JPasswordField pwtxtOld;
-	private JPasswordField pwtxtNew;
-	private JPasswordField pwtxtConfirm;
-	
-	private JTextField txtCounterISBN;
+    private JTextField txtAccountBranch;
+    private JTextField txtAccountEmail;
+    private JTextField txtAccountPhone;
+    private JPasswordField pwtxtOld;
+    private JPasswordField pwtxtNew;
+    private JPasswordField pwtxtConfirm;
+    
+    private JTextField txtCounterISBN;
     private JTextField txtCounterEmail;
     private JTable tblCounterBookList;
     private JTable tblCounterCustomerList;
@@ -58,163 +59,87 @@ public class StaffGUI extends JFrame {
     private JTextField txtOrderDate;
     private JTextField txtOrderStaffID;
     
-	// https://stackoverflow.com/a/27873384
-	// It's hard to believe Java Swing can understand HTML4 for basic formatting, but it _does_
+    // MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
     
-	private static String styledTabName(String tabName) {
-	    String template = "<html><body style=\"%s\">%s</body></html>";
-	    String style = "margin: 20px 5px; font-family: SansSerif; font-size: 14pt; font-weight: bold;";
-	    return String.format(template, style, tabName);
-	}
-	
-	private static String styledHeaderLabel(String text) {
-	    String template = "<html><body style=\"%s\">%s</body></html>";
-	    String style = "font-weight: bold; font-size: 24pt";
-	    return String.format(template, style, text);
-	}
-	
-	private static String styledHeaderSmallLabel(String text) {
-        String template = "<html><body style=\"%s\">%s</body></html>";
-        String style = "font-weight: bold; font-size: 18pt";
-        return String.format(template, style, text);
-    }
-	
-	// adapted from https://stackoverflow.com/a/7434935
-	private static void setGlobalFont(String family, int style, int size) {
-	    var newFont = new FontUIResource(family, style, size);
-	    var keys = UIManager.getLookAndFeelDefaults().keys();
-	    while (keys.hasMoreElements()) {
-	        var key = keys.nextElement();
-	        var value = UIManager.get(key);
-	        if (value instanceof javax.swing.plaf.FontUIResource) {
-	            UIManager.getLookAndFeelDefaults().replace(key, newFont);
-	        }
-	    }
-	}
-	
-	/**
-	 * A non-intrusive method for adding pseudo-placeholder text in JTextFields.
-	 * (Why "pseudo"? There's a pretty obvious UX bug in this implementation.)
-	 * @param field Instance of JTextField
-	 * @param text Placeholder string
-	 */
-	private static void addPlaceholderText(JTextField field, String text) {
-	    // Initial state should be placeholder
-	    field.setForeground(Color.GRAY);
-	    field.setText(text);
+    public StaffGUI() {
         
-        // Subsequent states
-	    field.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (field.getText().equals(text)) {
-                    field.setForeground(Color.BLACK);
-                    field.setText("");
-                }
-            }
-            public void focusLost(FocusEvent e) {
-                if (field.getText().isBlank()) {
-                    field.setForeground(Color.GRAY);
-                    field.setText(text);
-                }
-            }
-        });
-	}
-	
-	private static void addPasswordRevealToggleEvent(JToggleButton btn, JPasswordField passfield) {
-	    btn.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (btn.isSelected()) {
-                    passfield.setEchoChar('\u0000');
-                }
-                else {
-                    passfield.setEchoChar('●'); // default
-                }
-            }
-        });
-	}
-	
-	// MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
-	
-	public StaffGUI() {
-	    
-	    /**
-	     * Base
-	     */
-	    
-	    // Native LAF
-	    try {
+        /**
+        * Base
+        */
+        
+        // Native LAF
+        try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();;
         }
-	    
-	    // Basics
-	    setTitle("NATiC: Staff");
-        setGlobalFont("SansSerif", Font.PLAIN, 14);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 600);
-		getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
-		
-		// Base tabbed layout
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
-		getContentPane().add(tabbedPane, "cell 0 0,grow");
-		
-		
-		
-		/**
-		 * Account Panel
-		 */
-		
-		JPanel Account = new JPanel();
-		tabbedPane.addTab(styledTabName("{staff name}"), null, Account, null);
-		Account.setLayout(new MigLayout("", "[grow,fill]", "[grow][36.00,fill]"));
-		
-		JPanel AccountInfoEdit = new JPanel();
-		Account.add(AccountInfoEdit, "cell 0 0,grow");
+        
+        // Basics
+        setTitle("NATiC: Staff");
+        GUIHelpers.setGlobalFont("SansSerif", Font.PLAIN, 14);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 800, 600);
+        getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
+        
+        // Base tabbed layout
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+        getContentPane().add(tabbedPane, "cell 0 0,grow");
+        
+        
+        
+        /**
+        * Account Panel
+        */
+        
+        JPanel Account = new JPanel();
+        tabbedPane.addTab(GUIHelpers.htmlTabName("{staff name}"), null, Account, null);
+        Account.setLayout(new MigLayout("", "[grow,fill]", "[grow][36.00,fill]"));
+        
+        JPanel AccountInfoEdit = new JPanel();
+        Account.add(AccountInfoEdit, "cell 0 0,grow");
         AccountInfoEdit.setLayout(new MigLayout("", "[grow,fill][grow,fill][fill]", "[][][][][][][40px,center][][][][][]"));
-		
+        
         // Separator between About and Password section
         JSeparator sepAccount = new JSeparator();
         sepAccount.setForeground(new Color(192, 192, 192));
         AccountInfoEdit.add(sepAccount, "cell 0 6 3 1");
         
-		JButton btnLogOut = new JButton("Log out");
+        JButton btnLogOut = new JButton("Log out");
         Account.add(btnLogOut, "cell 0 1");
-		
+        
         
         
         /**
-         * Account Panel -> About
-         */
-		
-		JLabel lblHeaderAccountAbout = new JLabel(styledHeaderLabel("About you"));
-		JLabel lblAccountName = new JLabel("Name");
-		JLabel lblAccountEmail = new JLabel("Email");
-		JLabel lblAccountPhone = new JLabel("Phone");
-		JLabel lblAccountBranch = new JLabel("Branch");
-		txtAccountName = new JTextField();
-		txtAccountEmail = new JTextField();
-		txtAccountPhone = new JTextField();
-		txtAccountBranch = new JTextField();
-		
-		txtAccountBranch.setText("{staff branch name}");
+        * Account Panel -> About
+        */
+        
+        JLabel lblHeaderAccountAbout = new JLabel(GUIHelpers.htmlHeader("About you"));
+        JLabel lblAccountName = new JLabel("Name");
+        JLabel lblAccountEmail = new JLabel("Email");
+        JLabel lblAccountPhone = new JLabel("Phone");
+        JLabel lblAccountBranch = new JLabel("Branch");
+        txtAccountName = new JTextField();
+        txtAccountEmail = new JTextField();
+        txtAccountPhone = new JTextField();
+        txtAccountBranch = new JTextField();
+        
+        txtAccountBranch.setText("{staff branch name}");
         txtAccountBranch.setEnabled(false);
         txtAccountBranch.setEditable(false);
         txtAccountBranch.setFocusable(false);
-		
-		txtAccountName.setColumns(10);
-		txtAccountEmail.setColumns(10);
-		txtAccountPhone.setColumns(10);
-		txtAccountBranch.setColumns(10);
-		
-		JButton btnAccountAboutSave = new JButton("Save changes");
-		
-		AccountInfoEdit.add(lblHeaderAccountAbout, "cell 0 0 3 1,alignx trailing");
-		AccountInfoEdit.add(lblAccountName, "cell 0 1");
-		AccountInfoEdit.add(lblAccountEmail, "cell 0 2,alignx trailing");
-		AccountInfoEdit.add(lblAccountPhone, "cell 0 3,alignx trailing");
-		AccountInfoEdit.add(lblAccountBranch, "cell 0 4,alignx trailing");
+        
+        txtAccountName.setColumns(10);
+        txtAccountEmail.setColumns(10);
+        txtAccountPhone.setColumns(10);
+        txtAccountBranch.setColumns(10);
+        
+        JButton btnAccountAboutSave = new JButton("Save changes");
+        
+        AccountInfoEdit.add(lblHeaderAccountAbout, "cell 0 0 3 1,alignx trailing");
+        AccountInfoEdit.add(lblAccountName, "cell 0 1");
+        AccountInfoEdit.add(lblAccountEmail, "cell 0 2,alignx trailing");
+        AccountInfoEdit.add(lblAccountPhone, "cell 0 3,alignx trailing");
+        AccountInfoEdit.add(lblAccountBranch, "cell 0 4,alignx trailing");
         AccountInfoEdit.add(txtAccountName, "cell 1 1 2 1,growx");
         AccountInfoEdit.add(txtAccountEmail, "cell 1 2 2 1,growx");
         AccountInfoEdit.add(txtAccountPhone, "cell 1 3 2 1,growx");
@@ -224,65 +149,65 @@ public class StaffGUI extends JFrame {
         
         
         /**
-         * Account Panel -> Password
-         */
-		
-		JLabel lblHeaderPassword = new JLabel(styledHeaderLabel("Password"));
-		JLabel lblPasswordOld = new JLabel("Old password");
-		JLabel lblPasswordNew = new JLabel("New password");
-		JLabel lblPasswordConfirm = new JLabel("Confirm password");
-		pwtxtOld = new JPasswordField();
-		pwtxtNew = new JPasswordField();
-		pwtxtConfirm = new JPasswordField();
-		JButton btnPasswordSave = new JButton("Change password");
-		
-		// \u1F441 = eye symbol
+        * Account Panel -> Password
+        */
+        
+        JLabel lblHeaderPassword = new JLabel(GUIHelpers.htmlHeader("Password"));
+        JLabel lblPasswordOld = new JLabel("Old password");
+        JLabel lblPasswordNew = new JLabel("New password");
+        JLabel lblPasswordConfirm = new JLabel("Confirm password");
+        pwtxtOld = new JPasswordField();
+        pwtxtNew = new JPasswordField();
+        pwtxtConfirm = new JPasswordField();
+        JButton btnPasswordSave = new JButton("Change password");
+        
+        // \u1F441 = eye symbol
         JToggleButton btnPasswordOldReveal = new JToggleButton("👁");
         JToggleButton btnPasswordNewReveal = new JToggleButton("👁");
         JToggleButton btnPasswordConfirmReveal = new JToggleButton("👁");
-        addPasswordRevealToggleEvent(btnPasswordOldReveal, pwtxtOld);
-        addPasswordRevealToggleEvent(btnPasswordNewReveal, pwtxtNew);
-        addPasswordRevealToggleEvent(btnPasswordConfirmReveal, pwtxtConfirm);
+        GUIHelpers.addPasswordRevealToggleEvent(btnPasswordOldReveal, pwtxtOld);
+        GUIHelpers.addPasswordRevealToggleEvent(btnPasswordNewReveal, pwtxtNew);
+        GUIHelpers.addPasswordRevealToggleEvent(btnPasswordConfirmReveal, pwtxtConfirm);
         
-		AccountInfoEdit.add(lblHeaderPassword, "cell 0 7 3 1");
-		AccountInfoEdit.add(lblPasswordOld, "cell 0 8,alignx trailing");
-		AccountInfoEdit.add(lblPasswordNew, "cell 0 9,alignx trailing");
-		AccountInfoEdit.add(lblPasswordConfirm, "cell 0 10,alignx trailing");
-		AccountInfoEdit.add(pwtxtOld, "cell 1 8,growx");
-		AccountInfoEdit.add(pwtxtNew, "cell 1 9,growx");
-		AccountInfoEdit.add(pwtxtConfirm, "cell 1 10,growx");
-		AccountInfoEdit.add(btnPasswordOldReveal, "cell 2 8");
+        AccountInfoEdit.add(lblHeaderPassword, "cell 0 7 3 1");
+        AccountInfoEdit.add(lblPasswordOld, "cell 0 8,alignx trailing");
+        AccountInfoEdit.add(lblPasswordNew, "cell 0 9,alignx trailing");
+        AccountInfoEdit.add(lblPasswordConfirm, "cell 0 10,alignx trailing");
+        AccountInfoEdit.add(pwtxtOld, "cell 1 8,growx");
+        AccountInfoEdit.add(pwtxtNew, "cell 1 9,growx");
+        AccountInfoEdit.add(pwtxtConfirm, "cell 1 10,growx");
+        AccountInfoEdit.add(btnPasswordOldReveal, "cell 2 8");
         AccountInfoEdit.add(btnPasswordNewReveal, "cell 2 9");
         AccountInfoEdit.add(btnPasswordConfirmReveal, "cell 2 10");
         AccountInfoEdit.add(btnPasswordSave, "cell 1 11 2 1");
-		
         
         
-		/**
-		 * Counter
-		 */
-		JPanel Counter = new JPanel();
-		tabbedPane.addTab(styledTabName("Counter"), null, Counter, null);
-		Counter.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow][36px,fill][36.00,fill]"));
-		
-		txtCounterISBN = new JTextField();
-		txtCounterEmail = new JTextField();
-		addPlaceholderText(txtCounterISBN, "Enter ISBN");
-        addPlaceholderText(txtCounterEmail, "Enter customer email");
-		
-		txtCounterISBN.setColumns(10);
-		txtCounterEmail.setColumns(10);
-		
-		tblCounterBookList = new JTable();
-		tblCounterCustomerList = new JTable();
-		
-		JScrollPane scrollCounterBookList = new JScrollPane();
-		JScrollPane scrollCounterCustomerList = new JScrollPane();
-		
-		scrollCounterBookList.setViewportView(tblCounterBookList);
-		scrollCounterCustomerList.setViewportView(tblCounterCustomerList);
-		
-		JButton btnCounterCreate = new JButton("Create");
+        
+        /**
+        * Counter
+        */
+        JPanel Counter = new JPanel();
+        tabbedPane.addTab(GUIHelpers.htmlTabName("Counter"), null, Counter, null);
+        Counter.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][grow][36px,fill][36.00,fill]"));
+        
+        txtCounterISBN = new JTextField();
+        txtCounterEmail = new JTextField();
+        GUIHelpers.addPlaceholderText(txtCounterISBN, "Enter ISBN");
+        GUIHelpers.addPlaceholderText(txtCounterEmail, "Enter customer email");
+        
+        txtCounterISBN.setColumns(10);
+        txtCounterEmail.setColumns(10);
+        
+        tblCounterBookList = new JTable();
+        tblCounterCustomerList = new JTable();
+        
+        JScrollPane scrollCounterBookList = new JScrollPane();
+        JScrollPane scrollCounterCustomerList = new JScrollPane();
+        
+        scrollCounterBookList.setViewportView(tblCounterBookList);
+        scrollCounterCustomerList.setViewportView(tblCounterCustomerList);
+        
+        JButton btnCounterCreate = new JButton("Create");
         JButton btnCounterDiscard = new JButton("Discard");
         JButton btnCreateCustomer = new JButton("Create customer");
         
@@ -294,32 +219,32 @@ public class StaffGUI extends JFrame {
         Counter.add(btnCreateCustomer, "cell 1 2");
         Counter.add(btnCounterCreate, "cell 1 3,growx");
         Counter.add(btnCounterDiscard, "flowx,cell 1 3,growx");
-		
         
         
-		/**
-		 * Library
-		 */
-		
-		JPanel Library = new JPanel();
-		tabbedPane.addTab(styledTabName("Library"), null, Library, null);
-		Library.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][][grow]"));
-		
-		txtLibrarySearch = new JTextField();
-		txtLibrarySearch.setColumns(20);
-		
-        addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
-		
-		JPanel BookActions = new JPanel();
-		
-		spinnerSetStock = new JSpinner();
-		spinnerSetStock.setModel(new SpinnerNumberModel(0, 0, null, 1));
-		spinnerSetStock.setPreferredSize(new Dimension(100, 25));
-		
-		btnSetStock = new JButton("Set stock");
-		btnSetStock.setPreferredSize(new Dimension(100, 25));
-		
-		tblLibrary = new JTable();
+        
+        /**
+        * Library
+        */
+        
+        JPanel Library = new JPanel();
+        tabbedPane.addTab(GUIHelpers.htmlTabName("Library"), null, Library, null);
+        Library.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][][grow]"));
+        
+        txtLibrarySearch = new JTextField();
+        txtLibrarySearch.setColumns(20);
+        
+        GUIHelpers.addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
+        
+        JPanel BookActions = new JPanel();
+        
+        spinnerSetStock = new JSpinner();
+        spinnerSetStock.setModel(new SpinnerNumberModel(0, 0, null, 1));
+        spinnerSetStock.setPreferredSize(new Dimension(100, 25));
+        
+        btnSetStock = new JButton("Set stock");
+        btnSetStock.setPreferredSize(new Dimension(100, 25));
+        
+        tblLibrary = new JTable();
         
         JTextPane txtBookDetails = new JTextPane();
         txtBookDetails.setEditable(false);
@@ -354,19 +279,19 @@ public class StaffGUI extends JFrame {
         
         
         /**
-         * Library -> Book Details
-         */
+        * Library -> Book Details
+        */
         
         JPanel BookDetails = new JPanel();
         scrollBookDetails.setViewportView(BookDetails);
         BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][]"));
         
         JLabel lblBookCover = new JLabel("");
-        JLabel lblHeaderLibraryCommonFields = new JLabel(styledHeaderSmallLabel("Overview"));
+        JLabel lblHeaderLibraryCommonFields = new JLabel(GUIHelpers.htmlHeaderSmall("Overview"));
         JLabel lblLibraryISBN = new JLabel("ISBN");
         JLabel lblLibraryTitle = new JLabel("Title");
         JLabel lblLibraryAuthor = new JLabel("Author");
-        JLabel lblHeaderLibraryDetails = new JLabel(styledHeaderSmallLabel("Details"));
+        JLabel lblHeaderLibraryDetails = new JLabel(GUIHelpers.htmlHeaderSmall("Details"));
         JLabel lblLibraryVersionID = new JLabel("Version ID");
         JLabel lblLibraryYear = new JLabel("Year");
         JLabel lblLibraryPublisher = new JLabel("Publisher");
@@ -443,43 +368,43 @@ public class StaffGUI extends JFrame {
         
         
         
-		/**
-		 * Orders
-		 */
-		
-		JPanel Orders = new JPanel();
-		tabbedPane.addTab(styledTabName("Orders"), null, Orders, null);
-		Orders.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[grow]"));
-		
-		tblOrders = new JTable();
-		
-		JTextPane txtOrderDetails = new JTextPane();
-		txtOrderDetails.setEditable(false);
-		
-		JScrollPane scrollOrders = new JScrollPane();
+        /**
+        * Orders
+        */
+        
+        JPanel Orders = new JPanel();
+        tabbedPane.addTab(GUIHelpers.htmlTabName("Orders"), null, Orders, null);
+        Orders.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[grow]"));
+        
+        tblOrders = new JTable();
+        
+        JTextPane txtOrderDetails = new JTextPane();
+        txtOrderDetails.setEditable(false);
+        
+        JScrollPane scrollOrders = new JScrollPane();
         JScrollPane scrollOrderDetails = new JScrollPane();
-		
-		scrollOrders.setViewportView(tblOrders);
-		scrollOrderDetails.setViewportView(txtOrderDetails);
-		
-		Orders.add(scrollOrders, "cell 0 0,grow");
-		Orders.add(scrollOrderDetails, "cell 1 0,grow");
-		
-		
-		
-		/**
-		 * Orders -> Order Detail
-		 */
-		
-		JPanel OrderDetails = new JPanel();
+        
+        scrollOrders.setViewportView(tblOrders);
+        scrollOrderDetails.setViewportView(txtOrderDetails);
+        
+        Orders.add(scrollOrders, "cell 0 0,grow");
+        Orders.add(scrollOrderDetails, "cell 1 0,grow");
+        
+        
+        
+        /**
+        * Orders -> Order Detail
+        */
+        
+        JPanel OrderDetails = new JPanel();
         scrollOrderDetails.setViewportView(OrderDetails);
         OrderDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][40px,center][][][][][][][][][][]"));
         
-        JLabel lblHeaderOrderOverview = new JLabel(styledHeaderSmallLabel("Order info"));
+        JLabel lblHeaderOrderOverview = new JLabel(GUIHelpers.htmlHeaderSmall("Order info"));
         JLabel lblOrderID = new JLabel("Order ID");
         JLabel lblOrderDate = new JLabel("Date");
         JLabel lblOrderStaffID = new JLabel("Staff ID");
-        JLabel lblHeaderOrderBookDetails = new JLabel(styledHeaderSmallLabel("Book details"));
+        JLabel lblHeaderOrderBookDetails = new JLabel(GUIHelpers.htmlHeaderSmall("Book details"));
         JLabel lblOrderISBN = new JLabel("ISBN");
         JLabel lblOrderTitle = new JLabel("Title");
         JLabel lblOrderAuthor = new JLabel("Author");
@@ -573,15 +498,15 @@ public class StaffGUI extends JFrame {
         OrderDetails.add(txtOrderGenre, "cell 1 12,growx");
         OrderDetails.add(txtOrderFormat, "cell 1 13,growx");
         OrderDetails.add(txtOrderPrice, "cell 1 14");
-		
-		
-		
-		/**
-		 * Cosmetics, etc.
-		 */
+        
+        
+        
+        /**
+        * Cosmetics, etc.
+        */
         
         // Whiten (almost) everything
-                                     setBackground(Color.WHITE);
+        setBackground(Color.WHITE);
         getContentPane()            .setBackground(Color.WHITE);
         tabbedPane                  .setBackground(Color.WHITE);
         Account                     .setBackground(Color.WHITE);
@@ -613,111 +538,167 @@ public class StaffGUI extends JFrame {
         txtCounterEmail             .setBorder(CBorder4);
         txtLibrarySearch            .setBorder(CBorder4);
         txtCounterISBN              .setBorder(CBorder4);
-		
-		// Transparent scrollpane background
+        
+        // Transparent scrollpane background
         scrollCounterBookList     .getViewport().setOpaque(false);
         scrollCounterCustomerList .getViewport().setOpaque(false);
-		scrollLibrary             .getViewport().setOpaque(false);
-		scrollBookDetails         .getViewport().setOpaque(false);
-		scrollOrders              .getViewport().setOpaque(false);
-		scrollOrderDetails        .getViewport().setOpaque(false);
-		
-		// Always select 2nd tab on startup
-        tabbedPane.setSelectedIndex(1);
+        scrollLibrary             .getViewport().setOpaque(false);
+        scrollBookDetails         .getViewport().setOpaque(false);
+        scrollOrders              .getViewport().setOpaque(false);
+        scrollOrderDetails        .getViewport().setOpaque(false);
+        
+        
+        
+        /**
+        * Events (Main)
+        */
         
         // Library -> that checkbox: fire default state
         toggleLibraryView(checkBranchOnly.isSelected());
         
+        // Tab: change on index change
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                final HashMap<Integer, String> tabMap = new HashMap<>() {{
+                    put(0, "Account");
+                    put(1, "Counter");
+                    put(2, "Library");
+                    put(3, "Orders");
+                }};
+                int tabIndex = tabbedPane.getSelectedIndex();
+                Log.l.info("Tab changed to: " + tabMap.get(tabIndex));
+                populateTab(tabIndex);
+            }
+        });
+        
+        // Tab: always select 2nd tab on startup
+        tabbedPane.setSelectedIndex(1);
+        
+        
+        
         /**
-         * Events -> Account
-         */
+        * Events -> Account
+        */
         
         btnAccountAboutSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: AccountAboutSave");
+                Log.l.info("btn: AccountAboutSave");
             }
         });
         
         btnPasswordSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: PasswordSave");
+                Log.l.info("btn: PasswordSave");
             }
         });
         
         btnLogOut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: LogOut");
+                Log.l.info("btn: LogOut");
             }
         });
         
+        
+        
         /**
-         * Events -> Counter
-         */
+        * Events -> Counter
+        */
         
         btnCounterCreate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: CounterCreate");
+                Log.l.info("btn: CounterCreate");
             }
         });
         
         btnCounterDiscard.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: CounterDiscard");
+                Log.l.info("btn: CounterDiscard");
             }
         });
         
         btnCreateCustomer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: CreateCustomer");
+                Log.l.info("btn: CreateCustomer");
             }
         });
         
+        
+        
         /**
-         * Events -> Library
-         */
+        * Events -> Library
+        */
         
         btnSetStock.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: SetStock");
+                Log.l.info("btn: SetStock");
             }
         });
         
         checkBranchOnly.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("check: BranchOnly: " + checkBranchOnly.isSelected());
+                Log.l.info("check: BranchOnly: " + checkBranchOnly.isSelected());
                 toggleLibraryView(checkBranchOnly.isSelected());
             }
         });
         
         btnAddBook.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: AddBook");
+                Log.l.info("btn: AddBook");
             }
         });
         
         btnRemoveBook.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("btn: RemoveBook");
+                Log.l.info("btn: RemoveBook");
             }
         });
         
+        
+        
         /**
-         * Events -> Orders
-         */
-	}
-	
-	private void toggleLibraryView(boolean branchOnly) {
-	    if (branchOnly) {
-	        spinnerSetStock    .setVisible(true);
-	        btnSetStock        .setVisible(true);
-	        btnAddBook         .setVisible(false);
-	        btnRemoveBook      .setVisible(false);
-	    }
-	    else {
-	        spinnerSetStock    .setVisible(false);
+        * Events -> Orders
+        */
+
+        Log.l.info("Staff GUI init'd");
+    }
+    
+    private void toggleLibraryView(boolean branchOnly) {
+        if (branchOnly) {
+            spinnerSetStock    .setVisible(true);
+            btnSetStock        .setVisible(true);
+            btnAddBook         .setVisible(false);
+            btnRemoveBook      .setVisible(false);
+        }
+        else {
+            spinnerSetStock    .setVisible(false);
             btnSetStock        .setVisible(false);
             btnAddBook         .setVisible(true);
             btnRemoveBook      .setVisible(true);
-	    }
-	}
+        }
+    }
+    
+    private void populateTab(int tabIndex) {
+        switch (tabIndex) {
+            case 0: populateAccountTab(); break;
+            case 1: populateCounterTab(); break;
+            case 2: populateLibraryTab(); break;
+            case 3: populateOrdersTab(); break;
+        }
+    }
+    
+    private void populateAccountTab() {
+        Log.l.info("Account tab populated");
+    }
+    
+    private void populateCounterTab() {
+        Log.l.info("Counter tab populated");
+    }
+    
+    private void populateLibraryTab() {
+        Log.l.info("Library tab populated");
+    }
+    
+    private void populateOrdersTab() {
+        Log.l.info("Orders tab populated");
+    }
 }
