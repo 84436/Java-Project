@@ -76,6 +76,7 @@ public class LoginGUI extends JFrame {
                 pwtxtPassword.setText("");
                 SignupGUI signup = new SignupGUI();
                 signup.setVisible(true);
+                signup.getRootPane().requestFocus(false);
                 dispose();
             }
         });
@@ -110,7 +111,7 @@ public class LoginGUI extends JFrame {
                             pwtxtPassword.setText("");
                             CustomerGUI customer = new CustomerGUI(CusID);
                             customer.setVisible(true);
-                            setVisible(false);
+                            dispose();
                             break;
 
                         case STAFF:
@@ -119,7 +120,7 @@ public class LoginGUI extends JFrame {
                             pwtxtPassword.setText("");
                             StaffGUI staff = new StaffGUI(StaffID);
                             staff.setVisible(true);
-                            setVisible(false);
+                            dispose();
                             break;
 
                         case ADMIN:
@@ -129,8 +130,7 @@ public class LoginGUI extends JFrame {
                             
                             AdminGUI admin = new AdminGUI(AdminID);
                             admin.setVisible(true);
-                            setVisible(false);
-                            
+                            dispose();
                             break;
 
                         case UNKNOWN:

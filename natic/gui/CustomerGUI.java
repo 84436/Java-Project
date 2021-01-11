@@ -553,6 +553,11 @@ public class CustomerGUI extends JFrame {
         btnLogOut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: LogOut");
+                LoginGUI loginForm = new LoginGUI();
+                loginForm.setVisible(true);
+                loginForm.getRootPane().requestFocus(false);
+                dispose();
+                Log.l.info("CustomerGUI disposed");
             }
         });
         

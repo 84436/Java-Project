@@ -47,6 +47,15 @@ public class SignupGUI extends JFrame {
             ;
         }
 
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                LoginGUI loginForm = new LoginGUI();
+                loginForm.setVisible(true);
+                loginForm.getRootPane().requestFocus(false);
+                dispose();
+            }
+        });
+
         setBounds(100, 100, 500, 400);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
