@@ -24,6 +24,7 @@ public class BookEnums {
         ROMANCE("Romance"),
         FICTION("Fiction & Fantasy"),
         WIBU("Japanese Literature"),
+        OTHER("Others")
         ;
         //#endregion
 

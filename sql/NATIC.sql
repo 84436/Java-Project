@@ -81,6 +81,7 @@ CREATE TABLE Books (
         -- ROMANCE: 9
         -- FICTION: 10
         -- WIBU: 11
+        -- OTHER: 12
     -- FORMAT
         -- PAPER: 0
         -- HARD: 1
@@ -185,7 +186,8 @@ VALUES
     ("9781524763169", 1, "A Promised Land", "Barack Obama", "2020-01-01", "Crown", 5, 0.0, 1, 580.00),
     ("9781506706382", 1, "The Legend of Zelda Encyclopedia", "Nintendo", "2018-01-01", "Dark Horse Books ", 2, 0.0, 1, 580.00),
     ("9780062457714", 2, "The Subtle Art of Not Giving a F*ck", "Mark Manson", "2016-01-01", "Harper", 4, 0.0, 1, 350.00),
-    ("9780062316103", 1, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "2015-01-01", "Harper Collins", 1, 0.0, 2, 305.00)
+    ("9780062316103", 1, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari", "2015-01-01", "Harper Collins", 1, 0.0, 2, 305.00),
+	("random", 1, null, null, '2021-01-01', null, 12, 0.0, 2, 0.0)
 ;
 
 INSERT INTO CustomerLibraries (CustomerID, ISBN, ExpiryDate)
