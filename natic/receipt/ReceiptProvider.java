@@ -21,7 +21,8 @@ public class ReceiptProvider implements Provider<Receipt> {
     }
 
     public Receipt getByID(String ReceiptID, String CustomerID) throws SQLException {
-        String query = String.format("SELECT * FROM Receipts WHERE CustomerID = '%s' AND ID = '%s'", CustomerID, ReceiptID);
+        String query = String.format("SELECT * FROM Receipts WHERE CustomerID = '%s' AND ID = '%s'", CustomerID,
+                ReceiptID);
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         Receipt res = null;
@@ -64,6 +65,31 @@ public class ReceiptProvider implements Provider<Receipt> {
         return resList;
     }
 
+    public ArrayList<Receipt> getAtBranch(String BranchID) throws SQLException {
+        String query = String.format(
+                "SELECT * FROM receipts, branches, staff where receipts.StaffID = staff.id and staff.BranchID = branches.id and branches.id = '%s'",
+                BranchID);
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        ArrayList<Receipt> resList = new ArrayList<>();
+        while (rs.next()) {
+            Receipt res = new Receipt();
+            res.setID(rs.getString("ID"));
+            res.setISBN(rs.getString("ISBN"));
+            res.setStaffID(rs.getString("StaffID"));
+            res.setCustomerID(rs.getString("CustomerID"));
+            Date reDate = rs.getDate("ReceiptDate");
+            res.setDate(LocalDate.of(reDate.getYear() + 1900, reDate.getMonth() + 1, reDate.getDate()));
+            res.setPrice(rs.getFloat("Price"));
+            Date returnDate = rs.getDate("ReturnOn");
+            res.setReturnOn(LocalDate.of(returnDate.getYear() + 1900, returnDate.getMonth() + 1, returnDate.getDate()));
+
+            resList.add(res);
+        }
+        Log.l.info(String.format("%s: Get all RECEIPTS", BranchID));
+        return resList;
+    }
+
     public void add(Receipt o) throws SQLException {
         System.out.println(o.getClass().getName());
         o.setID(IDGen.next());
@@ -83,20 +109,17 @@ public class ReceiptProvider implements Provider<Receipt> {
     }
 
     public void bypassReceiptForVirtualAcc(String VirtualID, String currentStaff) throws SQLException {
-        String query = String.join("\n",
-            "UPDATE RECEIPTS",
-            "SET",
-            String.format("StaffID = \"%s\"", VirtualID),
-            "WHERE",
-            String.format("StaffID = \"%s\"", currentStaff)
-        );
+        String query = String.join("\n", "UPDATE RECEIPTS", "SET", String.format("StaffID = \"%s\"", VirtualID),
+                "WHERE", String.format("StaffID = \"%s\"", currentStaff));
         PreparedStatement stmt = conn.prepareStatement(query);
         stmt.executeUpdate();
         Log.l.info(String.format("Bypass RECEIPTS from \"%s\" to \"%s\"", currentStaff, VirtualID));
     }
 
     // DO WE EVEN DO THIS?
-    public void edit(Receipt o) {}
+    public void edit(Receipt o) {
+    }
 
-    public void remove(Receipt o) {}    
+    public void remove(Receipt o) {
+    }
 }

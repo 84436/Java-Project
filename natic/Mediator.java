@@ -333,6 +333,10 @@ public class Mediator {
         return RECEIPT.get(CustomerID);
     }
 
+    public ArrayList<Receipt> getAllOfBranches(String BranchID) throws SQLException {
+        return RECEIPT.getAtBranch(BranchID)
+    }
+
     public Receipt getReceiptByID(String ReceiptID, String CustomerID) throws SQLException {
         return RECEIPT.getByID(ReceiptID, CustomerID);
     }
