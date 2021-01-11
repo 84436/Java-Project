@@ -563,6 +563,15 @@ public class CustomerGUI extends JFrame {
                 toggleLibraryView(checkPurchased.isSelected());
             }
         });
+
+        /**
+         * Events -> Library
+         */
+        txtLibrarySearch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Log.l.info("txt: LibrarySearch");
+            }
+        });
         
         /**
          * Events -> Orders

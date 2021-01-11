@@ -651,6 +651,18 @@ public class StaffGUI extends JFrame {
                 Log.l.info("btn: CreateCustomer");
             }
         });
+
+        txtCounterISBN.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Log.l.info("txt: CounterAddISBN");
+            }
+        });
+
+        txtCounterEmail.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Log.l.info("txt: CounterSearchCustomerEmail");
+            }
+        });
         
         
         
@@ -680,6 +692,12 @@ public class StaffGUI extends JFrame {
         btnRemoveBook.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: RemoveBook");
+            }
+        });
+
+        txtLibrarySearch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Log.l.info("txt: LibrarySearch");
             }
         });
         
