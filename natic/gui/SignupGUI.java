@@ -23,12 +23,10 @@ public class SignupGUI extends JFrame {
             "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
 
     private JPanel contentPane;
-    private JTextField EmailField;
-    private JTextField PhoneField;
-    private JTextField pwdField;
-    private JTextField confirmpwdField;
-    private JButton btnSignUp;
-    private JSeparator separator_1;
+    private JTextField txtEmail;
+    private JTextField txtPhone;
+    private JTextField pwtxtNew;
+    private JTextField pwtxtConfirm;
 
     private static final String PLACEHOLDER_EMAIL = "Email";
     private static final String PLACEHOLDER_PHONE = "Phone";
@@ -56,54 +54,64 @@ public class SignupGUI extends JFrame {
             }
         });
 
-        setBounds(100, 100, 500, 400);
+        
+
+        setTitle("NATiC: Sign Up");
+        setBounds(0, 0, 500, 400);
+        GUIHelpers.centerWindow(this);
+        GUIHelpers.setGlobalFont("SansSerif", Font.PLAIN, 14);
+
         contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        contentPane.setLayout(new BorderLayout(0, 0));
         setContentPane(contentPane);
+        contentPane.setLayout(new MigLayout("fillx", "[36px][grow,fill][36px]", "[72px][36px,fill][36px,fill][36px,fill][36px,fill][36px,fill][24px][36px,center][grow]"));
 
-        JPanel panel = new JPanel();
-        contentPane.add(panel, BorderLayout.CENTER);
-        panel.setLayout(new MigLayout("", "[grow]", "[25px][25px][25px][25px][25px][25px][][]"));
+        setBackground(Color.WHITE);
+        contentPane.setBackground(Color.WHITE);
 
-        JLabel lblNewLabel = new JLabel("NATiC");
-        lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        panel.add(lblNewLabel, "cell 0 0,alignx center");
+        JLabel lblSignUpHeader = new JLabel("Welcome to NATiC");
+        lblSignUpHeader.setHorizontalAlignment(SwingConstants.CENTER);
+        lblSignUpHeader.setFont(new Font("SansSerif", Font.BOLD, 36));
+        contentPane.add(lblSignUpHeader, "cell 1 0");
 
-        JSeparator separator = new JSeparator();
-        panel.add(separator, "cell 0 1");
+        txtEmail = new JTextField();
+        GUIHelpers.addPlaceholderText(txtEmail, PLACEHOLDER_EMAIL);
+        contentPane.add(txtEmail, "cell 1 1");
+        txtEmail.setColumns(25);
 
-        EmailField = new JTextField();
-        GUIHelpers.addPlaceholderText(EmailField, PLACEHOLDER_EMAIL);
-        panel.add(EmailField, "cell 0 2,alignx center");
-        EmailField.setColumns(25);
+        txtPhone = new JTextField();
+        GUIHelpers.addPlaceholderText(txtPhone, PLACEHOLDER_PHONE);
+        contentPane.add(txtPhone, "cell 1 2");
+        txtPhone.setColumns(25);
 
-        PhoneField = new JTextField();
-        GUIHelpers.addPlaceholderText(PhoneField, PLACEHOLDER_PHONE);
-        panel.add(PhoneField, "cell 0 3,alignx center");
-        PhoneField.setColumns(25);
+        pwtxtNew = new JPasswordField();
+        GUIHelpers.addPlaceholderText(pwtxtNew, PLACEHOLDER_PASSWORD);
+        contentPane.add(pwtxtNew, "cell 1 3");
+        pwtxtNew.setColumns(25);
 
-        pwdField = new JPasswordField();
-        GUIHelpers.addPlaceholderText(pwdField, PLACEHOLDER_PASSWORD);
-        panel.add(pwdField, "cell 0 4,alignx center");
-        pwdField.setColumns(25);
+        pwtxtConfirm = new JPasswordField();
+        GUIHelpers.addPlaceholderText(pwtxtConfirm, PLACEHOLDER_PASSWORD_CONFIRM);
+        contentPane.add(pwtxtConfirm, "cell 1 4");
+        pwtxtConfirm.setColumns(25);
 
-        confirmpwdField = new JPasswordField();
-        GUIHelpers.addPlaceholderText(confirmpwdField, PLACEHOLDER_PASSWORD_CONFIRM);
-        panel.add(confirmpwdField, "cell 0 5,alignx center");
-        confirmpwdField.setColumns(25);
+        JLabel lblSignInPrompt = new JLabel("<html><body><b>Already have an account?</b> Close this window to sign in.</body></html>");
+        lblSignInPrompt.setHorizontalAlignment(SwingConstants.CENTER);
+        contentPane.add(lblSignInPrompt, "cell 1 7");
 
-        separator_1 = new JSeparator();
-        panel.add(separator_1, "cell 0 6");
+        CompoundBorder CBorder4 = new CompoundBorder(new LineBorder(new Color(192, 192, 192)), new EmptyBorder(4, 4, 4, 4));
+        txtEmail.setBorder(CBorder4);
+        txtPhone.setBorder(CBorder4);
+        pwtxtNew.setBorder(CBorder4);
+        pwtxtConfirm.setBorder(CBorder4);
 
-        btnSignUp = new JButton("Sign Up");
+        JButton btnSignUp = new JButton("Sign Up");
+        contentPane.add(btnSignUp, "flowx, cell 1 5");
         btnSignUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 Customer newCustomer = new Customer(M);
-                String email = EmailField.getText().trim();
-                String phone = PhoneField.getText().trim();
-                String password = pwdField.getText().trim();
-                String confirmpwd = confirmpwdField.getText().trim();
+                String email = txtEmail.getText().trim();
+                String phone = txtPhone.getText().trim();
+                String password = pwtxtNew.getText().trim();
+                String confirmpwd = pwtxtConfirm.getText().trim();
 
                 Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
 
@@ -133,8 +141,8 @@ public class SignupGUI extends JFrame {
                 }
 
                 if (!password.equals(confirmpwd)) {
-                    pwdField.setText("");
-                    confirmpwdField.setText("");
+                    pwtxtNew.setText("");
+                    pwtxtConfirm.setText("");
                     GUIHelpers.showErrorDialog("Passwords do not match", null);
                     return;
                 }
@@ -160,7 +168,5 @@ public class SignupGUI extends JFrame {
                 }
             }
         });
-        panel.add(btnSignUp, "flowx,cell 0 7,alignx center");
     }
-
 }
