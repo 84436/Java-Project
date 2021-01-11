@@ -23,11 +23,11 @@ import natic.receipt.Receipt;
 import natic.review.Review;
 
 public class CustomerGUI extends JFrame {
-    
+
     private static final long serialVersionUID = 1L;
     Mediator M = Mediator.getInstance();
     Customer customer;
-    
+
     private JTextField txtAccountName;
     private JTextField txtAccountEmail;
     private JTextField txtAccountPhone;
@@ -35,7 +35,7 @@ public class CustomerGUI extends JFrame {
     private JPasswordField pwtxtOld;
     private JPasswordField pwtxtNew;
     private JPasswordField pwtxtConfirm;
-    
+
     private JTable tblLibrary;
     private JTextField txtLibrarySearch;
     private JTextField txtLibraryISBN;
@@ -48,11 +48,11 @@ public class CustomerGUI extends JFrame {
     private JTextField txtLibraryFormat;
     private JTextField txtLibraryPrice;
     private JLabel lblLibraryRatingAvg;
-    
+
     private JButton btnBuy;
     private JButton btnRent;
     private JLabel lblPurchaseState;
-    
+
     private JTable tblOrders;
     private JTextField txtOrderISBN;
     private JTextField txtOrderTitle;
@@ -66,9 +66,11 @@ public class CustomerGUI extends JFrame {
     private JTextField txtOrderID;
     private JTextField txtOrderDate;
     private JTextField txtOrderStaffID;
-    
+
+    private JCheckBox checkPurchased;
+
     // MigLayout "sizegroup main" constraint: https://stackoverflow.com/a/60187262
-    
+
     public CustomerGUI(String ID) {
         try {
             customer = M.getCustomerByID(ID);
@@ -79,14 +81,15 @@ public class CustomerGUI extends JFrame {
         /**
          * Base
          */
-        
+
         // Native LAF
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            e.printStackTrace();;
+            e.printStackTrace();
+            ;
         }
-        
+
         // Basics
         setTitle("NATiC: Customer");
         GUIHelpers.setGlobalFont("SansSerif", Font.PLAIN, 14);
@@ -94,39 +97,36 @@ public class CustomerGUI extends JFrame {
         setBounds(0, 0, 1024, 768);
         GUIHelpers.centerWindow(this);
         getContentPane().setLayout(new MigLayout("", "[grow]", "[grow]"));
-        
+
         // Base tabbed layout
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
         getContentPane().add(tabbedPane, "cell 0 0,grow");
-        
-        
-        
+
         /**
          * Account Panel
          */
-        
+
         JPanel Account = new JPanel();
         tabbedPane.addTab(GUIHelpers.htmlTabName("Account"), null, Account, null);
         Account.setLayout(new MigLayout("", "[grow,fill]", "[grow][36.00,fill]"));
-        
+
         JPanel AccountInfoEdit = new JPanel();
         Account.add(AccountInfoEdit, "cell 0 0,grow");
-        AccountInfoEdit.setLayout(new MigLayout("", "[grow,fill][grow,fill][fill]", "[][][][][][][40px,center][][][][][]"));
-        
+        AccountInfoEdit
+                .setLayout(new MigLayout("", "[grow,fill][grow,fill][fill]", "[][][][][][][40px,center][][][][][]"));
+
         // Separator between About and Password section
         JSeparator sepAccount = new JSeparator();
         sepAccount.setForeground(new Color(192, 192, 192));
         AccountInfoEdit.add(sepAccount, "cell 0 6 3 1");
-        
+
         JButton btnLogOut = new JButton("Log out");
         Account.add(btnLogOut, "cell 0 1");
-        
-        
-        
+
         /**
          * Account Panel -> About
          */
-        
+
         JLabel lblHeaderAccountAbout = new JLabel(GUIHelpers.htmlHeader("About you"));
         JLabel lblAccountName = new JLabel("Name");
         JLabel lblAccountEmail = new JLabel("Email");
@@ -134,13 +134,13 @@ public class CustomerGUI extends JFrame {
         txtAccountName = new JTextField();
         txtAccountEmail = new JTextField();
         txtAccountPhone = new JTextField();
-        
+
         txtAccountName.setColumns(10);
         txtAccountEmail.setColumns(10);
         txtAccountPhone.setColumns(10);
-        
+
         JButton btnAccountAboutSave = new JButton("Save changes");
-        
+
         AccountInfoEdit.add(lblHeaderAccountAbout, "cell 0 0 3 1,alignx trailing");
         AccountInfoEdit.add(lblAccountName, "cell 0 1");
         AccountInfoEdit.add(lblAccountEmail, "cell 0 2,alignx trailing");
@@ -149,20 +149,18 @@ public class CustomerGUI extends JFrame {
         AccountInfoEdit.add(txtAccountEmail, "cell 1 2 2 1,growx");
         AccountInfoEdit.add(txtAccountPhone, "cell 1 3 2 1,growx");
         AccountInfoEdit.add(btnAccountAboutSave, "cell 1 5 2 1");
-        
+
         JLabel lblAccountDoB = new JLabel("Date of Birth");
         AccountInfoEdit.add(lblAccountDoB, "cell 0 4,alignx trailing");
-        
+
         ftxtAccountDoB = new JFormattedTextField(new SimpleDateFormat("yyyy-MM-dd"));
         ftxtAccountDoB.setValue(new Date());
         AccountInfoEdit.add(ftxtAccountDoB, "cell 1 4 2 1,growx");
-        
-        
-        
+
         /**
          * Account Panel -> Password
          */
-        
+
         JLabel lblHeaderPassword = new JLabel(GUIHelpers.htmlHeader("Password"));
         JLabel lblPasswordOld = new JLabel("Old password");
         JLabel lblPasswordNew = new JLabel("New password");
@@ -171,7 +169,7 @@ public class CustomerGUI extends JFrame {
         pwtxtNew = new JPasswordField();
         pwtxtConfirm = new JPasswordField();
         JButton btnPasswordSave = new JButton("Change password");
-        
+
         // \u1F441 = eye symbol
         JToggleButton btnPasswordOldReveal = new JToggleButton("👁");
         JToggleButton btnPasswordNewReveal = new JToggleButton("👁");
@@ -179,7 +177,7 @@ public class CustomerGUI extends JFrame {
         GUIHelpers.addPasswordRevealToggleEvent(btnPasswordOldReveal, pwtxtOld);
         GUIHelpers.addPasswordRevealToggleEvent(btnPasswordNewReveal, pwtxtNew);
         GUIHelpers.addPasswordRevealToggleEvent(btnPasswordConfirmReveal, pwtxtConfirm);
-        
+
         AccountInfoEdit.add(lblHeaderPassword, "cell 0 7 3 1");
         AccountInfoEdit.add(lblPasswordOld, "cell 0 8,alignx trailing");
         AccountInfoEdit.add(lblPasswordNew, "cell 0 9,alignx trailing");
@@ -191,60 +189,59 @@ public class CustomerGUI extends JFrame {
         AccountInfoEdit.add(btnPasswordNewReveal, "cell 2 9");
         AccountInfoEdit.add(btnPasswordConfirmReveal, "cell 2 10");
         AccountInfoEdit.add(btnPasswordSave, "cell 1 11 2 1");
-        
-        
-        
+
         /**
          * Library
          */
-        
+
         JPanel Library = new JPanel();
         tabbedPane.addTab(GUIHelpers.htmlTabName("Library"), null, Library, null);
-        Library.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][][grow]"));
-        
+        Library.setLayout(
+                new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[36.00,fill][][grow]"));
+
         txtLibrarySearch = new JTextField();
         txtLibrarySearch.setColumns(20);
         GUIHelpers.addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
-        
-        JCheckBox checkPurchased = new JCheckBox("Show only purchased books");
+
+        checkPurchased = new JCheckBox("Show only purchased books");
         checkPurchased.setSelected(true);
         JPanel BookActions = new JPanel();
-        
+
         btnBuy = new JButton("Buy");
         btnBuy.setPreferredSize(new Dimension(100, 25));
         btnRent = new JButton("Rent");
         btnRent.setPreferredSize(new Dimension(100, 25));
-        
+
         tblLibrary = new JTable();
-        
+
         JTextPane txtBookDetails = new JTextPane();
         txtBookDetails.setEditable(false);
-        
+
         JScrollPane scrollLibrary = new JScrollPane();
         JScrollPane scrollBookDetails = new JScrollPane();
-        
+
         scrollLibrary.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollLibrary.setViewportView(tblLibrary);
         scrollBookDetails.setViewportView(txtBookDetails);
-        
+
         Library.add(txtLibrarySearch, "cell 0 0,growx,aligny top");
         BookActions.add(btnBuy);
         BookActions.add(btnRent);
-        
+
         Library.add(BookActions, "cell 1 0,grow");
         Library.add(checkPurchased, "cell 0 1");
         Library.add(scrollLibrary, "cell 0 2,grow");
         Library.add(scrollBookDetails, "cell 1 1 1 2,grow");
-        
-        
+
         /**
          * Library -> Book Details
          */
-        
+
         JPanel BookDetails = new JPanel();
         scrollBookDetails.setViewportView(BookDetails);
-        BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][][40px,center][][][][][][][][40px,center][][][36px,fill]"));
-        
+        BookDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]",
+                "[][][][][][40px,center][][][][][][][][40px,center][][][36px,fill]"));
+
         JLabel lblBookCover = new JLabel("");
         JLabel lblHeaderLibraryCommonFields = new JLabel(GUIHelpers.htmlHeaderSmall("Overview"));
         JLabel lblLibraryISBN = new JLabel("ISBN");
@@ -258,8 +255,8 @@ public class CustomerGUI extends JFrame {
         JLabel lblLibraryFormat = new JLabel("Format");
         JLabel lblLibraryPrice = new JLabel("Price");
         JLabel lblHeaderLibraryReviews = new JLabel(GUIHelpers.htmlHeaderSmall("Reviews"));
-        lblLibraryRatingAvg = new JLabel("Average rating"); 
-        
+        lblLibraryRatingAvg = new JLabel("Average rating");
+
         txtLibraryISBN = new JTextField();
         txtLibraryTitle = new JTextField();
         txtLibraryAuthor = new JTextField();
@@ -272,7 +269,7 @@ public class CustomerGUI extends JFrame {
         txtLibraryPrice = new JTextField();
         JSeparator sepBookDetails2 = new JSeparator();
         JButton btnLibraryShowReviews = new JButton("Show reviews");
-        
+
         txtLibraryISBN.setEditable(false);
         txtLibraryTitle.setEditable(false);
         txtLibraryAuthor.setEditable(false);
@@ -282,7 +279,7 @@ public class CustomerGUI extends JFrame {
         txtLibraryGenre.setEditable(false);
         txtLibraryFormat.setEditable(false);
         txtLibraryPrice.setEditable(false);
-        
+
         txtLibraryISBN.setEnabled(false);
         txtLibraryTitle.setEnabled(false);
         txtLibraryAuthor.setEnabled(false);
@@ -292,7 +289,7 @@ public class CustomerGUI extends JFrame {
         txtLibraryGenre.setEnabled(false);
         txtLibraryFormat.setEnabled(false);
         txtLibraryPrice.setEnabled(false);
-        
+
         txtLibraryISBN.setColumns(10);
         txtLibraryTitle.setColumns(10);
         txtLibraryAuthor.setColumns(10);
@@ -309,7 +306,7 @@ public class CustomerGUI extends JFrame {
         lblPurchaseState = new JLabel("{current rental/purchase state}");
         BookDetails.add(lblPurchaseState, "cell 0 0 2 1");
         lblPurchaseState.setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         BookDetails.add(lblBookCover, "cell 0 0 2 1");
         BookDetails.add(lblHeaderLibraryCommonFields, "cell 0 1 2 1");
         BookDetails.add(lblLibraryISBN, "cell 0 2");
@@ -322,7 +319,7 @@ public class CustomerGUI extends JFrame {
         BookDetails.add(lblLibraryGenre, "cell 0 10");
         BookDetails.add(lblLibraryFormat, "cell 0 11");
         BookDetails.add(lblLibraryPrice, "cell 0 12");
-        
+
         BookDetails.add(txtLibraryISBN, "cell 1 2,growx");
         BookDetails.add(txtLibraryTitle, "cell 1 3,growx");
         BookDetails.add(txtLibraryAuthor, "cell 1 4,growx");
@@ -337,41 +334,38 @@ public class CustomerGUI extends JFrame {
         BookDetails.add(lblHeaderLibraryReviews, "cell 0 14 2 1");
         BookDetails.add(lblLibraryRatingAvg, "cell 0 15 2 1");
         BookDetails.add(btnLibraryShowReviews, "cell 0 16 2 1");
-        
-        
-        
+
         /**
          * Orders
          */
-        
+
         JPanel Orders = new JPanel();
         tabbedPane.addTab(GUIHelpers.htmlTabName("Orders"), null, Orders, null);
         Orders.setLayout(new MigLayout("", "[grow,sizegroup main,fill][grow,sizegroup main,fill]", "[grow]"));
-        
+
         tblOrders = new JTable();
-        
+
         JTextPane txtOrderDetails = new JTextPane();
         txtOrderDetails.setEditable(false);
-        
+
         JScrollPane scrollOrders = new JScrollPane();
         JScrollPane scrollOrderDetails = new JScrollPane();
-        
+
         scrollOrders.setViewportView(tblOrders);
         scrollOrderDetails.setViewportView(txtOrderDetails);
-        
+
         Orders.add(scrollOrders, "cell 0 0,grow");
         Orders.add(scrollOrderDetails, "cell 1 0,grow");
-        
-        
-        
+
         /**
          * Orders -> Order Detail
          */
-        
+
         JPanel OrderDetails = new JPanel();
         scrollOrderDetails.setViewportView(OrderDetails);
-        OrderDetails.setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][40px,center][][][][][][][][][][]"));
-        
+        OrderDetails
+                .setLayout(new MigLayout("", "[80.00px,fill][grow,fill]", "[][][][][40px,center][][][][][][][][][][]"));
+
         JLabel lblHeaderOrderOverview = new JLabel(GUIHelpers.htmlHeaderSmall("Order info"));
         JLabel lblOrderID = new JLabel("Order ID");
         JLabel lblOrderDate = new JLabel("Date");
@@ -386,7 +380,7 @@ public class CustomerGUI extends JFrame {
         JLabel lblOrderGenre = new JLabel("Genre");
         JLabel lblOrderFormat = new JLabel("Format");
         JLabel lblOrderPrice = new JLabel("Price");
-        
+
         txtOrderID = new JTextField();
         txtOrderDate = new JTextField();
         txtOrderStaffID = new JTextField();
@@ -399,7 +393,7 @@ public class CustomerGUI extends JFrame {
         txtOrderGenre = new JTextField();
         txtOrderFormat = new JTextField();
         txtOrderPrice = new JTextField();
-        
+
         txtOrderID.setEditable(false);
         txtOrderDate.setEditable(false);
         txtOrderStaffID.setEditable(false);
@@ -412,7 +406,7 @@ public class CustomerGUI extends JFrame {
         txtOrderGenre.setEditable(false);
         txtOrderFormat.setEditable(false);
         txtOrderPrice.setEditable(false);
-        
+
         txtOrderID.setEnabled(false);
         txtOrderDate.setEnabled(false);
         txtOrderStaffID.setEnabled(false);
@@ -425,7 +419,7 @@ public class CustomerGUI extends JFrame {
         txtOrderGenre.setEnabled(false);
         txtOrderFormat.setEnabled(false);
         txtOrderPrice.setEnabled(false);
-        
+
         txtOrderID.setColumns(10);
         txtOrderDate.setColumns(10);
         txtOrderStaffID.setColumns(10);
@@ -438,10 +432,10 @@ public class CustomerGUI extends JFrame {
         txtOrderGenre.setColumns(10);
         txtOrderFormat.setColumns(10);
         txtOrderPrice.setColumns(10);
-        
+
         JSeparator sepOrderDetails = new JSeparator();
         sepOrderDetails.setForeground(Color.LIGHT_GRAY);
-        
+
         OrderDetails.add(lblHeaderOrderOverview, "cell 0 0 2 1");
         OrderDetails.add(lblOrderID, "cell 0 1,alignx trailing");
         OrderDetails.add(lblOrderDate, "cell 0 2,alignx trailing");
@@ -457,7 +451,7 @@ public class CustomerGUI extends JFrame {
         OrderDetails.add(lblOrderGenre, "cell 0 12");
         OrderDetails.add(lblOrderFormat, "cell 0 13");
         OrderDetails.add(lblOrderPrice, "cell 0 14");
-        
+
         OrderDetails.add(txtOrderID, "cell 1 1,growx");
         OrderDetails.add(txtOrderDate, "cell 1 2,growx");
         OrderDetails.add(txtOrderStaffID, "cell 1 3,growx");
@@ -470,49 +464,46 @@ public class CustomerGUI extends JFrame {
         OrderDetails.add(txtOrderGenre, "cell 1 12,growx");
         OrderDetails.add(txtOrderFormat, "cell 1 13,growx");
         OrderDetails.add(txtOrderPrice, "cell 1 14");
-        
-        
-        
+
         /**
          * Cosmetics, etc.
          */
-        
+
         // Whiten (almost) everything
-                                     setBackground(Color.WHITE);
-        getContentPane()            .setBackground(Color.WHITE);
-        tabbedPane                  .setBackground(Color.WHITE);
-        Account                     .setBackground(Color.WHITE);
-        AccountInfoEdit             .setBackground(Color.WHITE);
-        Library                     .setBackground(Color.WHITE);
-        scrollLibrary               .setBackground(Color.WHITE);
-        scrollBookDetails           .setBackground(Color.WHITE);
-        Orders                      .setBackground(Color.WHITE);
-        scrollOrders                .setBackground(Color.WHITE);
-        scrollOrderDetails          .setBackground(Color.WHITE);
-        checkPurchased              .setBackground(Color.WHITE);
-        
+        setBackground(Color.WHITE);
+        getContentPane().setBackground(Color.WHITE);
+        tabbedPane.setBackground(Color.WHITE);
+        Account.setBackground(Color.WHITE);
+        AccountInfoEdit.setBackground(Color.WHITE);
+        Library.setBackground(Color.WHITE);
+        scrollLibrary.setBackground(Color.WHITE);
+        scrollBookDetails.setBackground(Color.WHITE);
+        Orders.setBackground(Color.WHITE);
+        scrollOrders.setBackground(Color.WHITE);
+        scrollOrderDetails.setBackground(Color.WHITE);
+        checkPurchased.setBackground(Color.WHITE);
+
         // Uniform border: 1px #c0c0c0 + variable padding
-        CompoundBorder CBorder0 = new CompoundBorder(new LineBorder(new Color(192, 192, 192)), new EmptyBorder(0, 0, 0, 0));
-        CompoundBorder CBorder4 = new CompoundBorder(new LineBorder(new Color(192, 192, 192)), new EmptyBorder(4, 4, 4, 4));
-        CompoundBorder CBorder8 = new CompoundBorder(new LineBorder(new Color(192, 192, 192)), new EmptyBorder(8, 8, 8, 8));
-        
-        AccountInfoEdit             .setBorder(CBorder8);
-        BookActions                 .setBorder(CBorder0);
-        scrollLibrary               .setBorder(CBorder0);
-        scrollBookDetails           .setBorder(CBorder0);
-        scrollOrders                .setBorder(CBorder0);
-        scrollOrderDetails          .setBorder(CBorder0);
-        txtLibrarySearch            .setBorder(CBorder4);
-        
+        CompoundBorder CBorder0 = new CompoundBorder(new LineBorder(new Color(192, 192, 192)),
+                new EmptyBorder(0, 0, 0, 0));
+        CompoundBorder CBorder4 = new CompoundBorder(new LineBorder(new Color(192, 192, 192)),
+                new EmptyBorder(4, 4, 4, 4));
+        CompoundBorder CBorder8 = new CompoundBorder(new LineBorder(new Color(192, 192, 192)),
+                new EmptyBorder(8, 8, 8, 8));
+
+        AccountInfoEdit.setBorder(CBorder8);
+        BookActions.setBorder(CBorder0);
+        scrollLibrary.setBorder(CBorder0);
+        scrollBookDetails.setBorder(CBorder0);
+        scrollOrders.setBorder(CBorder0);
+        scrollOrderDetails.setBorder(CBorder0);
+        txtLibrarySearch.setBorder(CBorder4);
+
         // Transparent scrollpane background
-        scrollLibrary             .getViewport().setOpaque(false);
-        scrollBookDetails         .getViewport().setOpaque(false);
-        scrollOrders              .getViewport().setOpaque(false);
-        scrollOrderDetails        .getViewport().setOpaque(false);
-        
-        
-
-
+        scrollLibrary.getViewport().setOpaque(false);
+        scrollBookDetails.getViewport().setOpaque(false);
+        scrollOrders.getViewport().setOpaque(false);
+        scrollOrderDetails.getViewport().setOpaque(false);
 
         /**
          * Events (Main)
@@ -524,24 +515,26 @@ public class CustomerGUI extends JFrame {
         // Tab: change on index change
         tabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                final HashMap<Integer, String> tabMap = new HashMap<>() {{
-                    put(0, "Account");
-                    put(1, "Library");
-                    put(2, "Orders");
-                }};
+                final HashMap<Integer, String> tabMap = new HashMap<>() {
+                    {
+                        put(0, "Account");
+                        put(1, "Library");
+                        put(2, "Orders");
+                    }
+                };
                 int tabIndex = tabbedPane.getSelectedIndex();
                 Log.l.info("Tab changed to: " + tabMap.get(tabIndex));
                 populateTab(tabIndex);
             }
         });
-        
+
         // Tab: always select 2nd tab on startup
         tabbedPane.setSelectedIndex(1);
-        
+
         /**
          * Events -> Account
          */
-        
+
         btnAccountAboutSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: AccountAboutSave");
@@ -551,14 +544,18 @@ public class CustomerGUI extends JFrame {
                 String phone = txtAccountPhone.getText().trim();
                 String dob = ftxtAccountDoB.getText().trim();
 
-                if (name.isBlank()) name = null;
-                if (email.isBlank()) email = null;
-                if (phone.isBlank()) phone = null;
-                if (dob.isBlank()) dob = null;
+                if (name.isBlank())
+                    name = null;
+                if (email.isBlank())
+                    email = null;
+                if (phone.isBlank())
+                    phone = null;
+                if (dob.isBlank())
+                    dob = null;
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate localDate = LocalDate.parse(dob, formatter);
-                
+
                 customer.setName(name);
                 customer.setEmail(email);
                 customer.setPhone(phone);
@@ -567,13 +564,12 @@ public class CustomerGUI extends JFrame {
                 try {
                     M.editAccount(customer);
                     populateAccountTab();
-                }
-                catch (Exception exc) {
+                } catch (Exception exc) {
                     GUIHelpers.showErrorDialog("Unable to edit account", exc);
                 }
             }
         });
-        
+
         btnPasswordSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: PasswordSave");
@@ -582,9 +578,12 @@ public class CustomerGUI extends JFrame {
                 String newPwd = pwtxtNew.getText();
                 String confirmPwd = pwtxtConfirm.getText();
 
-                if (oldPwd.isBlank()) oldPwd = null;
-                if (newPwd.isBlank()) newPwd = null;
-                if (confirmPwd.isBlank()) confirmPwd = null;
+                if (oldPwd.isBlank())
+                    oldPwd = null;
+                if (newPwd.isBlank())
+                    newPwd = null;
+                if (confirmPwd.isBlank())
+                    confirmPwd = null;
 
                 try {
                     if (newPwd.equals(confirmPwd)) {
@@ -598,13 +597,12 @@ public class CustomerGUI extends JFrame {
                         pwtxtNew.setText("");
                         pwtxtConfirm.setText("");
                     }
-                }
-                catch (Exception exc) {
+                } catch (Exception exc) {
                     GUIHelpers.showErrorDialog("Unable to change password", exc);
-                } 
+                }
             }
         });
-        
+
         btnLogOut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: LogOut");
@@ -615,11 +613,11 @@ public class CustomerGUI extends JFrame {
                 Log.l.info("CustomerGUI disposed");
             }
         });
-        
+
         /**
          * Events -> Library
          */
-        
+
         btnBuy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: Buy");
@@ -633,29 +631,40 @@ public class CustomerGUI extends JFrame {
                 }
             }
         });
-        
+
         btnRent.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: Rent");
                 String BookISBN = txtLibraryISBN.getText();
                 String staffID = "AC00000000";
-                // try {
-                //     // M.rentBook(staffID, customer.getID(), BookISBN, );
-                // } catch (SQLException exc) {
-                //     GUIHelpers.showErrorDialog("Unable to buy Book", exc);
-                //     exc.printStackTrace();
-                // }
+                try {
+                    M.rentBook(staffID, customer.getID(), BookISBN, 1);
+                } catch (SQLException exc) {
+                GUIHelpers.showErrorDialog("Unable to rent Book", exc);
+                exc.printStackTrace();
+                }
             }
         });
-        
+
         checkPurchased.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("check: LibraryPurchasedOnly: " + checkPurchased.isSelected());
                 toggleLibraryView(checkPurchased.isSelected());
                 populateLibraryTab(checkPurchased.isSelected());
+                
+                txtLibraryISBN.setText("");
+                txtLibraryTitle.setText("");
+                txtLibraryAuthor.setText("");
+                txtLibraryVersionID.setText("");
+                txtLibraryYear.setText("");
+                txtLibraryGenre.setText("");
+                txtLibraryFormat.setText("");
+                txtLibraryPrice.setText("");
+
+                lblPurchaseState.setText("{current rental/purchase state}");
             }
         });
-        
+
         txtLibrarySearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("txt: LibrarySearch");
@@ -670,7 +679,7 @@ public class CustomerGUI extends JFrame {
                 try {
                     if (checkPurchased.isSelected()) {
                         ArrayList<CustomerLibrary> customerLib = M.searchInCusLib(customer.getID(), query);
-                        for (var book: customerLib) {
+                        for (var book : customerLib) {
                             ArrayList<Object> record = new ArrayList<>();
                             record.add(book.getBook().getISBN());
                             record.add(book.getBook().getTitle());
@@ -689,7 +698,7 @@ public class CustomerGUI extends JFrame {
                             tableData.add(record);
                         }
                     }
-                    
+
                 } catch (SQLException exec) {
                     exec.printStackTrace();
                 }
@@ -709,13 +718,12 @@ public class CustomerGUI extends JFrame {
                     String isbn = txtLibraryISBN.getText().trim();
                     ArrayList<Review> reviews = M.getReview(isbn);
                     ReviewViewerGUI reviewViewerFrame = new ReviewViewerGUI(reviews);
-                }
-                catch (Exception exc) {
+                } catch (Exception exc) {
                     GUIHelpers.showErrorDialog("Unable to show reviews for books", exc);
                 }
             }
         });
-        
+
         tblLibrary.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 int selectedRow = tblLibrary.getSelectedRow();
@@ -753,45 +761,53 @@ public class CustomerGUI extends JFrame {
 
         Log.l.info("Customer GUI init'd");
     }
-    
+
     private void toggleLibraryView(boolean purchasedOnly) {
         if (purchasedOnly) {
-            btnBuy              .setEnabled(false);
-            btnRent             .setEnabled(false);
-            lblPurchaseState    .setVisible(true);
-        }
-        else {
-            btnBuy              .setEnabled(true);
-            btnRent             .setEnabled(true);
-            lblPurchaseState    .setVisible(false);
+            btnBuy.setEnabled(false);
+            btnRent.setEnabled(false);
+            lblPurchaseState.setVisible(true);
+        } else {
+            btnBuy.setEnabled(true);
+            btnRent.setEnabled(true);
+            lblPurchaseState.setVisible(false);
         }
     }
 
     private void populateTab(int tabIndex) {
         switch (tabIndex) {
-            case 0: populateAccountTab(); break;
-            case 1: populateLibraryTab(true); break;
-            case 2: populateOrdersTab(); break;
+            case 0:
+                populateAccountTab();
+                break;
+            case 1:
+                checkPurchased.setSelected(true);
+                populateLibraryTab(true);
+                break;
+            case 2:
+                populateOrdersTab();
+                break;
         }
     }
-    
+
     private void populateAccountTab() {
         txtAccountName.setText(customer.getName());
         txtAccountEmail.setText(customer.getEmail());
         txtAccountPhone.setText(customer.getPhone());
-        ftxtAccountDoB.setText(String.format("%04d-%02d-%02d", customer.getDoB().getYear(), customer.getDoB().getMonth().getValue(), customer.getDoB().getDayOfMonth()));
+        ftxtAccountDoB.setText(String.format("%04d-%02d-%02d", customer.getDoB().getYear(),
+                customer.getDoB().getMonth().getValue(), customer.getDoB().getDayOfMonth()));
         Log.l.info("Account tab populated");
     }
-    
+
     private void populateLibraryTab(boolean isFilter) {
-        String[] tableHeaders = {GUIHelpers.htmlBoldText("ISBN"), GUIHelpers.htmlBoldText("Title"), GUIHelpers.htmlBoldText("Author"), GUIHelpers.htmlBoldText("Year")};
+        String[] tableHeaders = { GUIHelpers.htmlBoldText("ISBN"), GUIHelpers.htmlBoldText("Title"),
+                GUIHelpers.htmlBoldText("Author"), GUIHelpers.htmlBoldText("Year") };
 
         ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
 
         try {
             if (isFilter) {
                 ArrayList<CustomerLibrary> customerLib = M.getCustomerLibrary(customer.getID());
-                for (var booklib: customerLib) {
+                for (var booklib : customerLib) {
                     ArrayList<Object> record = new ArrayList<>();
                     record.add(booklib.getBook().getISBN());
                     record.add(booklib.getBook().getTitle());
@@ -799,10 +815,9 @@ public class CustomerGUI extends JFrame {
                     record.add(booklib.getBook().getYear());
                     tableData.add(record);
                 }
-            }   
-            else {
+            } else {
                 ArrayList<Book> books = M.getAllBooks();
-                for (var book: books) {
+                for (var book : books) {
                     ArrayList<Object> record = new ArrayList<>();
                     record.add(book.getISBN());
                     record.add(book.getTitle());
@@ -811,8 +826,7 @@ public class CustomerGUI extends JFrame {
                     tableData.add(record);
                 }
             }
-        }   
-        catch (SQLException exec) {
+        } catch (SQLException exec) {
             exec.printStackTrace();
         }
         // extract and push each records
@@ -822,15 +836,16 @@ public class CustomerGUI extends JFrame {
         tblLibrary.setModel(tbmLib);
         Log.l.info("Library tab populated");
     }
-    
+
     private void populateOrdersTab() {
-        String[] tableHeaders = {GUIHelpers.htmlBoldText("ID"), GUIHelpers.htmlBoldText("Title"), GUIHelpers.htmlBoldText("Price")};
+        String[] tableHeaders = { GUIHelpers.htmlBoldText("ID"), GUIHelpers.htmlBoldText("Title"),
+                GUIHelpers.htmlBoldText("Price") };
 
         ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
 
         try {
             ArrayList<Receipt> receipts = M.getAllReceipts(customer.getID());
-            for (var receipt: receipts) {
+            for (var receipt : receipts) {
                 ArrayList<Object> record = new ArrayList<>();
                 Book b = M.getByISBN(receipt.getISBN());
                 record.add(receipt.getID());
@@ -886,7 +901,9 @@ public class CustomerGUI extends JFrame {
             } else {
                 CustomerLibrary customerLib = M.getCustomerLibrary(customer.getID(), BookISBN);
                 LocalDate expiredDate = customerLib.getExpireDate();
-                if (expiredDate.compareTo(LocalDate.now()) < 0) {
+                if (expiredDate.equals(LocalDate.of(1, 1, 1))) {
+                    lblPurchaseState.setText("Permanent");
+                } else if (expiredDate.compareTo(LocalDate.now()) < 0) {
                     lblPurchaseState.setText("Expired");
                 } else {
                     lblPurchaseState.setText(String.format("Available until %s", expiredDate.toString()));
@@ -910,7 +927,7 @@ public class CustomerGUI extends JFrame {
 
                 updateBookDetailsRating(b.getRating());
             }
-            
+
         } catch (SQLException exc) {
             GUIHelpers.showErrorDialog("Unable to get selected book info", exc);
         }
