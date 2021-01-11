@@ -3,6 +3,7 @@ package natic.gui;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
@@ -11,9 +12,14 @@ import net.miginfocom.swing.MigLayout;
 
 import java.util.*;
 import java.text.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import natic.*;
 import natic.account.Customer;
 import natic.book.Book;
+import natic.book.CustomerLibrary;
+import natic.receipt.Receipt;
 import natic.review.Review;
 
 public class CustomerGUI extends JFrame {
@@ -200,7 +206,7 @@ public class CustomerGUI extends JFrame {
         GUIHelpers.addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
         
         JCheckBox checkPurchased = new JCheckBox("Show only purchased books");
-        
+        checkPurchased.setSelected(true);
         JPanel BookActions = new JPanel();
         
         btnBuy = new JButton("Buy");
@@ -538,12 +544,63 @@ public class CustomerGUI extends JFrame {
         btnAccountAboutSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: AccountAboutSave");
+
+                String name = txtAccountName.getText().trim();
+                String email = txtAccountEmail.getText().trim();
+                String phone = txtAccountPhone.getText().trim();
+                String dob = ftxtAccountDoB.getText().trim();
+
+                if (name.isBlank()) name = null;
+                if (email.isBlank()) email = null;
+                if (phone.isBlank()) phone = null;
+                if (dob.isBlank()) dob = null;
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDate = LocalDate.parse(dob, formatter);
+                
+                customer.setName(name);
+                customer.setEmail(email);
+                customer.setPhone(phone);
+                customer.setDoB(localDate);
+
+                try {
+                    M.editAccount(customer);
+                    populateAccountTab();
+                }
+                catch (Exception exc) {
+                    GUIHelpers.showErrorDialog("Unable to edit account", exc);
+                }
             }
         });
         
         btnPasswordSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: PasswordSave");
+                Log.l.info("btn: PasswordSave");
+                String oldPwd = pwtxtOld.getText();
+                String newPwd = pwtxtNew.getText();
+                String confirmPwd = pwtxtConfirm.getText();
+
+                if (oldPwd.isBlank()) oldPwd = null;
+                if (newPwd.isBlank()) newPwd = null;
+                if (confirmPwd.isBlank()) confirmPwd = null;
+
+                try {
+                    if (newPwd.equals(confirmPwd)) {
+                        M.changePassword(customer.getEmail(), oldPwd, newPwd);
+                        pwtxtOld.setText("");
+                        pwtxtNew.setText("");
+                        pwtxtConfirm.setText("");
+                    } else {
+                        GUIHelpers.showErrorDialog("Password does not match", null);
+                        pwtxtOld.setText("");
+                        pwtxtNew.setText("");
+                        pwtxtConfirm.setText("");
+                    }
+                }
+                catch (Exception exc) {
+                    GUIHelpers.showErrorDialog("Unable to change password", exc);
+                } 
             }
         });
         
@@ -578,12 +635,53 @@ public class CustomerGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("check: LibraryPurchasedOnly: " + checkPurchased.isSelected());
                 toggleLibraryView(checkPurchased.isSelected());
+                populateLibraryTab(checkPurchased.isSelected());
             }
         });
         
         txtLibrarySearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("txt: LibrarySearch");
+
+                String query = txtLibrarySearch.getText();
+
+                String[] tableHeaders = { GUIHelpers.htmlBoldText("ISBN"), GUIHelpers.htmlBoldText("Title"),
+                        GUIHelpers.htmlBoldText("Author"), GUIHelpers.htmlBoldText("Year") };
+
+                ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
+
+                try {
+                    if (checkPurchased.isSelected()) {
+                        ArrayList<CustomerLibrary> customerLib = M.searchInCusLib(customer.getID(), query);
+                        for (var book: customerLib) {
+                            ArrayList<Object> record = new ArrayList<>();
+                            record.add(book.getBook().getISBN());
+                            record.add(book.getBook().getTitle());
+                            record.add(book.getBook().getAuthor());
+                            record.add(book.getBook().getYear());
+                            tableData.add(record);
+                        }
+                    } else {
+                        ArrayList<Book> books = M.searchBook(query);
+                        for (var book : books) {
+                            ArrayList<Object> record = new ArrayList<>();
+                            record.add(book.getISBN());
+                            record.add(book.getTitle());
+                            record.add(book.getAuthor());
+                            record.add(book.getYear());
+                            tableData.add(record);
+                        }
+                    }
+                    
+                } catch (SQLException exec) {
+                    exec.printStackTrace();
+                }
+                // extract and push each records
+
+                CustomTableModel tbmLib = new CustomTableModel(tableHeaders, tableData);
+                tblLibrary.setRowHeight(24);
+                tblLibrary.setModel(tbmLib);
+                Log.l.info("Library tab populated");
             }
         });
 
@@ -601,9 +699,40 @@ public class CustomerGUI extends JFrame {
             }
         });
         
+        tblLibrary.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = tblLibrary.getSelectedRow();
+                Log.l.info("Selected row index: " + selectedRow);
+
+                if (selectedRow == -1)
+                    return;
+
+                String BookISBN = (String) tblLibrary.getModel().getValueAt(selectedRow, 0);
+
+                if (checkPurchased.isSelected()) {
+                    showBookDetails(BookISBN, true);
+                } else {
+                    showBookDetails(BookISBN, false);
+                }
+            }
+        });
         /**
          * Events -> Orders
          */
+
+        tblOrders.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = tblOrders.getSelectedRow();
+                Log.l.info("Selected row index: " + selectedRow);
+
+                if (selectedRow == -1)
+                    return;
+
+                String ReceiptID = (String) tblOrders.getModel().getValueAt(selectedRow, 0);
+
+                showBookDetails(ReceiptID, true);
+            }
+        });
 
         Log.l.info("Customer GUI init'd");
     }
@@ -624,7 +753,7 @@ public class CustomerGUI extends JFrame {
     private void populateTab(int tabIndex) {
         switch (tabIndex) {
             case 0: populateAccountTab(); break;
-            case 1: populateLibraryTab(); break;
+            case 1: populateLibraryTab(true); break;
             case 2: populateOrdersTab(); break;
         }
     }
@@ -637,11 +766,70 @@ public class CustomerGUI extends JFrame {
         Log.l.info("Account tab populated");
     }
     
-    private void populateLibraryTab() {
+    private void populateLibraryTab(boolean isFilter) {
+        String[] tableHeaders = {GUIHelpers.htmlBoldText("ISBN"), GUIHelpers.htmlBoldText("Title"), GUIHelpers.htmlBoldText("Author"), GUIHelpers.htmlBoldText("Year")};
+
+        ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
+
+        try {
+            if (isFilter) {
+                ArrayList<CustomerLibrary> customerLib = M.getCustomerLibrary(customer.getID());
+                for (var booklib: customerLib) {
+                    ArrayList<Object> record = new ArrayList<>();
+                    record.add(booklib.getBook().getISBN());
+                    record.add(booklib.getBook().getTitle());
+                    record.add(booklib.getBook().getAuthor());
+                    record.add(booklib.getBook().getYear());
+                    tableData.add(record);
+                }
+            }   
+            else {
+                ArrayList<Book> books = M.getAllBooks();
+                for (var book: books) {
+                    ArrayList<Object> record = new ArrayList<>();
+                    record.add(book.getISBN());
+                    record.add(book.getTitle());
+                    record.add(book.getAuthor());
+                    record.add(book.getYear());
+                    tableData.add(record);
+                }
+            }
+        }   
+        catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+        // extract and push each records
+
+        CustomTableModel tbmLib = new CustomTableModel(tableHeaders, tableData);
+        tblLibrary.setRowHeight(24);
+        tblLibrary.setModel(tbmLib);
         Log.l.info("Library tab populated");
     }
     
     private void populateOrdersTab() {
+        String[] tableHeaders = {GUIHelpers.htmlBoldText("ID"), GUIHelpers.htmlBoldText("Title"), GUIHelpers.htmlBoldText("Price")};
+
+        ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
+
+        try {
+            ArrayList<Receipt> receipts = M.getAllReceipts(customer.getID());
+            for (var receipt: receipts) {
+                ArrayList<Object> record = new ArrayList<>();
+                Book b = M.getByISBN(receipt.getISBN());
+                record.add(receipt.getID());
+                record.add(b.getTitle());
+                record.add(receipt.getPrice());
+                tableData.add(record);
+            }
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+
+        CustomTableModel tbmOrder = new CustomTableModel(tableHeaders, tableData);
+        tblOrders.setRowHeight(24);
+        tblOrders.setModel(tbmOrder);
+        Log.l.info("Library tab populated");
+
         Log.l.info("Orders tab populated");
     }
 
@@ -649,28 +837,75 @@ public class CustomerGUI extends JFrame {
         lblLibraryRatingAvg.setText(String.format("Average rating: %.1f", rating));
     }
 
-    private void showBookDetails(String BookISBN) {
+    private void updateBookDetailsReviews(ArrayList<Review> reviews) {
+        String r = "";
+        for (int i = 0; i < reviews.size(); i++) {
+            Review each = reviews.get(i);
+            r += String.format("%s\n--%s, %d/5\n", each.getReviewText(), each.getCustomerID(), each.getReviewScore());
+            if (i < reviews.size() - 1)
+                r += "\n";
+        }
+    }
+
+    private void showBookDetails(String BookISBN, boolean isPurchased) {
         try {
-            Book b = M.getByISBN(BookISBN);
+            if (!isPurchased) {
+                Book b = M.getByISBN(BookISBN);
 
-            txtLibraryISBN.setText(b.getISBN());
-            txtLibraryTitle.setText(b.getTitle());
-            txtLibraryAuthor.setText(b.getAuthor());
-            txtLibraryVersionID.setText(Integer.toString(b.getVersionID()));
-            txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
-            txtLibraryPublisher.setText(b.getPublisher());
-            txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
-            txtLibraryGenre.setText(b.getGenre().name());
-            txtLibraryFormat.setText(b.getFormat().name());
+                txtLibraryISBN.setText(b.getISBN());
+                txtLibraryTitle.setText(b.getTitle());
+                txtLibraryAuthor.setText(b.getAuthor());
+                txtLibraryVersionID.setText(Integer.toString(b.getVersionID()));
+                txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
+                txtLibraryPublisher.setText(b.getPublisher());
+                txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
+                txtLibraryGenre.setText(b.getGenre().name());
+                txtLibraryFormat.setText(b.getFormat().name());
 
-            txtLibraryISBN.setCaretPosition(0);
-            txtLibraryTitle.setCaretPosition(0);
-            txtLibraryAuthor.setCaretPosition(0);
-            txtLibraryPublisher.setCaretPosition(0);
+                txtLibraryISBN.setCaretPosition(0);
+                txtLibraryTitle.setCaretPosition(0);
+                txtLibraryAuthor.setCaretPosition(0);
+                txtLibraryPublisher.setCaretPosition(0);
 
-            updateBookDetailsRating(b.getRating());
+                updateBookDetailsRating(b.getRating());
+            } else {
+                CustomerLibrary customerLib = M.getCustomerLibrary(customer.getID(), BookISBN);
+                LocalDate expiredDate = customerLib.getExpireDate();
+                if (expiredDate.compareTo(LocalDate.now()) < 0) {
+                    lblPurchaseState.setText("Expired");
+                } else {
+                    lblPurchaseState.setText(String.format("Available until %s", expiredDate.toString()));
+                }
+                Book b = customerLib.getBook();
+
+                txtLibraryISBN.setText(b.getISBN());
+                txtLibraryTitle.setText(b.getTitle());
+                txtLibraryAuthor.setText(b.getAuthor());
+                txtLibraryVersionID.setText(Integer.toString(b.getVersionID()));
+                txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
+                txtLibraryPublisher.setText(b.getPublisher());
+                txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
+                txtLibraryGenre.setText(b.getGenre().name());
+                txtLibraryFormat.setText(b.getFormat().name());
+
+                txtLibraryISBN.setCaretPosition(0);
+                txtLibraryTitle.setCaretPosition(0);
+                txtLibraryAuthor.setCaretPosition(0);
+                txtLibraryPublisher.setCaretPosition(0);
+
+                updateBookDetailsRating(b.getRating());
+            }
+            
         } catch (SQLException exc) {
             GUIHelpers.showErrorDialog("Unable to get selected book info", exc);
         }
+    }
+
+    private void showReceiptDetails() {
+        // try {
+            
+        // } catch (SQLException exc) {
+        //     GUIHelpers.showErrorDialog("Unable to get receipt", exc);
+        // }
     }
 }

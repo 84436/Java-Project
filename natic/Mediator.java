@@ -321,6 +321,13 @@ public class Mediator {
         return BOOKLIST.searchInBranLib(BranchID, match);
     }
 
+    public BranchStockList getBranchStockList(String ISBN, String BranchID) throws SQLException {
+        return BOOKLIST.getBookInBranLib(BranchID, ISBN);
+    }
+
+    public CustomerLibrary getCustomerLibrary(String customerID, String ISBN) throws SQLException {
+        return BOOKLIST.getBookInCusLib(customerID, ISBN);
+    }
     // RECEIPTS function
     public ArrayList<Receipt> getAllReceipts(String CustomerID) throws SQLException {
         return RECEIPT.get(CustomerID);

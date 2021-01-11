@@ -148,12 +148,12 @@ VALUES
 INSERT INTO Accounts (ID, Name, Email, Phone, Type, Pass)
 VALUES
     ("AC00000000", "Virtual Account", NULL, NULL, 1, NULL),
-    ("AC00000001", "Nguyễn Văn AB", "ab.nguyen@email.com", NULL, 2, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
-    ("AC00000002", "Trần Văn CD", "cd.tran@email.com", "0123456789", 0, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
-    ("AC00000003", "Lê Thị EF", "ef.lethi@email.com", NULL, 1, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
-    ("AC00000004", "Lý Quốc GH", "gh.lyquoc@email.com", "0928471742", 0, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
-    ("AC00000005", "Phạm Lê IJ", "ij.phamle@email.com", "0728471238", 1, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
-    ("AC00000006", "Vũ Thị XY", "xy.vuthi@email.com", "0734591231", 0, "$2y$10$zZn3gcF1n1VcVdex1bnCv./xQahV32hopylatAr.N7BGJqAGF6Gca"),
+    ("AC00000001", "Nguyễn Văn AB", "ab.nguyen@email.com", NULL, 2, "$2a$10$8TjZGSbjA9Uv90Xg1ezFbOCiuQ.kNDuYEFaAoY5p8yeFGqHbEOGmK"),
+    ("AC00000002", "Trần Văn CD", "cd.tran@email.com", "0123456789", 0, "$2a$10$8TjZGSbjA9Uv90Xg1ezFbOCiuQ.kNDuYEFaAoY5p8yeFGqHbEOGmK"),
+    ("AC00000003", "Lê Thị EF", "ef.lethi@email.com", NULL, 1, "$2a$10$8TjZGSbjA9Uv90Xg1ezFbOCiuQ.kNDuYEFaAoY5p8yeFGqHbEOGmK"),
+    ("AC00000004", "Lý Quốc GH", "gh.lyquoc@email.com", "0928471742", 0, "$2a$10$8TjZGSbjA9Uv90Xg1ezFbOCiuQ.kNDuYEFaAoY5p8yeFGqHbEOGmK"),
+    ("AC00000005", "Phạm Lê IJ", "ij.phamle@email.com", "0728471238", 1, "$2a$10$8TjZGSbjA9Uv90Xg1ezFbOCiuQ.kNDuYEFaAoY5p8yeFGqHbEOGmK"),
+    ("AC00000006", "Vũ Thị XY", "xy.vuthi@email.com", "0734591231", 0, "$2a$10$8TjZGSbjA9Uv90Xg1ezFbOCiuQ.kNDuYEFaAoY5p8yeFGqHbEOGmK"),
     ("AC00000007", NULL, "1@a.c", NULL, 2, "$2a$10$1oHZJ/JEfSzUxnikOByr8efKZUA1qBWYpvIvR/rlBxigwrWBYFLf.")
 ;
 
@@ -193,7 +193,8 @@ INSERT INTO CustomerLibraries (CustomerID, ISBN, ExpiryDate)
 VALUES
     ("AC00000002", "9781524763169", "0001-01-01"),
     ("AC00000002", "9780062316103", "2020-11-20"),
-    ("AC00000006", "9781292263427", "2021-01-01")
+    ("AC00000006", "9781292263427", "2021-01-01"),
+    ("AC00000002", "9781292263427", "2021-12-31")
 ;
 
 INSERT INTO BranchStockLists (BranchID, ISBN, Stock)

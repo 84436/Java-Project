@@ -246,7 +246,7 @@ public class StaffGUI extends JFrame {
         txtLibrarySearch = new JTextField();
         txtLibrarySearch.setColumns(20);
         
-        GUIHelpers.addPlaceholderText(txtLibrarySearch, "Search by title or ISBN");
+        GUIHelpers.addPlaceholderText(txtLibrarySearch, "Search by title, author or ISBN");
         
         JPanel BookActions = new JPanel();
         
@@ -630,6 +630,31 @@ public class StaffGUI extends JFrame {
         btnPasswordSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: PasswordSave");
+                Log.l.info("btn: PasswordSave");
+                String oldPwd = pwtxtOld.getText();
+                String newPwd = pwtxtNew.getText();
+                String confirmPwd = pwtxtConfirm.getText();
+
+                if (oldPwd.isBlank()) oldPwd = null;
+                if (newPwd.isBlank()) newPwd = null;
+                if (confirmPwd.isBlank()) confirmPwd = null;
+
+                try {
+                    if (newPwd.equals(confirmPwd)) {
+                        M.changePassword(staff.getEmail(), oldPwd, newPwd);
+                        pwtxtOld.setText("");
+                        pwtxtNew.setText("");
+                        pwtxtConfirm.setText("");
+                    } else {
+                        GUIHelpers.showErrorDialog("Password does not match", null);
+                        pwtxtOld.setText("");
+                        pwtxtNew.setText("");
+                        pwtxtConfirm.setText("");
+                    }
+                }
+                catch (Exception exc) {
+                    GUIHelpers.showErrorDialog("Unable to change password", exc);
+                } 
             }
         });
         
@@ -689,6 +714,19 @@ public class StaffGUI extends JFrame {
         btnSetStock.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: SetStock");
+                int selectedRow = tblLibrary.getSelectedRow();
+                if (selectedRow == -1) {
+                    return;
+                }
+
+                String bookISBN = (String) tblLibrary.getModel().getValueAt(selectedRow, 0);
+                int stock = Integer.parseInt(spinnerSetStock.getValue().toString());
+
+                try {
+                    M.updateStock(staff.getBranchID(), bookISBN, stock);
+                } catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to add book to branch", exc);
+                }
             }
         });
         
@@ -696,24 +734,86 @@ public class StaffGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("check: BranchOnly: " + checkBranchOnly.isSelected());
                 toggleLibraryView(checkBranchOnly.isSelected());
+                populateLibraryTab(checkBranchOnly.isSelected());
             }
         });
         
         btnAddBook.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: AddBook");
+                int selectedRow = tblLibrary.getSelectedRow();
+                if (selectedRow == -1) {
+                    return;
+                }
+
+                String bookISBN = (String) tblLibrary.getModel().getValueAt(selectedRow, 0);
+                try {
+                    M.addBookToBranch(bookISBN, staff.getBranchID());
+                } catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to add book to branch", exc);
+                }
             }
         });
         
         btnRemoveBook.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("btn: RemoveBook");
+                int selectedRow = tblLibrary.getSelectedRow();
+                if (selectedRow == -1) {
+                    return;
+                }
+
+                String bookISBN = (String) tblLibrary.getModel().getValueAt(selectedRow, 0);
+                try {
+                    M.removeBookFromBranch(bookISBN, staff.getBranchID());
+                } catch (SQLException exc) {
+                    GUIHelpers.showErrorDialog("Unable to add book to branch", exc);
+                }
             }
         });
 
         txtLibrarySearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.l.info("txt: LibrarySearch");
+                String query = txtLibrarySearch.getText();
+
+                String[] tableHeaders = { GUIHelpers.htmlBoldText("ISBN"), GUIHelpers.htmlBoldText("Title"),
+                        GUIHelpers.htmlBoldText("Author"), GUIHelpers.htmlBoldText("Year") };
+
+                ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
+
+                try {
+                    if (checkBranchOnly.isSelected()) {
+                        ArrayList<BranchStockList> booksBranch = M.searchInBranLib(staff.getBranchID(), query);
+                        for (var bookbranch: booksBranch) {
+                            ArrayList<Object> record = new ArrayList<>();
+                            record.add(bookbranch.getBook().getISBN());
+                            record.add(bookbranch.getBook().getTitle());
+                            record.add(bookbranch.getBook().getAuthor());
+                            record.add(bookbranch.getBook().getYear());
+                            tableData.add(record);
+                        }
+                    } else {
+                        ArrayList<Book> books = M.searchBook(query);
+                        for (var book : books) {
+                            ArrayList<Object> record = new ArrayList<>();
+                            record.add(book.getISBN());
+                            record.add(book.getTitle());
+                            record.add(book.getAuthor());
+                            record.add(book.getYear());
+                            tableData.add(record);
+                        }
+                    }
+                    
+                } catch (SQLException exec) {
+                    exec.printStackTrace();
+                }
+                // extract and push each records
+
+                CustomTableModel tbmLib = new CustomTableModel(tableHeaders, tableData);
+                tblLibrary.setRowHeight(24);
+                tblLibrary.setModel(tbmLib);
+                Log.l.info("Library tab populated");
             }
         });
 
@@ -731,7 +831,23 @@ public class StaffGUI extends JFrame {
             }
         });
         
-        
+        tblLibrary.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = tblLibrary.getSelectedRow();
+                Log.l.info("Selected row index: " + selectedRow);
+
+                if (selectedRow == -1)
+                    return;
+
+                String BookISBN = (String) tblLibrary.getModel().getValueAt(selectedRow, 0);
+
+                if (checkBranchOnly.isSelected()) {
+                    showBookDetails(BookISBN, true);
+                } else {
+                    showBookDetails(BookISBN, false);
+                }
+            }
+        });
         
         /**
         * Events -> Orders
@@ -777,7 +893,7 @@ public class StaffGUI extends JFrame {
     }
     
     private void populateLibraryTab(boolean isFilter) {
-        String[] tableHeaders = {GUIHelpers.htmlBoldText("Title"), GUIHelpers.htmlBoldText("Author"), GUIHelpers.htmlBoldText("Year")};
+        String[] tableHeaders = {GUIHelpers.htmlBoldText("ISBN"), GUIHelpers.htmlBoldText("Title"), GUIHelpers.htmlBoldText("Author"), GUIHelpers.htmlBoldText("Year")};
 
         ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
 
@@ -786,6 +902,7 @@ public class StaffGUI extends JFrame {
                 ArrayList<BranchStockList> booksBranch = M.getBranchStockList(staff.getBranchID());
                 for (var bookBranch: booksBranch) {
                     ArrayList<Object> record = new ArrayList<>();
+                    record.add(bookBranch.getBook().getISBN());
                     record.add(bookBranch.getBook().getTitle());
                     record.add(bookBranch.getBook().getAuthor());
                     record.add(bookBranch.getBook().getYear());
@@ -796,6 +913,7 @@ public class StaffGUI extends JFrame {
                 ArrayList<Book> books = M.getAllBooks();
                 for (var book: books) {
                     ArrayList<Object> record = new ArrayList<>();
+                    record.add(book.getISBN());
                     record.add(book.getTitle());
                     record.add(book.getAuthor());
                     record.add(book.getYear());
@@ -823,26 +941,61 @@ public class StaffGUI extends JFrame {
         lblLibraryRatingAvg.setText(String.format("Average rating: %.1f", rating));
     }
 
-    private void showBookDetails(String BookISBN) {
+    private void updateBookDetailsReviews(ArrayList<Review> reviews) {
+        String r = "";
+        for (int i = 0; i < reviews.size(); i++) {
+            Review each = reviews.get(i);
+            r += String.format("%s\n--%s, %d/5\n", each.getReviewText(), each.getCustomerID(), each.getReviewScore());
+            if (i < reviews.size() - 1)
+                r += "\n";
+        }
+    }
+
+    private void showBookDetails(String BookISBN, boolean isBranchOnly) {
         try {
-            Book b = M.getByISBN(BookISBN);
+            if (!isBranchOnly) {
+                Book b = M.getByISBN(BookISBN);
 
-            txtLibraryISBN.setText(b.getISBN());
-            txtLibraryTitle.setText(b.getTitle());
-            txtLibraryAuthor.setText(b.getAuthor());
-            txtLibraryVersionID.setText(Integer.toString(b.getVersionID()));
-            txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
-            txtLibraryPublisher.setText(b.getPublisher());
-            txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
-            txtLibraryGenre.setText(b.getGenre().name());
-            txtLibraryFormat.setText(b.getFormat().name());
+                txtLibraryISBN.setText(b.getISBN());
+                txtLibraryTitle.setText(b.getTitle());
+                txtLibraryAuthor.setText(b.getAuthor());
+                txtLibraryVersionID.setText(Integer.toString(b.getVersionID()));
+                txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
+                txtLibraryPublisher.setText(b.getPublisher());
+                txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
+                txtLibraryGenre.setText(b.getGenre().name());
+                txtLibraryFormat.setText(b.getFormat().name());
 
-            txtLibraryISBN.setCaretPosition(0);
-            txtLibraryTitle.setCaretPosition(0);
-            txtLibraryAuthor.setCaretPosition(0);
-            txtLibraryPublisher.setCaretPosition(0);
+                txtLibraryISBN.setCaretPosition(0);
+                txtLibraryTitle.setCaretPosition(0);
+                txtLibraryAuthor.setCaretPosition(0);
+                txtLibraryPublisher.setCaretPosition(0);
 
-            updateBookDetailsRating(b.getRating());
+                updateBookDetailsRating(b.getRating());
+            } else {
+                BranchStockList branchStockList = M.getBranchStockList(BookISBN, staff.getBranchID());
+                spinnerSetStock.setValue(branchStockList.getStock());
+
+                Book b = branchStockList.getBook();
+
+                txtLibraryISBN.setText(b.getISBN());
+                txtLibraryTitle.setText(b.getTitle());
+                txtLibraryAuthor.setText(b.getAuthor());
+                txtLibraryVersionID.setText(Integer.toString(b.getVersionID()));
+                txtLibraryYear.setText(Integer.toString(b.getYear().getValue()));
+                txtLibraryPublisher.setText(b.getPublisher());
+                txtLibraryPrice.setText(String.format("%.02f", b.getPrice()));
+                txtLibraryGenre.setText(b.getGenre().name());
+                txtLibraryFormat.setText(b.getFormat().name());
+
+                txtLibraryISBN.setCaretPosition(0);
+                txtLibraryTitle.setCaretPosition(0);
+                txtLibraryAuthor.setCaretPosition(0);
+                txtLibraryPublisher.setCaretPosition(0);
+
+                updateBookDetailsRating(b.getRating());
+            }
+            
         } catch (SQLException exc) {
             GUIHelpers.showErrorDialog("Unable to get selected book info", exc);
         }
