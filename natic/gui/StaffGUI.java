@@ -14,6 +14,7 @@ import natic.*;
 import natic.account.Staff;
 import natic.book.Book;
 import natic.book.BranchStockList;
+import natic.receipt.Receipt;
 import natic.review.Review;
 
 public class StaffGUI extends JFrame {
@@ -854,6 +855,20 @@ public class StaffGUI extends JFrame {
         * Events -> Orders
         */
 
+        tblOrders.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = tblOrders.getSelectedRow();
+                Log.l.info("Selected row index: " + selectedRow);
+
+                if (selectedRow == -1)
+                    return;
+
+                String ReceiptID = (String) tblOrders.getModel().getValueAt(selectedRow, 0);
+
+                showReceiptDetails(ReceiptID);
+            }
+        });
+
         Log.l.info("Staff GUI init'd");
     }
     
@@ -935,6 +950,27 @@ public class StaffGUI extends JFrame {
     }
     
     private void populateOrdersTab() {
+        String[] tableHeaders = {GUIHelpers.htmlBoldText("ID"), GUIHelpers.htmlBoldText("Title"), GUIHelpers.htmlBoldText("Price")};
+
+        ArrayList<ArrayList<Object>> tableData = new ArrayList<>();
+
+        try {
+            ArrayList<Receipt> receipts = M.getAllOfBranches(staff.getBranchID());
+            for (var receipt: receipts) {
+                ArrayList<Object> record = new ArrayList<>();
+                Book b = M.getByISBN(receipt.getISBN());
+                record.add(receipt.getID());
+                record.add(b.getTitle());
+                record.add(receipt.getPrice());
+                tableData.add(record);
+            }
+        } catch (SQLException exec) {
+            exec.printStackTrace();
+        }
+
+        CustomTableModel tbmOrder = new CustomTableModel(tableHeaders, tableData);
+        tblOrders.setRowHeight(24);
+        tblOrders.setModel(tbmOrder);
         Log.l.info("Orders tab populated");
     }
 
@@ -999,6 +1035,28 @@ public class StaffGUI extends JFrame {
             
         } catch (SQLException exc) {
             GUIHelpers.showErrorDialog("Unable to get selected book info", exc);
+        }
+    }
+
+    private void showReceiptDetails(String ReceiptID) {
+        try {
+            Receipt rec = M.getReceiptByID(ReceiptID);
+            Book b = M.getByISBN(rec.getISBN());
+
+            txtOrderISBN.setText(rec.getISBN());
+            txtOrderID.setText(rec.getID());
+            txtOrderStaffID.setText(rec.getStaffID());
+            txtOrderPrice.setText(Float.toString(rec.getPrice()));
+            txtOrderDate.setText(rec.getDate().toString());
+            txtOrderTitle.setText(b.getTitle());
+            txtOrderGenre.setText(b.getGenre().name());
+            txtOrderAuthor.setText(b.getAuthor());
+            txtOrderFormat.setText(b.getFormat().name());
+            txtOrderPublisher.setText(b.getPublisher());
+            txtOrderVersionID.setText(Integer.toString(b.getVersionID()));
+            txtOrderYear.setText(Integer.toString(b.getYear().getValue()));
+        } catch (SQLException exc) {
+            GUIHelpers.showErrorDialog("Unable to get receipt", exc);
         }
     }
 }

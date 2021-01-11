@@ -228,7 +228,9 @@ public class Mediator {
         receipt.setReturnOn(LocalDate.of(1, 1, 1));
         RECEIPT.add(receipt);
 
-        if (!b.getFormat().equals(BookFormat.EBOOK)) {
+        Staff s = ACCOUNT.getStaff(StaffID);
+
+        if (!b.getFormat().equals(BookFormat.EBOOK) && !s.getBranchID().equals("BR00000000")) {
             BranchStockList br = BOOKLIST.getBookInBranLib(ACCOUNT.getStaff(StaffID).getBranchID(), ISBN);
             br.setStock(br.getStock() - 1);
             BOOKLIST.edit(br);
@@ -247,6 +249,7 @@ public class Mediator {
             cAdd.setBook(b);
             cAdd.setExpireDate(LocalDate.now().plusMonths(numberOfMonth));
             BOOKLIST.add(cAdd);
+            receipt.setReturnOn(LocalDate.now().plusMonths(numberOfMonth));
         }
         else if(c.getExpireDate().equals(LocalDate.of(1, 1, 1))){
             return;
